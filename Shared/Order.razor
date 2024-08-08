@@ -1,0 +1,66 @@
+<style>
+
+    @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    .Order 
+    {
+        background-image: url("/images/Burger_Menu_bg.png");
+        height: 300px;
+        width: 300px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display:grid;
+        grid-template-columns: 0.1fr 1fr 0.1fr;
+        grid-template-rows: 0.1fr 1fr 0.1fr; 
+    }
+    .Order_Content
+    {
+        grid-column: 2;
+        grid-row: 2;
+        display:grid;
+        text-align: center;
+        font-family: "Cedarville Cursive", cursive;
+    }
+
+    .Order_Greeting
+    {
+        font-size: 1.3em;
+        color: #E36565;
+    }
+
+    .Order_Price
+    {
+        font-size: 1.3em;
+        color: #E36565;
+    }
+
+    .Order_List
+    {
+        margin-left: -20px;
+        max-height: 150px;
+        overflow-y: scroll;
+    }
+
+</style>
+
+<div class="Order">
+    <div class="Order_Content">
+        <h6 class="Order_Greeting">Hello! Could I have a burger with:</h6>
+        @* Preparing an order list with variable list *@
+        <div class="Order_List">
+            @foreach (var item in OrderList)
+            {
+                @item
+                <br>
+            }
+        </div>
+        <h6 class="Order_Price">I will pay Rs. @Order_Price for this.</h6>
+    </div>
+</div>
+
+@code 
+{
+    private List<string> OrderList = new List<string> { "Cheese", "Lettuce", "Tomato", "Onion", "Patty", "Cheese", "Lettuce", "Tomato", "Onion", "Patty" };
+    private int Order_Price = 10;
+}

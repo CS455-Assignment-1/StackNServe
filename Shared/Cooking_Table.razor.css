@@ -1,0 +1,7 @@
+.Cooking_Table 
+{
+    background-color: #7E4D4D;
+    width: 70%;
+    height: 350px;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
