@@ -33,6 +33,7 @@
     }
     .Timer_Divison
     {
+        margin-top: -50px;
         text-align: center;
         grid-column: 2;
         font-size: 1.5rem;
@@ -56,7 +57,7 @@
         <Cooking_Table />
     </div>
     <div class="Order_Division">
-        <Order />
+        <Order Order_List="@Fetch_Order_List()" Order_Price="@Fetch_Order_Price()" />
     </div>
     <div class="Score_Board_Divison">
         <Score_Board />
@@ -69,5 +70,15 @@
     private void HandleTimerFinished()
     {
         Console.WriteLine("Timer Finished");
+    }
+    private List<string> Fetch_Order_List()
+    {
+        BurgerComponents burgerComponents = new BurgerComponents();
+        return burgerComponents.Order_List;
+    }
+    private int Fetch_Order_Price()
+    {
+        Random random = new Random();
+        return random.Next(5, 200);
     }
 }
