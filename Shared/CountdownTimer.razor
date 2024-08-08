@@ -1,8 +1,20 @@
 @using System.Timers
 @implements IDisposable
-
+<style>
+    .CountdownTimer
+    {
+        background-color: black;
+        width:30%;
+        max-height: 2.5rem;
+    }   
+    .Timer
+    {
+        font-size: 2rem;
+        color: red;
+    }
+</style>
 <div class="CountdownTimer">
-    <p>@FormatTimeSpan(TimeRemaining)</p>
+    <h3 class="Timer">@FormatTimeSpan(TimeRemaining)</h3>
     @if (ShowResetButton)
     {
         <button @onclick="ResetTimer">Reset</button>
@@ -11,7 +23,7 @@
 
 @code {
     [Parameter]
-    public int InitialTimeInSeconds { get; set; } = 120; // Default to 2 minutes
+    public int InitialTimeInSeconds { get; set; } = 20; // Default to 2 minutes
 
     [Parameter]
     public bool ShowResetButton { get; set; } = true;

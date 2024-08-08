@@ -1,6 +1,6 @@
 .Score_Board {
     width:280px;
-    height:50px;
+    height:60px;
     display: grid;
     grid-template-columns: 1fr 4fr;
     text-align: center;
