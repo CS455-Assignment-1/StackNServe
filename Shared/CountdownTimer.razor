@@ -1,0 +1,69 @@
+@using System.Timers
+@implements IDisposable
+
+<div class="CountdownTimer">
+    <p>Time Remaining: @FormatTimeSpan(TimeRemaining)</p>
+    @if (ShowResetButton)
+    {
+        <button @onclick="ResetTimer">Reset</button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int InitialTimeInSeconds { get; set; } = 120; // Default to 2 minutes
+
+    [Parameter]
+    public bool ShowResetButton { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnTimerFinished { get; set; }
+
+    private TimeSpan TimeRemaining { get; set; }
+    private Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
+        _timer = new Timer(1000);
+        _timer.Elapsed += async (sender, e) => await TimerTick();
+        _timer.Start();
+    }
+
+    private async Task TimerTick()
+    {
+        await InvokeAsync(() =>
+        {
+            TimeRemaining = TimeRemaining.Subtract(TimeSpan.FromSeconds(1));
+            
+            if (TimeRemaining <= TimeSpan.Zero)
+            {
+                _timer.Stop();
+                TimeRemaining = TimeSpan.Zero;
+                OnTimerFinished.InvokeAsync();
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    private void ResetTimer()
+    {
+        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
+        if (!_timer.Enabled)
+        {
+            _timer.Start();
+        }
+    }
+
+    private string FormatTimeSpan(TimeSpan timeSpan)
+    {
+        return $"{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
+    }
+
+    public void Dispose()
+    {
+        _timer?.Stop();
+        _timer?.Dispose();
+    }
+}
