@@ -2,7 +2,7 @@
 @implements IDisposable
 
 <div class="CountdownTimer">
-    <p>Time Remaining: @FormatTimeSpan(TimeRemaining)</p>
+    <p>@FormatTimeSpan(TimeRemaining)</p>
     @if (ShowResetButton)
     {
         <button @onclick="ResetTimer">Reset</button>

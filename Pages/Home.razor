@@ -1,8 +1,73 @@
 ﻿@page "/"
+@using DemoRepo.Pages
 @using DemoRepo.Shared
+<style>
+    .Home_Page
+    {
+        display:grid;
+        grid-template-columns: 1fr 4fr 1fr;
+        grid-template-rows: 0.5fr 0.5fr 1fr;
+    }
+    .Main_Page_Header_Class
+    {
+        grid-column: 2;
+    }
+    .Select_Buttons
+    {
+        grid-row-start: 1;
+        grid-row-end: 3;
+    }
+    .Order_Division
+    {
+        grid-row:1;
+        grid-column: 3;
+    }
+    .Score_Board_Divison
+    {
+        grid-row:3;
+        grid-column: 3;
+    }
+    .Cooking_Table_Divison
+    {
+        grid-column: 2;
+    }
+    .Timer_Divison
+    {
+        text-align: center;
+        grid-column: 2;
+        font-size: 1.5rem;
+    }
+</style>
+<div class="Home_Page">
+    <div class="Select_Buttons">
+        <Bun_Select />
+        <br>
+        <Patty_Select />
+        <br>
+        <Toppings_Select />
+        <br>
+        <Sauces_Select />
+    </div>
+    <Main_Page_Header />
+    <div class="Timer_Divison">
+        <CountdownTimer InitialTimeInSeconds="120" OnTimerFinished= "HandleTimerFinished" ShowResetButton = "false" />
+    </div>
+    <div class="Cooking_Table_Divison">
+        <Cooking_Table />
+    </div>
+    <div class="Order_Division">
+        <Order />
+    </div>
+    <div class="Score_Board_Divison">
+        <Score_Board />
+    </div>
+    
+</div>
 
-<Main_Page_Header />
-<Order />
-<Score_Board />
-<Cooking_Table />
-
+@code
+{
+    private void HandleTimerFinished()
+    {
+        Console.WriteLine("Timer Finished");
+    }
+}
