@@ -57,7 +57,7 @@ public class Portobello_Mushroom_Patty
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    public Portobello_Mushroom_Burger()
+    public Portobello_Mushroom_Patty()
     {
         Id = 4;
         Name = "Portobello Mushroom Patty";

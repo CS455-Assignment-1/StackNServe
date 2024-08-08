@@ -39,7 +39,7 @@ public class Garlic_Bun
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    Chocolate_Bun()
+    Garlic_Bun()
     {
         Id = 3;
         Name = "Garlic Bun";
