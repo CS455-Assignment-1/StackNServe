@@ -2,6 +2,8 @@
 @using DemoRepo.Pages
 @using DemoRepo.Shared
 <style>
+    @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
     .Home_Page
     {
         display:grid;
@@ -34,14 +36,64 @@
     .Timer_Divison
     {
         margin-top: -50px;
+        display: flex;
+        justify-content: center;
         text-align: center;
         grid-column: 2;
         font-size: 1.5rem;
     }
+    .Skip_Play_Buttons
+    {
+        grid-column: 3;
+        grid-row: 2;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+    .Time_Elapsed_Message
+    {
+        font-family: 'Cedarville Cursive', cursive;
+        font-size: 2rem;
+        color: black;
+        text-align: center;
+        grid-column: 2;
+    }
+    .Time_Elapsed_Score
+    {
+        font-family: 'Cedarville Cursive', cursive;
+        font-size:3rem;
+        color: #E36565;
+        text-align: center;
+        grid-column: 2;
+    }
+    .Time_Elapsed_Instruction
+    {
+        font-family: 'Cedarville Cursive', cursive;
+        font-size: 1.5rem;
+        color: black;
+        text-align: center;
+        grid-column: 2;
+    }
+    .Play_Again_Button
+    {
+        grid-column: 2;
+    }
 </style>
 
 <div class="Home_Page">
-    <div class="Select_Buttons">
+    @if(isEnded)
+    {
+        <h1 class="Time_Elapsed_Message">Your time finished!</h1><br>
+        <h2 class="Time_Elapsed_Score">Your score was:@New_Player.Balance</h2><br>
+        <h3 class="Time_Elapsed_Instruction">Click on the button below to play again</h3>
+        <div class="Play_Again_Button">
+            <Play_Again OnPlayAgain="() => { isEnded = false; New_Player = new Users(); }" />
+        </div>
+    }
+    else
+    {
+        <div class="Select_Buttons">
         <Bun_Select />
         <br>
         <Patty_Select />
@@ -49,27 +101,33 @@
         <Toppings_Select />
         <br>
         <Sauces_Select />
-    </div>
-    <Main_Page_Header />
-    <div class="Timer_Divison">
-        <CountdownTimer InitialTimeInSeconds="120" OnTimerFinished= "HandleTimerFinished" ShowResetButton = "false" />
-    </div>
-    <div class="Cooking_Table_Divison">
-        <Cooking_Table />
-    </div>
-    <div class="Order_Division">
-        <Order Order_List="@Fetch_Order_List()" Order_Price="@Fetch_Order_Price()" />
-    </div>
-    <div class="Score_Board_Divison">
-        <Score_Board />
-    </div>
-    
+        </div>
+        <Main_Page_Header />
+        <div class="Timer_Divison">
+            <CountdownTimer InitialTimeInSeconds="120" OnTimerFinished= "HandleTimerFinished" ShowResetButton = "false" />
+        </div>
+        <div class="Cooking_Table_Divison">
+            <Cooking_Table />
+        </div>
+        <div class="Order_Division">
+            <Order Order_List="@Fetch_Order_List()" Order_Price="@Fetch_Order_Price()" />
+        </div>
+        <div class="Skip_Play_Buttons">
+            <Skip OnSkip="Player_Skip"/>
+        </div>
+        <div class="Score_Board_Divison">
+            <Score_Board CurrentScore="New_Player.Balance"/>
+        </div>
+    }
 </div>
 
 @code
 {
+    private bool isEnded=false;
+    Users New_Player= new Users();
     private void HandleTimerFinished()
     {
+        isEnded = true;
         Console.WriteLine("Timer Finished");
     }
     private List<string> Fetch_Order_List()
@@ -81,5 +139,11 @@
     {
         Random random = new Random();
         return random.Next(5, 200);
+    }
+    private void Player_Skip()
+    {
+        New_Player.Balance -= 5;
+        Fetch_Order_List();
+        StateHasChanged();
     }
 }
