@@ -82,7 +82,10 @@
     }
 </style>
 
+@inject GlobalStringListService StringListService
+
 <div class = "PattySelect">
+
     <button @onclick="ToggleMenu" class = "PattyToggleButton">
         <div class="PattyIconContainer">
             <img src="/images/Patty_Select.png" alt="Patty Select" class="Patty_Select_Image" />
@@ -93,7 +96,7 @@
         <ul class = "ClickExpandMenu" @onmouseenter="CancelAutoClose" @onmouseleave="StartAutoClose">
             @foreach (var Patty in PattyImages)
             {
-                <li @onmouseenter="() => Display_Info(Patty)" @onmouseleave="ClearHoverInfo">
+                <li @onmouseenter="() => Display_Info(Patty)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Patty)">
                     <img src="@Patty" class="ImageSmallCircular" alt="Patty" />
                     @if (currentHoverInfo != null && currentHoverPatty == Patty)
                     {
@@ -169,6 +172,7 @@
     {
         CancelAutoClose(); // Cancel any existing timer
         autoCloseTimer = new Timer(CloseMenu, null, 1, Timeout.Infinite);
+        
     }
 
     private void CancelAutoClose()
@@ -181,11 +185,6 @@
     {
         isExpanded = false;
         InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        CancelAutoClose();
     }
     private class PattyInfo
     {
@@ -200,4 +199,26 @@
             Price = price;
         }
     }
+
+    private void AddItem(string newItem)
+    {
+        if (!string.IsNullOrWhiteSpace(newItem))
+        {
+            StringListService.AddString(newItem);
+            newItem = "";
+        }
+    }
+
+    public void AddToBurger(string patty)
+    {
+        Console.WriteLine("Adding Patty to Burger");
+        // Add Patty to Burger
+        currentHoverPatty = patty;
+        if (patty == "images/Patty/Veggie_Patty.png") AddItem("Veggie Patty");
+        else if (patty == "images/Patty/Chicken_Patty.png") AddItem("Chicken Patty");
+        else if (patty == "images/Patty/Fish_Patty.png") AddItem("Fish Patty");
+        else if (patty == "images/Patty/Portobello_Mushroom_Patty.png") AddItem("Portobello Mushroom Patty");
+    }
 }
+
+

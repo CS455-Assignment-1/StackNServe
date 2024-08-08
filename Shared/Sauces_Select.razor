@@ -84,6 +84,8 @@
     }
 </style>
 
+@inject GlobalStringListService StringListService
+
 <div class = "SaucesSelect">
     <button @onclick="ToggleMenu" class = "SaucesToggleButton">
         <div class="SaucesIconContainer">
@@ -96,7 +98,7 @@
         <ul class = "ClickExpandMenu">
             @foreach (var Sauces in SaucesImages)
             {
-                <li @onmouseenter="() => Display_Info(Sauces)" @onmouseleave="ClearHoverInfo">
+                <li @onmouseenter="() => Display_Info(Sauces)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Sauces)">
                     <img src="@Sauces" class="ImageSmallCircular" alt="Sauce" />
                     @if (currentHoverInfo != null && currentHoverPatty == Sauces)
                     {
@@ -196,4 +198,29 @@
             Price = price;
         }
     }
+
+
+    private void AddItem(string newItem)
+    {
+        if (!string.IsNullOrWhiteSpace(newItem))
+        {
+            StringListService.AddString(newItem);
+            newItem = "";
+        }
+    }
+
+    public void AddToBurger(string sauces)
+    {
+        Console.WriteLine("Adding Sauce to Burger");
+        // Add Patty to Burger
+        currentHoverPatty = sauces;
+        if(sauces == "images/Sauces/Aioli.png") AddItem("Aioli");
+        else if(sauces == "images/Sauces/BBQSauce.png") AddItem("BBQ Sauce");
+        else if(sauces == "images/Sauces/HotSauce.png") AddItem("Hot Sauce");
+        else if(sauces == "images/Sauces/Ketchup.png") AddItem("Ketchup");
+        else if(sauces == "images/Sauces/Mayo.png") AddItem("Mayo");
+        else if(sauces == "images/Sauces/Mustard.png") AddItem("Mustard");
+        else if(sauces == "images/Sauces/Ranch.png") AddItem("Ranch");
+    }
+
 }

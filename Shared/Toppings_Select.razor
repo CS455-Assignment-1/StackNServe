@@ -82,6 +82,9 @@
     }
 </style>
 
+
+@inject GlobalStringListService StringListService
+
 <div class = "ToppingsSelect">
     <button @onclick="ToggleMenu" class = "ToppingToggleButton">
         <div class="ToppingIconContainer">
@@ -91,11 +94,11 @@
     @if (isExpanded)
     {
         <ul class = "ClickExpandMenu">
-            @foreach (var topping in ToppingImages)
+            @foreach (var Topping in ToppingImages)
             {
-                <li @onmouseenter="() => Display_Info(topping)" @onmouseleave="ClearHoverInfo">
-                    <img src="@topping" class="ImageSmallCircular" alt="Sauce" />
-                    @if (currentHoverInfo != null && currentHoverPatty == topping)
+                <li @onmouseenter="() => Display_Info(Topping)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Topping)">
+                    <img src="@Topping" class="ImageSmallCircular" alt="Sauce" />
+                    @if (currentHoverInfo != null && currentHoverPatty == Topping)
                     {
                         <div class="HoverInfo">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
@@ -208,5 +211,30 @@
             Description = description;
             Price = price;
         }
+    }
+
+    private void AddItem(string newItem)
+    {
+        if (!string.IsNullOrWhiteSpace(newItem))
+        {
+            StringListService.AddString(newItem);
+            newItem = "";
+        }
+    }
+
+    public void AddToBurger(string topping)
+    {
+        Console.WriteLine("Adding Topping to Burger");
+        // Add Patty to Burger
+        currentHoverPatty = topping;
+        if(topping == "images/Toppings/Avocado.png") AddItem("Avocado");
+        else if(topping == "images/Toppings/Bacon.png") AddItem("Bacon");
+        else if(topping == "images/Toppings/Cheese.png") AddItem("Cheese");
+        else if(topping == "images/Toppings/Egg.png") AddItem("Egg");
+        else if(topping == "images/Toppings/Jalapenos.png") AddItem("Jalapenos");
+        else if(topping == "images/Toppings/Lettuce.png") AddItem("Lettuce");
+        else if(topping == "images/Toppings/Onion.png") AddItem("Onion");
+        else if(topping == "images/Toppings/Pickles.png") AddItem("Pickles");
+        else if(topping == "images/Toppings/Tomato.png") AddItem("Tomato"); 
     }
 }
