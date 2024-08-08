@@ -1,11 +1,23 @@
 <style>
-    .Bun_Select 
+    @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    .BunSelect
+    {
+        display: flex;
+        flex-direction: row;
+    }
+    .BunToggleButton
     {
         background-color: #FFCBA2;
         width: 120px;
         height: 120px;
         border-radius: 50%;
         border: 1px solid #E38282;
+    }
+
+    .BunToggleButton:hover
+    {
+        background-color: rgb(208, 168, 221);
+        transition: 0.5s;
     }
 
     .Bun_Select_Image 
@@ -16,13 +28,151 @@
         max-height: 100%;
         object-fit: contain;
     }
+
+    .ClickExpandMenu
+    {
+        background-color: #fce1cc;
+        position: absolute;
+        align-items: center;
+        margin-left: 10rem;
+        margin-top: 1.5rem;
+        padding: 5px;
+        padding-left: 25px;
+        border-radius: 15px;
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+        animation: 0.5s;
+    }
+
+    .ClickExpandMenu li
+    {
+        margin-right: 10px;
+    }
+
+    .ImageSmallCircular
+    {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%; 
+        object-fit: cover; 
+    }
+    .HoverInfo 
+    {
+        z-index: 1000;
+        text-align: center;
+        font-family:"Cedarville Cursive", cursive;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        top: 70px;
+        left: 0;
+        width: 200px;
+    }
+    .HoverInfoHeading
+    {
+        color:#E36565;
+    }
+    .HoverInfoPrice
+    {
+        color:#E36565;
+    }
 </style>
 
-<div class="Bun_Select">
-    <img src="/images/Bun_Select.png" alt="Bun Select" class="Bun_Select_Image" />
+<div class = "BunSelect">
+    <button @onclick="ToggleMenu" class = "BunToggleButton">
+        <div class="BunIconContainer">
+            <img src="/images/Bun_Select.png" alt="Bun Select" class="Bun_Select_Image" />
+        </div>
+    </button>
+    @if (isExpanded)
+    {
+        <ul class = "ClickExpandMenu">
+            @foreach (var Bun in BunImages)
+            {
+                <li @onmouseenter="() => Display_Info(Bun)" @onmouseleave="ClearHoverInfo">
+                    <img src="@Bun" class="ImageSmallCircular" alt="Bun" />
+                    @if (currentHoverInfo != null && currentHoverPatty == Bun)
+                    {
+                        <div class="HoverInfo">
+                            <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
+                            <p>@currentHoverInfo.Description</p>
+                            <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>
+                        </div>
+                    }
+                </li>
+            }
+            <li></li>
+        </ul>
+        
+    }
 </div>
 
-@code
-{
 
+@code
+{  
+    List<string> BunImages = new List<string>
+        {
+            "images/Bun/Garlic_Bun.png",
+            "images/Bun/Parmesan_Bun.png",
+            "images/Bun/Plain_Bun.png",
+            "images/Bun/Sesame_Bun.png",
+        };
+
+    private bool isExpanded = false;
+    private BunInfo currentHoverInfo;
+    private string currentHoverPatty;
+    private void Display_Info(string Bun)
+    {
+        currentHoverPatty = Bun;
+        if (Bun == "images/Bun/Garlic_Bun.png")
+        {
+            Garlic_Bun temp_object = new Garlic_Bun();
+            currentHoverInfo = new BunInfo("Garlic Bun", temp_object.Description, temp_object.Price);
+        }
+        else if (Bun == "images/Bun/Parmesan_Bun.png")
+        {
+            Parmesan_Bun temp_object = new Parmesan_Bun();
+            currentHoverInfo = new BunInfo("Parmesan Bun", temp_object.Description, temp_object.Price);
+        }
+        else if (Bun == "images/Bun/Plain_Bun.png")
+        {
+            Plain_Bun temp_object = new Plain_Bun();
+            currentHoverInfo = new BunInfo("Plain Bun", temp_object.Description, temp_object.Price);
+        }
+        else if (Bun == "images/Bun/Sesame_Bun.png")
+        {
+            Sesame_Bun temp_object = new Sesame_Bun();
+            currentHoverInfo = new BunInfo("Sesame Bun", temp_object.Description, temp_object.Price);
+        }
+    }
+    private void ClearHoverInfo()
+    {
+        currentHoverInfo = null;
+        currentHoverPatty = null;
+    }
+    [Parameter]
+    public EventCallback<bool> OnStateChanged { get; set; }
+        
+    private async Task ToggleMenu()
+    {
+        isExpanded = !isExpanded;
+        await OnStateChanged.InvokeAsync(isExpanded);
+    }
+    private class BunInfo
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+
+        public BunInfo(string name, string description, decimal price)
+        {
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+    }
 }

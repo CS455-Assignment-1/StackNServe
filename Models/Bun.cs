@@ -5,7 +5,7 @@ public class Plain_Bun
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    Plain_Bun()
+    public Plain_Bun()
     {
         Id = 1;
         Name = "Plain Bun";
@@ -22,7 +22,7 @@ public class Sesame_Bun
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    Sesame_Bun()
+    public Sesame_Bun()
     {
         Id = 2;
         Name = "Sesame Bun";
@@ -39,7 +39,7 @@ public class Garlic_Bun
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    Garlic_Bun()
+    public Garlic_Bun()
     {
         Id = 3;
         Name = "Garlic Bun";
@@ -56,7 +56,7 @@ public class Parmesan_Bun
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public string Description { get; set; }
-    Parmesan_Bun()
+    public Parmesan_Bun()
     {
         Id = 4;
         Name = "Parmesan Bun";

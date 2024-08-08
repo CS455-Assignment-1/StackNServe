@@ -1,3 +1,4 @@
+
 public class Chicken_Patty
 {
     public int Id { get; set; }

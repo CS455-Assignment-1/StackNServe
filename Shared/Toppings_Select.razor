@@ -1,5 +1,11 @@
 <style>
-    .Bun_Select 
+    @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    .ToppingsSelect
+    {
+        display: flex;
+        flex-direction: row;
+    }
+    .ToppingToggleButton
     {
         background-color: #FFCBA2;
         width: 120px;
@@ -8,7 +14,13 @@
         border: 1px solid #E38282;
     }
 
-    .Bun_Select_Image 
+    .ToppingToggleButton:hover
+    {
+        background-color: rgb(208, 168, 221);
+        transition: 0.5s;
+    }
+
+    .Topping_Select_Image 
     {
         padding-left: 10px;
         padding-top: 12px;
@@ -16,13 +28,185 @@
         max-height: 100%;
         object-fit: contain;
     }
+
+    .ClickExpandMenu
+    {
+        background-color: #fce1cc;
+        position: absolute;
+        align-items: center;
+        margin-left: 10rem;
+        margin-top: 1.5rem;
+        padding: 5px;
+        padding-left: 25px;
+        border-radius: 15px;
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+        animation: 0.5s;
+    }
+
+    .ClickExpandMenu li
+    {
+        margin-right: 10px;
+    }
+
+    .ImageSmallCircular
+    {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%; 
+        object-fit: cover; 
+    }
+    .HoverInfo 
+    {
+        z-index: 2000;
+        text-align: center;
+        font-family:"Cedarville Cursive", cursive;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        top: 70px;
+        left: 0;
+        width: 200px;
+    }
+    .HoverInfoHeading
+    {
+        color:#E36565;
+    }
+    .HoverInfoPrice
+    {
+        color:#E36565;
+    }
 </style>
 
-<div class="Bun_Select">
-    <img src="/images/Toppings_Select.png" alt="Bun Select" class="Bun_Select_Image" />
+<div class = "ToppingsSelect">
+    <button @onclick="ToggleMenu" class = "ToppingToggleButton">
+        <div class="ToppingIconContainer">
+            <img src="/images/Toppings_Select.png" alt="Topping Select" class="Topping_Select_Image" />
+        </div>
+    </button>
+    @if (isExpanded)
+    {
+        <ul class = "ClickExpandMenu">
+            @foreach (var topping in ToppingImages)
+            {
+                <li @onmouseenter="() => Display_Info(topping)" @onmouseleave="ClearHoverInfo">
+                    <img src="@topping" class="ImageSmallCircular" alt="Sauce" />
+                    @if (currentHoverInfo != null && currentHoverPatty == topping)
+                    {
+                        <div class="HoverInfo">
+                            <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
+                            <p>@currentHoverInfo.Description</p>
+                            <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>
+                        </div>
+                    }
+                </li>
+            }
+            <li></li>
+        </ul>
+        
+    }
 </div>
 
-@code
-{
 
+@code
+{ 
+ 
+    List<string> Toppings = new List<string> { "Tomato", "Lettuce" ,"Onion", "Pickles", "Jalapenos", "Avocado", "Bacon" ,"Cheese", "Egg"}; 
+    
+    List<string> ToppingImages = new List<string>
+        {
+            "images/Toppings/Avocado.png",
+            "images/Toppings/Bacon.png",
+            "images/Toppings/Cheese.png",
+            "images/Toppings/Egg.png",
+            "images/Toppings/Jalapenos.png", 
+            "images/Toppings/Lettuce.png",
+            "images/Toppings/Onion.png", 
+            "images/Toppings/Pickles.png",
+            "images/Toppings/Tomato.png"
+        };
+
+    private bool isExpanded = false;
+    private ToppingInfo currentHoverInfo;
+    private string currentHoverPatty;
+    private void Display_Info(string topping)
+    {
+        currentHoverPatty = topping;
+        if (topping == "images/Toppings/Avocado.png")
+        {
+            Avocado temp_object = new Avocado();
+            currentHoverInfo = new ToppingInfo("Avocado", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Bacon.png")
+        {
+            Bacon temp_object = new Bacon();
+            currentHoverInfo = new ToppingInfo("Bacon", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Cheese.png")
+        {
+            Cheese temp_object = new Cheese();
+            currentHoverInfo = new ToppingInfo("Cheese", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Egg.png")
+        {
+            Egg temp_object = new Egg();
+            currentHoverInfo = new ToppingInfo("Egg", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Jalapenos.png")
+        {
+            Jalapenos temp_object = new Jalapenos();
+            currentHoverInfo = new ToppingInfo("Jalapenos", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Lettuce.png")
+        {
+            Lettuce temp_object = new Lettuce();
+            currentHoverInfo = new ToppingInfo("Lettuce", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Onion.png")
+        {
+            Onion temp_object = new Onion();
+            currentHoverInfo = new ToppingInfo("Onion", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Pickles.png")
+        {
+            Pickles temp_object = new Pickles();
+            currentHoverInfo = new ToppingInfo("Pickles", temp_object.Description, temp_object.Price);
+        }
+        else if (topping == "images/Toppings/Tomato.png")
+        {
+            Tomato temp_object = new Tomato();
+            currentHoverInfo = new ToppingInfo("Tomato", temp_object.Description, temp_object.Price);
+        }
+    }
+    private void ClearHoverInfo()
+    {
+        currentHoverInfo = null;
+        currentHoverPatty = null;
+    }
+    [Parameter]
+    public EventCallback<bool> OnStateChanged { get; set; }
+        
+    private async Task ToggleMenu()
+    {
+        isExpanded = !isExpanded;
+        await OnStateChanged.InvokeAsync(isExpanded);
+    }
+
+    private class ToppingInfo
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+
+        public ToppingInfo(string name, string description, decimal price)
+        {
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+    }
 }

@@ -1,5 +1,11 @@
 <style>
-    .Bun_Select 
+    @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    .PattySelect
+    {
+        display: flex;
+        flex-direction: row;
+    }
+    .PattyToggleButton
     {
         background-color: #FFCBA2;
         width: 120px;
@@ -8,7 +14,13 @@
         border: 1px solid #E38282;
     }
 
-    .Bun_Select_Image 
+    .PattyToggleButton:hover
+    {
+        background-color: rgb(208, 168, 221);
+        transition: 0.5s;
+    }
+
+    .Patty_Select_Image 
     {
         padding-left: 10px;
         padding-top: 12px;
@@ -16,13 +28,176 @@
         max-height: 100%;
         object-fit: contain;
     }
+
+    .ClickExpandMenu
+    {
+        background-color: #fce1cc;
+        position: absolute;
+        align-items: center;
+        margin-left: 10rem;
+        margin-top: 1.5rem;
+        padding: 5px;
+        padding-left: 25px;
+        border-radius: 15px;
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+        animation: 0.5s;
+    }
+
+    .ClickExpandMenu li
+    {
+        margin-right: 10px;
+    }
+
+    .ImageSmallCircular
+    {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%; 
+        object-fit: cover; 
+    }
+    .HoverInfo 
+    {
+        z-index: 2000;
+        text-align: center;
+        font-family:"Cedarville Cursive", cursive;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        top: 70px;
+        left: 0;
+        width: 200px;
+    }
+    .HoverInfoHeading
+    {
+        color:#E36565;
+    }
+    .HoverInfoPrice
+    {
+        color:#E36565;
+    }
 </style>
 
-<div class="Bun_Select">
-    <img src="/images/Patty_Select.png" alt="Bun Select" class="Bun_Select_Image" />
+<div class = "PattySelect">
+    <button @onclick="ToggleMenu" class = "PattyToggleButton">
+        <div class="PattyIconContainer">
+            <img src="/images/Patty_Select.png" alt="Patty Select" class="Patty_Select_Image" />
+        </div>
+    </button>
+    @if (isExpanded)
+    {
+        <ul class = "ClickExpandMenu" @onmouseenter="CancelAutoClose" @onmouseleave="StartAutoClose">
+            @foreach (var Patty in PattyImages)
+            {
+                <li @onmouseenter="() => Display_Info(Patty)" @onmouseleave="ClearHoverInfo">
+                    <img src="@Patty" class="ImageSmallCircular" alt="Patty" />
+                    @if (currentHoverInfo != null && currentHoverPatty == Patty)
+                    {
+                        <div class="HoverInfo">
+                            <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
+                            <p>@currentHoverInfo.Description</p>
+                            <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>
+                        </div>
+                    }
+                </li>
+            }
+            <li></li>
+        </ul>
+        
+    }
 </div>
 
-@code
-{
 
+@code
+{  
+    List<string> PattyImages = new List<string>
+        {
+            "images/Patty/Veggie_Patty.png",
+            "images/Patty/Chicken_Patty.png",
+            "images/Patty/Fish_Patty.png",
+            "images/Patty/Portobello_Mushroom_Patty.png",
+        };
+    
+    private bool isExpanded = false;
+    private PattyInfo currentHoverInfo;
+    private string currentHoverPatty;
+    private Timer autoCloseTimer;
+    private void Display_Info(string patty)
+    {
+        currentHoverPatty = patty;
+        if (patty == "images/Patty/Veggie_Patty.png")
+        {
+            Veggie_Patty temp_object = new Veggie_Patty();
+            currentHoverInfo = new PattyInfo("Veggie Patty", temp_object.Description, temp_object.Price);
+        }
+        else if (patty == "images/Patty/Chicken_Patty.png")
+        {
+            Chicken_Patty temp_object = new Chicken_Patty();    
+            currentHoverInfo = new PattyInfo("Chicken Patty", temp_object.Description, temp_object.Price);
+
+        }
+        else if (patty == "images/Patty/Fish_Patty.png")
+        {
+            Fish_Patty temp_object = new Fish_Patty();
+            currentHoverInfo = new PattyInfo("Fish Patty", temp_object.Description, temp_object.Price);
+        }
+        else if (patty == "images/Patty/Portobello_Mushroom_Patty.png")
+        {
+            Portobello_Mushroom_Patty temp_object = new Portobello_Mushroom_Patty();
+            currentHoverInfo = new PattyInfo("Portobello Mushroom Patty", temp_object.Description, temp_object.Price);
+        }
+    }
+
+    private void ClearHoverInfo()
+    {
+        currentHoverInfo = null;
+        currentHoverPatty = null;
+    }
+    [Parameter]
+    public EventCallback<bool> OnStateChanged { get; set; }
+    
+    private async Task ToggleMenu()
+    {
+        isExpanded = !isExpanded;
+        await OnStateChanged.InvokeAsync(isExpanded);
+    }
+    private void StartAutoClose()
+    {
+        CancelAutoClose(); // Cancel any existing timer
+        autoCloseTimer = new Timer(CloseMenu, null, 1, Timeout.Infinite);
+    }
+
+    private void CancelAutoClose()
+    {
+        autoCloseTimer?.Dispose();
+        autoCloseTimer = null;
+    }
+
+    private void CloseMenu(object state)
+    {
+        isExpanded = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CancelAutoClose();
+    }
+    private class PattyInfo
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+
+        public PattyInfo(string name, string description, decimal price)
+        {
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+    }
 }
