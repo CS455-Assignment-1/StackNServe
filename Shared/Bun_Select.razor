@@ -183,7 +183,6 @@
         if (!string.IsNullOrWhiteSpace(newItem))
         {
             StringListService.AddString(newItem);
-            newItem = "";
         }
     }
 
@@ -193,9 +192,31 @@
         // Add Patty to Burger
         currentHoverPatty = buns;
 
-        if (buns == "images/Bun/Garlic_Bun.png") AddItem("Garlic Bun");
-        else if (buns == "images/Bun/Parmesan_Bun.png") AddItem("Parmesan Bun");
-        else if (buns == "images/Bun/Plain_Bun.png") AddItem("Plain Bun");
-        else if (buns == "images/Bun/Sesame_Bun.png") AddItem("Sesame Bun");
+        //If there is no bun in the burger, add the bun to the bottom
+        //Travel through the list of ingredients and add the bun to the bottom
+        int count = 0;
+        foreach (var ingredient in StringListService.StringList)
+        {
+            if (ingredient == "Bun Bottom")
+            {
+                count++;
+            }
+        }
+
+        if(count == 0)
+        {
+            if (buns == "images/Bun/Garlic_Bun.png") AddItem("Bun Bottom");
+            else if (buns == "images/Bun/Parmesan_Bun.png") AddItem("Bun Bottom");
+            else if (buns == "images/Bun/Plain_Bun.png") AddItem("Bun Bottom");
+            else if (buns == "images/Bun/Sesame_Bun.png") AddItem("Bun Bottom");
+        }
+
+        else
+        {
+            if (buns == "images/Bun/Garlic_Bun.png") AddItem("Garlic Bun");
+            else if (buns == "images/Bun/Parmesan_Bun.png") AddItem("Parmesan Bun");
+            else if (buns == "images/Bun/Plain_Bun.png") AddItem("Plain Bun");
+            else if (buns == "images/Bun/Sesame_Bun.png") AddItem("Sesame Bun");
+        }
     }
 }

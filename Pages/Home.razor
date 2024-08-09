@@ -4,6 +4,177 @@
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+    .burger-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        min-height: 300px;
+        margin-bottom: 20px;
+        z-index: 15;
+    }
+    .burger-container > div {
+        width: 200px;
+        margin: 2px;
+        border-radius: 10px;
+    }
+
+
+    .sesame-bun { 
+        background-color: #F4A460; 
+        border-radius: 50px 50px 0 0;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+    .garlic-bun { 
+        background-color: #F4A460; 
+        border-radius: 50px 50px 0 0;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+    .parmesan-bun { 
+        background-color: #F4A460; 
+        border-radius: 50px 50px 0 0;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+    .plain-bun { 
+        background-color: #F4A460; 
+        border-radius: 50px 50px 0 0;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bun-top::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 10%;
+        right: 10%;
+        height: 10px;
+        background-color: #D2691E;
+        border-radius: 50%;
+    }
+    .bun-bottom { 
+        background-color: #F4A460;
+        border-radius: 0 0 50px 50px;
+        height: 30px;
+    }
+
+    .veggie-patty { 
+        background-color: #e68b2a;
+        height: 30px;
+        border-radius: 10px;
+    }
+    .chicken-patty { 
+        background-color: #532300;
+        height: 30px;
+        border-radius: 10px;
+    }
+    .fish-patty { 
+        background-color: #92562b;
+        height: 30px;
+        border-radius: 10px;
+    }
+    .portobello-mushroom-patty { 
+        background-color: #aa623c;
+        height: 30px;
+        border-radius: 10px;
+    }
+
+    .aioli
+    {
+        background-color: #ffefb3;
+        height: 10px;
+    }
+    .bbq-sauce
+    {
+        background-color: #8b0000;
+        height: 10px;
+    }
+    .ketchup
+    {
+        background-color: #ff0000;
+        height: 10px;
+    }
+    .mustard
+    {
+        background-color: #ffdb58;
+        height: 10px;
+    }
+    .hot-sauce
+    {
+        background-color: #ff4500;
+        height: 10px;
+    }
+    .ranch
+    {
+        background-color: #c4bf60;
+        height: 10px;
+    }
+    .mayonnaise
+    {
+        background-color: #fff5ee;
+        height: 10px;
+    }
+
+    .onion { 
+        background-color: #FFA07A;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .tomato { 
+        background-color: #FF6347;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .avocado { 
+        background-color: #7CFC00;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .bacon { 
+        background-color: #8B0000;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .cheese { 
+        background-color: #FFD700;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .egg{
+        background-color: #F0E68C;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .jalapenos{
+        background-color: #FFA500;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .lettuce { 
+        background-color: #32CD32;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    .pickles { 
+        background-color: #228B22;
+        height: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .ingredients-list {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
     .Home_Page
     {
         display:grid;
@@ -26,7 +197,7 @@
     }
     .Score_Board_Divison
     {
-        grid-row:3;
+        grid-row: 3;
         grid-column: 3;
     }
     .Cooking_Table_Divison
@@ -81,6 +252,8 @@
     }
 </style>
 
+@inject GlobalStringListService StringListService
+
 <div class="Home_Page">
     @if(isEnded)
     {
@@ -106,15 +279,28 @@
         <div class="Timer_Divison">
             <CountdownTimer InitialTimeInSeconds="120" OnTimerFinished= "HandleTimerFinished" ShowResetButton = "false" />
         </div>
-        <div class="Cooking_Table_Divison">
-            <Cooking_Table />
-        </div>
+
+        
+        @* <div class="burger-and-table-container"> *@
+            <div class="burger-container">
+                @foreach (var ingredient in StringListService.StringList)
+                {
+                    <div class="@ingredient.ToLower().Replace(" ", "-")"></div>
+                }
+            </div>
+            <div class="Cooking_Table_Division">
+                <Cooking_Table />
+            </div>
+        @* </div> *@
+
         <div class="Order_Division">
-            <Order Order_List="@Fetch_Order_List()" Order_Price="@Fetch_Order_Price()" />
+            <Order Order_List="@currentOrderList" Order_Price="@currentOrderPrice" />
         </div>
         <div class="Skip_Play_Buttons">
             <Skip OnSkip="Player_Skip"/>
+            <Submit OnSubmit="CheckList"/>
         </div>
+
         <div class="Score_Board_Divison">
             <Score_Board CurrentScore="New_Player.Balance"/>
         </div>
@@ -124,6 +310,8 @@
 @code
 {
     private bool isEnded=false;
+    private List<string> currentOrderList = new List<string>();
+    private int currentOrderPrice = 0;
     Users New_Player= new Users();
     private void HandleTimerFinished()
     {
@@ -140,10 +328,64 @@
         Random random = new Random();
         return random.Next(5, 200);
     }
+
+    private void UpdateOrder()
+    {
+        currentOrderList = Fetch_Order_List();
+        currentOrderPrice = Fetch_Order_Price();
+        StateHasChanged();
+    }
+
     private void Player_Skip()
     {
         New_Player.Balance -= 5;
-        Fetch_Order_List();
+        StringListService.ClearList();
+        UpdateOrder();
         StateHasChanged();
+    }
+    
+    protected override void OnInitialized()
+    {
+        StringListService.OnChange += StateHasChanged;
+        UpdateOrder();
+    }
+
+    public void Dispose()
+    {
+        StringListService.OnChange -= StateHasChanged;
+    }
+
+    private void CheckList()
+    {
+        //Compare the Elements in the two lists.
+        //If they are the same, add the price to the player's balance
+        bool truth = true;
+        foreach (var item in currentOrderList)
+        {
+            if (StringListService.StringList.Contains(item))
+            {
+                Console.WriteLine("You passed the order");
+                Console.WriteLine(item);
+                continue;
+            }
+            else
+            {
+                Console.WriteLine("You failed the order");
+                Console.WriteLine(item);
+
+                New_Player.Balance -= 10;
+                truth = false;
+                break;
+            }
+        }
+        if (truth)
+        {
+            New_Player.Balance += currentOrderPrice;
+        }
+        Clear_List();
+    }
+    private void Clear_List()
+    {
+        StringListService.ClearList();
     }
 }
