@@ -8,6 +8,15 @@
     position: relative;
     overflow: hidden;
 }
+
+.sesame-bun 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
 .garlic-bun 
 { 
     background-color: #F4A460; 
