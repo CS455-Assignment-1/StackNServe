@@ -1,0 +1,262 @@
+@@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.sesame-bun[b-jxlz5puxc4] 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sesame-bun[b-jxlz5puxc4] 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+.garlic-bun[b-jxlz5puxc4] 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+.parmesan-bun[b-jxlz5puxc4] 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+.plain-bun[b-jxlz5puxc4] 
+{ 
+    background-color: #F4A460; 
+    border-radius: 50px 50px 0 0;
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bun-top[b-jxlz5puxc4]::after 
+{
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 10%;
+    right: 10%;
+    height: 10px;
+    background-color: #D2691E;
+    border-radius: 50%;
+}
+.bun-bottom[b-jxlz5puxc4] { 
+    background-color: #F4A460;
+    border-radius: 0 0 50px 50px;
+    height: 30px;
+}
+
+.veggie-patty[b-jxlz5puxc4] 
+{ 
+    background-color: #e68b2a;
+    height: 30px;
+    border-radius: 10px;
+}
+.chicken-patty[b-jxlz5puxc4] 
+{ 
+    background-color: #532300;
+    height: 30px;
+    border-radius: 10px;
+}
+.fish-patty[b-jxlz5puxc4] 
+{ 
+    background-color: #92562b;
+    height: 30px;
+    border-radius: 10px;
+}
+.portobello-mushroom-patty[b-jxlz5puxc4] 
+{ 
+    background-color: #aa623c;
+    height: 30px;
+    border-radius: 10px;
+}
+.aioli[b-jxlz5puxc4]
+{
+    background-color: #ffefb3;
+    height: 10px;
+}
+.bbq-sauce[b-jxlz5puxc4]
+{
+    background-color: #8b0000;
+    height: 10px;
+}
+.ketchup[b-jxlz5puxc4]
+{
+    background-color: #ff0000;
+    height: 10px;
+}
+.mustard[b-jxlz5puxc4]
+{
+    background-color: #ffdb58;
+    height: 10px;
+}
+.hot-sauce[b-jxlz5puxc4]
+{
+    background-color: #ff4500;
+    height: 10px;
+}
+.ranch[b-jxlz5puxc4]
+{
+    background-color: #c4bf60;
+    height: 10px;
+}
+.mayonnaise[b-jxlz5puxc4]
+{
+    background-color: #fff5ee;
+    height: 10px;
+}
+
+.onion[b-jxlz5puxc4] { 
+    background-color: #FFA07A;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.tomato[b-jxlz5puxc4] { 
+    background-color: #FF6347;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.avocado[b-jxlz5puxc4] { 
+    background-color: #7CFC00;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.bacon[b-jxlz5puxc4] { 
+    background-color: #8B0000;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.cheese[b-jxlz5puxc4] { 
+    background-color: #FFD700;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.egg[b-jxlz5puxc4]{
+    background-color: #F0E68C;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.jalapenos[b-jxlz5puxc4]{
+    background-color: #FFA500;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.lettuce[b-jxlz5puxc4] { 
+    background-color: #32CD32;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+.pickles[b-jxlz5puxc4] { 
+    background-color: #228B22;
+    height: 15px;
+    border-radius: 0 0 20px 20px;
+}
+
+.ingredients-list[b-jxlz5puxc4] {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.Home_Page[b-jxlz5puxc4]
+{
+    display:grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 0.2fr 0.1fr 1fr;
+}
+.Main_Page_Header_Class[b-jxlz5puxc4]
+{
+    grid-column: 2;
+}
+.Select_Buttons[b-jxlz5puxc4]
+{
+    grid-row-start: 1;
+    grid-row-end: 3;
+}
+.Order_Division[b-jxlz5puxc4]
+{
+    grid-row:1;
+    grid-column: 3;
+}
+.Score_Board_Divison[b-jxlz5puxc4]
+{
+    grid-row: 3;
+    grid-column: 3;
+}
+.Cooking_Table_Division[b-jxlz5puxc4]
+{
+    grid-row: 3;
+    grid-column: 2;
+}
+.Timer_Divison[b-jxlz5puxc4]
+{
+    margin-top: -50px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    grid-column: 2;
+    font-size: 1.5rem;
+}
+.Skip_Play_Buttons[b-jxlz5puxc4]
+{
+    grid-column: 3;
+    grid-row: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.Time_Elapsed_Message[b-jxlz5puxc4]
+{
+    font-size: 2rem;
+    color: black;
+    text-align: center;
+    grid-column: 2;
+}
+.Time_Elapsed_Score[b-jxlz5puxc4]
+{
+    font-size:3rem;
+    color: #E36565;
+    text-align: center;
+    grid-column: 2;
+}
+.Time_Elapsed_Instruction[b-jxlz5puxc4]
+{
+    font-size: 1.5rem;
+    color: black;
+    text-align: center;
+    grid-column: 2;
+}
+.Play_Again_Button[b-jxlz5puxc4]
+{
+    grid-column: 2;
+}
+.burger-container[b-jxlz5puxc4] 
+{
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    min-height: 300px;
+    z-index: 15;
+}
+.burger-container > div[b-jxlz5puxc4] 
+{
+    width: 200px;
+    margin: 2px;
+    border-radius: 10px;
+}
