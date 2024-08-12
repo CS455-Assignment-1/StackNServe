@@ -1,37 +1,40 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Burgeria</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand" href="">Stack-N-Serve</a>
     </div>
 </div>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
+        <div class="nav-item px-3" >
+            <NavLink class="nav-link"  @onclick="LoadPlayerGuide">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Player Guide
+            </NavLink>
+        </div>
+        <div class="nav-item px-3" @onclick="NewGame">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> New Game
             </NavLink>
         </div>
     </nav>
 </div>
 
-@code {
+@code 
+{
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
+    private async void NewGame()
+    {
+        NavigationManager.NavigateTo("New_Game");
+        await JSRuntime.InvokeVoidAsync("location.reload");
+    } 
+    private void LoadPlayerGuide()
+    {
+        NavigationManager.NavigateTo("/");
+    }
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;

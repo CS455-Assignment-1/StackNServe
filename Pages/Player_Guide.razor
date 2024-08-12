@@ -1,0 +1,70 @@
+@page "/"
+@using DemoRepo.Shared
+<style>
+    .Player_Guide
+    {
+        font-family: 'Poppins', sans-serif;
+    }
+    .Player_Guide_Heading
+    {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #ff7f50;
+    }
+    .Player_Guide_Rules
+    {
+        background-color: bisque;
+        border: 1px solid black;
+        padding: 10px;
+    }
+    .Player_Guide_Controls
+    {
+        background-color: bisque;
+        border: 1px solid black;
+        padding: 10px;
+    }
+</style>
+
+<div class="Player_Guide">
+    <h1 class="Player_Guide_Heading">Player Guide</h1>
+    <p class="Player_Guide_Greeting">
+        Welcome to Stack-N-Serve! This is a game where you can play as a chef and serve customers by making burgers. You can
+        earn money by making burgers and serving them to customers. You can also lose money by skipping customers or making
+        the wrong burger. The goal of the game is to make as much money as possible before the timer runs out.
+    </p>
+    <div class="Player_Guide_Rules">
+        <p>Following are the rules of the game:
+            <li>Customers will come to your restaurant and order a burger. They will also tell you how much they are willing to pay
+                for the burger.</li>
+            <li>You can make the burger by stacking the ingredients in the correct order, i.e. with a bun at the top and the bottom
+                of the stack.</li>
+            <li>You have to make as many burgers as possible before the timer runs out.</li>
+            <li>If you make the wrong burger or skip a customer, you will lose money.</li>
+            <li>If you make the right burger and serve it to the customer, you will earn money. However, there's a catch! The ingredients cost money, so you have to make sure that you are making a profit.</li>
+            <li>Your initial balance in the game is Rs. 100.</li>
+        </p>
+    </div>
+    <br>
+    <p class="Player_Guide_Intent">
+        The intent of the game is to test your memory and speed. You have to remember the ingredients and the order in which they
+        are stacked. You also have to be quick in making the burger and serving it to the customer. The game will get harder as
+        you progress, with more ingredients and more customers to serve. Good luck!
+    </p>
+    <br>
+    <div class="Player_Guide_Controls">
+        <p>
+            Following are the controls of the game:
+            <li>Use the New Game button to start a new game.</li>
+            <li>Use the Player Guide button to view the player guide.</li>
+            <li>Use the Select buttons present at the left side of the playing area to select the ingredients.</li>
+            <li>Use the 'Skip' button to skip a customer.</li>
+            <li>Use the 'Submit' button to serve the burger to the customer.</li>
+        </p>
+    </div>
+    <div class="Play_Game_Button">
+        <Play_Again />
+    </div>
+</div>
+
+@code
+{}

@@ -27,6 +27,37 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        let audio;
+        window.initializeAudio = () => 
+        {
+            if (!window.audio) 
+            {
+                window.audio = new Audio('background_music.mp3');
+                window.audio.loop = true;
+                const playAudio = () => {
+                    window.audio.play().catch(error => 
+                    {
+                        console.log('Auto-play prevented. Waiting for user interaction.', error);
+                    });
+                };
+                playAudio();
+                document.body.addEventListener('click', playAudio, { once: true });
+                window.addEventListener('load', playAudio);
+            }
+        };
+
+        window.onbeforeunload = () => 
+        {
+            if (audio) 
+            {
+                sessionStorage.setItem('audioTime', audio.currentTime.toString());
+                sessionStorage.setItem('audioPlaying', (!audio.paused).toString());
+            }
+        };
+        
+        initializeAudio();
+    </script>
 </body>
 
 </html>

@@ -1,16 +1,51 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeVoidAsync("initializeAudio");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var wasPlayingString = await JS.InvokeAsync<string>("sessionStorage.getItem", "audioPlaying");
+            var audioTimeString = await JS.InvokeAsync<string>("sessionStorage.getItem", "audioTime");
+
+            bool wasPlaying = wasPlayingString == "true";
+            double audioTime = 0;
+
+            if (double.TryParse(audioTimeString, out double parsedTime))
+            {
+                audioTime = parsedTime;
+            }
+
+            if (wasPlaying)
+            {
+                await JS.InvokeVoidAsync("playAudio");
+                if (audioTime > 0)
+                {
+                    await JS.InvokeVoidAsync("eval", $"if(audio) audio.currentTime = {audioTime}");
+                }
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await JS.InvokeVoidAsync("eval", "if(audio) audio.pause()");
+    }
+}

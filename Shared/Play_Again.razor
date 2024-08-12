@@ -1,3 +1,7 @@
+@page "/Play_Again"
+@using DemoRepo.Pages
+@using DemoRepo.Shared
+@inject NavigationManager NavigationManager
 <style>
     .Play_Again 
     {
@@ -8,24 +12,26 @@
         margin: 10px;
         cursor: pointer;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
     }
     .Play_Again_Heading 
     {
-        font-size: 20px;
+        font-size: 40px;
         align-self: center;
+        justify-self: center;
+        margin-top:10px;
+
     }
 </style>
 <div class="Play_Again" @onclick="InvokeOnPlayAgain">
-    <h1 class="Play_Again_Heading">PLAY AGAIN</h1>
+    <h1 class="Play_Again_Heading">PLAY</h1>
 </div>
 @code
 {
     [Parameter]
     public EventCallback OnPlayAgain { get; set; }
-    private async Task InvokeOnPlayAgain()
+    private void InvokeOnPlayAgain()
     {
-        await OnPlayAgain.InvokeAsync();
+        NavigationManager.NavigateTo("/New_Game");
     }
 }

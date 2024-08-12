@@ -1,0 +1,41 @@
+@inject IJSRuntime JSRuntime
+
+<audio @ref="audioElement" loop>
+    <source src="background_music.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+@code 
+{
+    private ElementReference audioElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await PlayAsync();
+        }
+    }
+
+    public async Task PlayAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", $"document.querySelector('audio').play()");
+    }
+
+    public async Task PauseAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", $"document.querySelector('audio').pause()");
+    }
+
+    public async Task ToggleAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", @"
+            var audio = document.querySelector('audio');
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        ");
+    }
+}
