@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "DemoRepo",
   "resources": {
-    "hash": "sha256-4kqYNaCV4v1FQV/ziJwrsfdguT5auIx4wzHUKRfISAA=",
+    "hash": "sha256-txqW4XsfK58XBtYud2Cvc7tz39wjbN6ZJfB+jyMOJCA=",
     "jsModuleNative": {
       "dotnet.native.8.0.7.z0qmlxdeha.js": "sha256-tFsxPBbhkdn6GKNBKvCRLzrfAHdyM86odYTe0MtrwMk="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "DemoRepo.wasm": "sha256-L+pdCnIRfR5blyxRXdBJDFzfk/ltjyVento0Z3qia2g=",
+      "DemoRepo.wasm": "sha256-NpXQbUp/PrSc2jBTRPeEF+y38rrTRHtJK7A9yh5gd34=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-UjG/wJsTKoiI5jewL/Kg3kgNiAmWrRdDDqquQMyXdkA=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-2Nc52xPm6AAtLy8IOvelSz2P5TBQN5mNmSng7M/1YBE=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-cjv0l2XLcfeTcLwHeVQeK+F20CSOw34aaTjOGlrKazc=",
