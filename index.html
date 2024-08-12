@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DemoRepo</title>
-    <base href="/StackNServe/" />
+    <base href="StackNServe" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -27,6 +27,37 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        let audio;
+        window.initializeAudio = () => 
+        {
+            if (!window.audio) 
+            {
+                window.audio = new Audio('background_music.mp3');
+                window.audio.loop = true;
+                const playAudio = () => {
+                    window.audio.play().catch(error => 
+                    {
+                        console.log('Auto-play prevented. Waiting for user interaction.', error);
+                    });
+                };
+                playAudio();
+                document.body.addEventListener('click', playAudio, { once: true });
+                window.addEventListener('load', playAudio);
+            }
+        };
+
+        window.onbeforeunload = () => 
+        {
+            if (audio) 
+            {
+                sessionStorage.setItem('audioTime', audio.currentTime.toString());
+                sessionStorage.setItem('audioPlaying', (!audio.paused).toString());
+            }
+        };
+        
+        initializeAudio();
+    </script>
 </body>
 
 </html>
