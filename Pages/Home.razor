@@ -3,6 +3,7 @@
 @using DemoRepo.Shared
 
 @inject GlobalStringListService StringListService
+@inject IJSRuntime JSRuntime
 
 
 <style>
@@ -24,6 +25,16 @@
         justify-self: center;
         margin-top:10px;
 
+    }
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: black;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
     }
 </style>
 <div class="Home_Page">
@@ -48,6 +59,10 @@
             <Toppings_Select />
             <br>
             <Sauces_Select />
+        </div>
+        <!-- <button class="btn btn-primary" @onclick="ShowNotification">Show Notification</button> -->
+        <div id="notification" class="notification" style="display: none;">
+            @message
         </div>
         <Main_Page_Header />
         <div class="Timer_Divison">
@@ -82,8 +97,11 @@
 @code
 {
     private bool isEnded=false;
+    private string message = "Hello World!";
     private List<string> currentOrderList = new List<string>();
     private int currentOrderPrice = 0;
+    private int makingCost = 0;
+
     Users New_Player= new Users();
     private void HandleTimerFinished()
     {
@@ -107,7 +125,6 @@
         {
             isEnded = false;
             New_Player = new Users();
-            Clear_List();
         }
     }
     private void UpdateOrder()
@@ -140,6 +157,46 @@
     {
         //Compare the Elements in the two lists.
         //If they are the same, add the price to the player's balance
+        //Calculate the making cost of the burger
+        makingCost = 0;
+
+        if (StringListService.StringList.Count == 0)
+        {
+            message = "No Order!";
+            ShowNotification();
+            return;
+        }
+    
+        foreach (var item in StringListService.StringList)
+        {
+            if(item == "Bun Bottom") makingCost += 0;
+            else if(item == "Plain Bun") makingCost += 10;
+            else if(item == "Sesame Bun") makingCost += 12;
+            else if(item == "Garlic Bun") makingCost += 20;
+            else if(item == "Parmesan Bun") makingCost += 25;
+            else if(item == "Veggie Patty") makingCost += 15;
+            else if(item == "Chicken Patty") makingCost += 20;
+            else if(item == "Fish Patty") makingCost += 25;
+            else if(item == "Portobello Mushroom Patty") makingCost += 18;
+            else if(item == "Avocado") makingCost += 8;
+            else if(item == "Bacon") makingCost += 7;
+            else if(item == "Cheese") makingCost += 5;
+            else if(item == "Egg") makingCost += 4;
+            else if(item == "Jalapenos") makingCost += 6;
+            else if(item == "Lettuce") makingCost += 3;
+            else if(item == "Onion") makingCost += 4;
+            else if(item == "Pickles") makingCost += 2;
+            else if(item == "Tomato") makingCost += 5;
+            else if(item == "Aioli") makingCost += 5;
+            else if(item == "BBQ Sauce") makingCost += 5;
+            else if(item == "Hot Sauce") makingCost += 5;
+            else if(item == "Ketchup") makingCost += 5;
+            else if(item == "Mayonnaise") makingCost += 5;
+            else if(item == "Mustard") makingCost += 5;
+            else if(item == "Ranch") makingCost += 5;
+            else makingCost += 0;
+        }
+        New_Player.Balance -= makingCost;
         bool truth = true;
         foreach (var item in currentOrderList)
         {
@@ -153,20 +210,65 @@
             {
                 Console.WriteLine("You failed the order");
                 Console.WriteLine(item);
-
-                New_Player.Balance -= 10;
                 truth = false;
                 break;
             }
         }
+        if(currentOrderList.Count + 1 != StringListService.StringList.Count)
+        {
+            truth = false;
+        }
+        //Check the first element of the list
+        if ("Bun Bottom"!= StringListService.StringList[0])
+        {
+            New_Player.Balance -= 10;
+            truth = false;
+        }
         if (truth)
         {
+            message = "Perfect Order!";
+            ShowNotification();
             New_Player.Balance += currentOrderPrice;
         }
-        Clear_List();
+        else
+        {
+            message = "Wrong Order!";
+            ShowNotification();
+        }
+        
+        StringListService.ClearList();
+        UpdateOrder();
+        StateHasChanged();
     }
     private void Clear_List()
     {
         StringListService.ClearList();
     }
+    private async Task ShowNotification()
+    {
+        await JSRuntime.InvokeVoidAsync("showNotification");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeNotification");
+        }
+    }
 }
+
+<script>
+    function initializeNotification() 
+    {
+        window.showNotification = function () 
+        {
+            var notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(function () 
+            {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    }
+</script>
