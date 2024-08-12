@@ -1,14 +1,12 @@
 # StackNServe
 
-This application was made as a course project of [CS455]: Introduction to Software Engineering in 2024-25 Sem I under the guidance of [Prof. Sruti Ragavan](https://sruti-s-ragavan.github.io).
+StackNServe is an interactive game developed as a course project for CS455: Introduction to Software Engineering during the 2024-25 Semester I, under the guidance of [Prof. Sruti Ragavan](https://sruti-s-ragavan.github.io).
 
-StackNServe is an interactive game, designed to test memory, time and risk management abilities of the player.
+The application is designed to evaluate players' memory, time management, and risk assessment capabilities through an engaging gameplay experience. StackNServe features a user-friendly interface, ensuring accessibility and a smooth user experience.
 
-The interface of the app is simple and intuitive ensuring that users will not face any difficulties while using the application and will have a seamless experience. 
+## Development Team
 
-## Group Details
-
-The assignment has been developed by : [Aditi Khandelia](https://github.com/AditiKhandelia) and [Kushagra Srivastava](https://github.com/whizdor).
+This project was developed by : [Aditi Khandelia](https://github.com/AditiKhandelia) and [Kushagra Srivastava](https://github.com/whizdor).
 
 ## Deployment
 
@@ -16,18 +14,22 @@ The web app is deployed at: https://cs455-assignment-1.github.io/StackNServe/
 
 ## How to run the software locally?
 
-* Make sure you have .NET 8 SDK and C# installed in your system.
+* Make sure you have .NET 8 SDK and C# Development Enviroment installed in your system.
 
 Clone the repository-
 
 ```
 gh repo clone CS455-Assignment-1/StackNServe
 ```
-
-Run the following commands to start the server
+Navigate to the project directory:
 
 ```
 cd StackNServe
+```
+Launch the application using the .NET CLI:
+```
 dotnet watch
 ```
-The application should start running on the local host.
+The application will start and be accessible via your local host.
+
+For further information or to report issues, please refer to the project's GitHub repository.
