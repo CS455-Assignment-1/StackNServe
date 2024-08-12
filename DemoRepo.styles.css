@@ -160,3 +160,38 @@ main[b-xfwrz8dget] {
         overflow-y: auto;
     }
 }
+/* /Pages/Home.razor.rz.scp.css */
+ 
+/* /Shared/Cooking_Table.razor.rz.scp.css */
+.Cooking_Table[b-9gm4xnsg91] 
+{
+    background-color: #7E4D4D;
+    width: 100%;
+    height: 350px;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
+/* /Shared/Score_Board.razor.rz.scp.css */
+.Score_Board[b-0zuv5dazfv] {
+    width:280px;
+    height:60px;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    text-align: center;
+    background-color: #FFCBA2;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+.Score_Board_Image[b-0zuv5dazfv]
+{
+    padding-top: 5px;
+    grid-column: 1;
+    max-width: 50px;
+    max-height: 100px;
+    padding-left: 10px;
+}
+.Current_Score[b-0zuv5dazfv]
+{
+    grid-column: 2;
+    font-size: 40px;
+    font-weight: bold;
+}
