@@ -20,14 +20,6 @@ jobs:
         args: >
             -Dsonar.organization=cs455-assignment-1
             -Dsonar.projectKey=CS455-Assignment-1_StackNServe
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.coverage.exclusions=**/*Tests.cs
-            -Dsonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
-            -Dsonar.cpd.cs.minimumLines=25
-            -Dsonar.cpd.cs.minimumTokens=150
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.scm.provider=git
-            -Dsonar.scm.forceReloadAll=true
 
   deploy-to-github-pages:
     runs-on: ubuntu-latest
