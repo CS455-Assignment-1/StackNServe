@@ -84,6 +84,7 @@
 
 
 @inject GlobalStringListService StringListService
+@inject SelectionButtonService SelectionButtonService
 
 <div class = "ToppingsSelect">
     <button @onclick="ToggleMenu" class = "ToppingToggleButton">
@@ -195,7 +196,18 @@
         
     private async Task ToggleMenu()
     {
-        isExpanded = !isExpanded;
+        if(isExpanded) {
+            isExpanded = false;
+        }
+        else {
+            isExpanded = true;
+            SelectionButtonService.BunSelectVar = false;
+            SelectionButtonService.PattySelectVar = false;
+            SelectionButtonService.SaucesSelectVar = false;
+            SelectionButtonService.ToppingSelectVar = true;
+            SelectionButtonService.NotifyStateChanged();
+        }
+        await OnStateChanged.InvokeAsync(isExpanded);
         await OnStateChanged.InvokeAsync(isExpanded);
     }
 
@@ -236,5 +248,29 @@
         else if(topping == "images/Toppings/Onion.png") AddItem("Onion");
         else if(topping == "images/Toppings/Pickles.png") AddItem("Pickles");
         else if(topping == "images/Toppings/Tomato.png") AddItem("Tomato");
+    }
+
+    private System.Threading.Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new System.Threading.Timer(CheckToppingsSelectVar, null, 0, 100); // Check every 100ms
+    }
+
+    private void CheckToppingsSelectVar(object state)
+    {
+        if (!SelectionButtonService.ToppingSelectVar && isExpanded)
+        {
+            InvokeAsync(async () =>
+            {
+                await ToggleMenu();
+                StateHasChanged();
+            });
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }

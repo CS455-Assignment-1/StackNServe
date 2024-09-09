@@ -85,6 +85,7 @@
 </style>
 
 @inject GlobalStringListService StringListService
+@inject SelectionButtonService SelectionButtonService
 
 <div class = "SaucesSelect">
     <button @onclick="ToggleMenu" class = "SaucesToggleButton">
@@ -182,7 +183,17 @@
         
     private async Task ToggleMenu()
     {
-        isExpanded = !isExpanded;
+        if(isExpanded) {
+            isExpanded = false;
+        }
+        else {
+            isExpanded = true;
+            SelectionButtonService.BunSelectVar = false;
+            SelectionButtonService.PattySelectVar = false;
+            SelectionButtonService.SaucesSelectVar = true;
+            SelectionButtonService.ToppingSelectVar = false;
+            SelectionButtonService.NotifyStateChanged();
+        }
         await OnStateChanged.InvokeAsync(isExpanded);
     }
     private class SaucesInfo
@@ -221,6 +232,30 @@
         else if(sauces == "images/Sauces/Mayo.png") AddItem("Mayonnaise");
         else if(sauces == "images/Sauces/Mustard.png") AddItem("Mustard");
         else if(sauces == "images/Sauces/Ranch.png") AddItem("Ranch");
+    }
+
+    private System.Threading.Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new System.Threading.Timer(CheckSaucesSelectVar, null, 0, 100); // Check every 100ms
+    }
+
+    private void CheckSaucesSelectVar(object state)
+    {
+        if (!SelectionButtonService.SaucesSelectVar && isExpanded)
+        {
+            InvokeAsync(async () =>
+            {
+                await ToggleMenu();
+                StateHasChanged();
+            });
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 
 }
