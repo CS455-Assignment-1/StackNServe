@@ -4,6 +4,23 @@ on:
   [push]
 
 jobs:
+  sonarcloud :
+    runs-on: ubuntu-latest
+    steps :
+    # Checkout the code from the master branch
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth:0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{secrets.SONARCLOUD_TOKEN}}
+      with:
+        args: >
+            -Dsonar.organisation=CS455-Assignment-1
+            -Dsonar.projectKey=StackNServe
+            
   deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
@@ -39,6 +56,9 @@ jobs:
     # Add a .nojekyll file to prevent Jekyll processing
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
+
+    # Check for code smells
+    - name : 
 
     # Deploy the wwwroot folder to the gh-pages branch
     - name: Deploy to GitHub Pages
