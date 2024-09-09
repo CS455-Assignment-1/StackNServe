@@ -25,7 +25,7 @@ jobs:
             -Dsonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
             -Dsonar.cpd.cs.minimumLines=25
             -Dsonar.cpd.cs.minimumTokens=150
-            -Dsonar.cs.file.suffixes=.cs
+            -Dsonar.cs.file.suffixes=.cs, .razor
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.scm.provider=git
             -Dsonar.scm.forceReloadAll=true
