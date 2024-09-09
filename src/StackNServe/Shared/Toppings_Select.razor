@@ -95,13 +95,13 @@
     @if (isExpanded)
     {
         <ul class = "ClickExpandMenu">
-            @foreach (var Topping in ToppingImages)
+            @foreach (var item in ToppingImages.Select((Topping, index) => new { Topping, index }))
             {
-                <li @onmouseenter="() => Display_Info(Topping)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Topping)">
-                    <img src="@Topping" class="ImageSmallCircular" alt="Sauce" />
-                    @if (currentHoverInfo != null && currentHoverPatty == Topping)
+                <li @onmouseenter="() => Display_Info(item.Topping)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Topping)">
+                    <img src="@item.Topping" class="ImageSmallCircular" alt="Bun" />
+                    @if (currentHoverInfo != null && currentHoverPatty == item.Topping)
                     {
-                        <div class="HoverInfo">
+                        <div class="HoverInfo" style="margin-left:@($"{item.index * 4}vw")">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
                             <p>@currentHoverInfo.Description</p>
                             <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>

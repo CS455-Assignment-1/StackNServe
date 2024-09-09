@@ -95,13 +95,13 @@
     @if (isExpanded)
     {
         <ul class = "ClickExpandMenu" @onmouseenter="CancelAutoClose" @onmouseleave="StartAutoClose">
-            @foreach (var Patty in PattyImages)
+            @foreach (var item in PattyImages.Select((Patty, index) => new { Patty, index }))
             {
-                <li @onmouseenter="() => Display_Info(Patty)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Patty)">
-                    <img src="@Patty" class="ImageSmallCircular" alt="Patty" />
-                    @if (currentHoverInfo != null && currentHoverPatty == Patty)
+                <li @onmouseenter="() => Display_Info(item.Patty)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Patty)">
+                    <img src="@item.Patty" class="ImageSmallCircular" alt="Bun" />
+                    @if (currentHoverInfo != null && currentHoverPatty == item.Patty)
                     {
-                        <div class="HoverInfo">
+                        <div class="HoverInfo" style="margin-left:@($"{item.index * 3.5}vw")">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
                             <p>@currentHoverInfo.Description</p>
                             <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>

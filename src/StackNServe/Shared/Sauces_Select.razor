@@ -97,13 +97,13 @@
     {
         // set the z dimesion of the div to 1000 to make it appear on top of the other elements
         <ul class = "ClickExpandMenu">
-            @foreach (var Sauces in SaucesImages)
+            @foreach (var item in SaucesImages.Select((Sauces, index) => new { Sauces, index }))
             {
-                <li @onmouseenter="() => Display_Info(Sauces)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Sauces)">
-                    <img src="@Sauces" class="ImageSmallCircular" alt="Sauce" />
-                    @if (currentHoverInfo != null && currentHoverPatty == Sauces)
+                <li @onmouseenter="() => Display_Info(item.Sauces)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Sauces)">
+                    <img src="@item.Sauces" class="ImageSmallCircular" alt="Bun" />
+                    @if (currentHoverInfo != null && currentHoverPatty == item.Sauces)
                     {
-                        <div class="HoverInfo">
+                        <div class="HoverInfo" style="margin-left:@($"{item.index * 4}vw")">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
                             <p>@currentHoverInfo.Description</p>
                             <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>

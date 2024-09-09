@@ -69,7 +69,7 @@
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         top: 70px;
-        left: 0;
+        @* left: 0; *@
         width: 200px;
     }
     .HoverInfoHeading
@@ -94,13 +94,13 @@
     @if (isExpanded)
     {
         <ul class = "ClickExpandMenu">
-            @foreach (var Bun in BunImages)
+            @foreach (var item in BunImages.Select((Bun, index) => new { Bun, index }))
             {
-                <li @onmouseenter="() => Display_Info(Bun)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(Bun)">
-                    <img src="@Bun" class="ImageSmallCircular" alt="Bun" />
-                    @if (currentHoverInfo != null && currentHoverPatty == Bun)
+                <li @onmouseenter="() => Display_Info(item.Bun)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Bun)">
+                    <img src="@item.Bun" class="ImageSmallCircular" alt="Bun" />
+                    @if (currentHoverInfo != null && currentHoverPatty == item.Bun)
                     {
-                        <div class="HoverInfo">
+                        <div class="HoverInfo" style="margin-left:@($"{item.index * 3.5}vw")">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
                             <p>@currentHoverInfo.Description</p>
                             <p class="HoverInfoPrice">Price: Rs. @currentHoverInfo.Price.ToString("F2")</p>
