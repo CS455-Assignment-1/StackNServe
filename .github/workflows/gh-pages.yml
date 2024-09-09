@@ -20,7 +20,7 @@ jobs:
         args: >
             -Dsonar.organisation=CS455-Assignment-1
             -Dsonar.projectKey=StackNServe
-            
+
   deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
@@ -56,9 +56,6 @@ jobs:
     # Add a .nojekyll file to prevent Jekyll processing
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
-
-    # Check for code smells
-    - name : 
 
     # Deploy the wwwroot folder to the gh-pages branch
     - name: Deploy to GitHub Pages
