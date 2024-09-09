@@ -18,8 +18,8 @@ jobs:
           SONAR_TOKEN: ${{secrets.SONARCLOUD_TOKEN}}
       with:
         args: >
-            -Dsonar.organization=CS455-Assignment-1
-            -Dsonar.projectKey=StackNServe
+            -Dsonar.organization=cs455-assignment-1
+            -Dsonar.projectKey=CS455-Assignment-1_StackNServe
 
   deploy-to-github-pages:
     runs-on: ubuntu-latest
