@@ -20,6 +20,8 @@ jobs:
         args: >
             -Dsonar.organization=cs455-assignment-1
             -Dsonar.projectKey=CS455-Assignment-1_StackNServe
+            -Dsonar.sources=src/StackNServe
+            -Dsonar.exclusions=**/*.test.cs,**/node_modules/**
 
   deploy-to-github-pages:
     runs-on: ubuntu-latest
