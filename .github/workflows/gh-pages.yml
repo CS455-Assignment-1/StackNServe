@@ -54,7 +54,14 @@ jobs:
           echo "Fetching detailed analysis results..."
           curl -u $SONAR_TOKEN: "https://sonarcloud.io/api/issues/search?componentKeys=CS455-Assignment-1_StackNServe" > sonarcloud-results.json
           echo "Analysis results:"
-          cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}'  
+          cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}' 
+      # Upload the SonarCloud results JSON as an artifact
+      - name: Upload SonarCloud results artifact
+        if: always()  
+        uses: actions/upload-artifact@v3
+        with:
+          name: sonarcloud-results
+          path: sonarcloud-results.json 
       - name: Check SonarCloud Quality Gate
         id: quality-gate
         shell: bash
