@@ -16,17 +16,20 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
       # Installing the correct version of .NET SDK
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
+      
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v3
@@ -34,70 +37,38 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+      
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      # Build the main solution first
+      
+      # Install dotcover for code coverage
+      - name: Install dotCover
+        run: dotnet tool install --global JetBrains.dotCover.GlobalTool
+
+      # SonarCloud analysis begins
+      - name: Begin SonarCloud Analysis
+        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html /d:sonar.exclusions="**/dotCover.Output/**,dotCover.Output.html"
+
+      # Build the solution after starting SonarCloud analysis
       - name: Build the solution
         run: dotnet build src/StackNServe/StackNServe.csproj --configuration Debug
+
       # Build the test project explicitly to generate test DLLs
       - name: Build the test project
         run: dotnet build tests/StackNServe.Tests/StackNServe.Tests.csproj --configuration Debug
+
       # Run tests and collect coverage
       - name: Run tests and collect coverage
-        run: |
-          dotnet test tests/StackNServe.Tests/StackNServe.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test_results.trx" --verbosity normal
-      # Ensure tests ran successfully (using PowerShell syntax)
-      - name: Ensure tests ran successfully
-        shell: powershell
-        run: |
-          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/test_results.trx")) {
-            Write-Host "Test results file not found!"
-            exit 1
-          }
-          # Load the .trx file as XML and check for failed tests
-          [xml]$trx = Get-Content "tests/StackNServe.Tests/TestResults/test_results.trx"
-          $failedTests = $trx.TestRun.Results.UnitTestResult | Where-Object { $_.outcome -eq 'Failed' }
-          if ($failedTests.Count -gt 0) {
-            Write-Host "Some tests failed!"
-            exit 1
-          } else {
-            Write-Host "All tests passed!"
-          }
-      # Find the coverage.cobertura.xml file and copy it to a predictable location
-      - name: Locate and move coverage file
-        shell: powershell
-        run: |
-          $coverageFile = Get-ChildItem -Path "tests/StackNServe.Tests/TestResults" -Recurse -Filter "coverage.cobertura.xml" | Select-Object -First 1
-          if ($coverageFile) {
-            Copy-Item $coverageFile.FullName "tests/StackNServe.Tests/TestResults/coverage.cobertura.xml"
-            Write-Host "Coverage file found and moved."
-          } else {
-            Write-Host "Coverage file not found!"
-            exit 1
-          }
-      # Check for coverage report (using PowerShell syntax)
-      - name: Check for coverage report
-        shell: powershell
-        run: |
-          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/coverage.cobertura.xml")) {
-            Write-Host "Coverage report not found!"
-            exit 1
-          } else {
-            Write-Host "Coverage report found!"
-          }
-      # Begin SonarCloud analysis using SonarCloud scanner
-      - name: Run SonarCloud Analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="tests/StackNServe.Tests/TestResults/coverage.cobertura.xml"
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML                  
+
+      # Finalize the SonarCloud analysis after building the project
+      - name: End SonarCloud Analysis
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
       # Fetch detailed SonarCloud results and output in the logs
       - name: Fetch and display detailed SonarCloud analysis results
         if: always()
