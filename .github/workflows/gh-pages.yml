@@ -44,6 +44,17 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build src/StackNServe/StackNServe.csproj
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      # Fetch detailed SonarCloud results and output in the logs
+      - name: Fetch and display detailed SonarCloud analysis results
+        if: always()
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Fetching detailed analysis results..."
+          curl -u $SONAR_TOKEN: "https://sonarcloud.io/api/issues/search?componentKeys=CS455-Assignment-1_StackNServe" > sonarcloud-results.json
+          echo "Analysis results:"
+          cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}'  
       - name: Check SonarCloud Quality Gate
         id: quality-gate
         shell: bash
@@ -57,18 +68,6 @@ jobs:
           else
             echo "Quality gate passed!"
           fi
-
-      # Fetch detailed SonarCloud results and output in the logs
-      - name: Fetch and display detailed SonarCloud analysis results
-        shell: bash
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          echo "Fetching detailed analysis results..."
-          curl -u $SONAR_TOKEN: "https://sonarcloud.io/api/issues/search?componentKeys=CS455-Assignment-1_StackNServe" > sonarcloud-results.json
-          echo "Analysis results:"
-          cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}'  # You can adjust the fields you want to display
-        continue-on-error: true 
 
   deploy-to-github-pages:
     needs: build
