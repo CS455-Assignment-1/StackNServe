@@ -1,72 +1,152 @@
-namespace StackNServe
+namespace StackNServe.Models
 {
     public class Chicken_Patty
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string ImageUrl { get; set; }
-        public string Description { get; set; }
         public Chicken_Patty()
         {
-            Id = 1;
-            Name = "Chicken Patty";
-            Price = 20.00m;
-            ImageUrl = "../wwwroot/images/Patty/Chicken_Patty.png";
-            Description = "A chicken patty is a type of breaded chicken cutlet. They are usually served with lettuce, tomato, and mayonnaise.";
+            this.Id = 1;
+            this.Name = "Chicken Patty";
+            this.Price = 20.00m;
+            this.ImageUrl = "../wwwroot/images/Patty/Chicken_Patty.png";
+            this.Description = "A chicken patty is a type of breaded chicken cutlet. They are usually served with lettuce, tomato, and mayonnaise.";
         }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the patty.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the patty.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the price of the patty.
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the image for the patty.
+        /// </summary>
+        public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description of the patty.
+        /// </summary>
+        public string Description { get; set; }
     }
 
     public class Veggie_Patty
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string ImageUrl { get; set; }
-        public string Description { get; set; }
         public Veggie_Patty()
         {
-            Id = 2;
-            Name = "Veggie Patty";
-            Price = 15.00m;
-            ImageUrl = "../wwwroot/images/Patty/Veggie_Patty.png";
-            Description = "A veggie patty is as nutritious as it is delicious. They can be made from a variety of vegetables, grains, and legumes.";
+            this.Id = 2;
+            this.Name = "Veggie Patty";
+            this.Price = 15.00m;
+            this.ImageUrl = "../wwwroot/images/Patty/Veggie_Patty.png";
+            this.Description = "A veggie patty is as nutritious as it is delicious. They can be made from a variety of vegetables, grains, and legumes.";
 
         }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the patty.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the patty.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the price of the patty.
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the image for the patty.
+        /// </summary>
+        public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description of the patty.
+        /// </summary>
+        public string Description { get; set; }
     }
 
     public class Fish_Patty
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string ImageUrl { get; set; }
-        public string Description { get; set; }
         public Fish_Patty()
         {
-            Id = 3;
-            Name = "Fish Patty";
-            Price = 25.00m;
-            ImageUrl = "../wwwroot/images/Patty/Fish_Patty.png";
-            Description = "A fish patty is a unique blend of fish, spices, and herbs. They are usually served with tartar sauce and a slice of lemon.";
+            this.Id = 3;
+            this.Name = "Fish Patty";
+            this.Price = 25.00m;
+            this.ImageUrl = "../wwwroot/images/Patty/Fish_Patty.png";
+            this.Description = "A fish patty is a unique blend of fish, spices, and herbs. They are usually served with tartar sauce and a slice of lemon.";
         }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the patty.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the patty.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the price of the patty.
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the image for the patty.
+        /// </summary>
+        public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description of the patty.
+        /// </summary>
+        public string Description { get; set; }
     }
 
     public class Portobello_Mushroom_Patty
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string ImageUrl { get; set; }
-        public string Description { get; set; }
         public Portobello_Mushroom_Patty()
         {
-            Id = 4;
-            Name = "Portobello Mushroom Patty";
-            Price = 18.00m;
-            ImageUrl = "../wwwroot/images/Patty/Portobello_Mushroom_Patty.png";
-            Description = "A portobello mushroom burger is a vegetarian burger made from a large, mature portobello mushroom. They are usually marinated and grilled to perfection.";
+            this.Id = 4;
+            this.Name = "Portobello Mushroom Patty";
+            this.Price = 18.00m;
+            this.ImageUrl = "../wwwroot/images/Patty/Portobello_Mushroom_Patty.png";
+            this.Description = "A portobello mushroom burger is a vegetarian burger made from a large, mature portobello mushroom. They are usually marinated and grilled to perfection.";
         }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the patty.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the patty.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the price of the patty.
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the image for the patty.
+        /// </summary>
+        public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description of the patty.
+        /// </summary>
+        public string Description { get; set; }
     }
 
 }

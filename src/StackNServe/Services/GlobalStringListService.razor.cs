@@ -1,4 +1,4 @@
-namespace StackNServe
+namespace StackNServe.Services
 {
     public class GlobalStringListService
     {

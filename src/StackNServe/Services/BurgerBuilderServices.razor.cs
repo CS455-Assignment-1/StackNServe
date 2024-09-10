@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StackNServe
+namespace StackNServe.Services
 {
     public class BurgerComponent
     {

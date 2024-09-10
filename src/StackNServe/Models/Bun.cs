@@ -1,4 +1,4 @@
-namespace StackNServe
+namespace StackNServe.Models
 {
     public class Plain_Bun
     {
