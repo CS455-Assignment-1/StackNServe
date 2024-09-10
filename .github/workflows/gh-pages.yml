@@ -41,14 +41,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" /d:sonar.tests="tests/StackNServe.Tests"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml"
           dotnet build src/StackNServe/StackNServe.csproj
-          # Run tests and collect coverage
           dotnet test tests/StackNServe.Tests/StackNServe.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage"
-          # Convert the coverage result to a format SonarCloud can read (e.g., OpenCover)
           dotnet tool install --global coverlet.console
           dotnet coverlet tests/StackNServe.Tests/bin/Debug/net6.0/StackNServe.Tests.dll --target "dotnet" --targetargs "test tests/StackNServe.Tests/StackNServe.Tests.csproj --no-build" --format opencover --output coverage.opencover.xml
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       # Fetch detailed SonarCloud results and output in the logs
       - name: Fetch and display detailed SonarCloud analysis results
         if: always()
