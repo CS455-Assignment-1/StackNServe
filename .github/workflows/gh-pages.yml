@@ -67,6 +67,18 @@ jobs:
           } else {
             Write-Host "All tests passed!"
           }
+      # Find the coverage.cobertura.xml file and copy it to a predictable location
+      - name: Locate and move coverage file
+        shell: powershell
+        run: |
+          $coverageFile = Get-ChildItem -Path "tests/StackNServe.Tests/TestResults" -Recurse -Filter "coverage.cobertura.xml" | Select-Object -First 1
+          if ($coverageFile) {
+            Copy-Item $coverageFile.FullName "tests/StackNServe.Tests/TestResults/coverage.cobertura.xml"
+            Write-Host "Coverage file found and moved."
+          } else {
+            Write-Host "Coverage file not found!"
+            exit 1
+          }
       # Check for coverage report (using PowerShell syntax)
       - name: Check for coverage report
         shell: powershell
