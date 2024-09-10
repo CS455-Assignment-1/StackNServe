@@ -77,8 +77,8 @@ namespace StackNServe
             {
                 byte[] data = new byte[4];
                 rng.GetBytes(data);
-                int value = BitConverter.ToInt32(data, 0) & int.MaxValue; // Ensure it's non-negative
-                return new Random(value).Next(min, max);
+                int value = BitConverter.ToInt32(data, 0) & int.MaxValue; 
+                return value % (max - min) + min; 
             }
         }
 
