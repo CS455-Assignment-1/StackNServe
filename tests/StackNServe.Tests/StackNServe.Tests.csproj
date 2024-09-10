@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="/Users/aditikhandelia/Desktop/untitled folder/src/StackNServe/StackNServe.csproj" />
+    <ProjectReference Include="../../src/StackNServe/StackNServe.csproj" />
   </ItemGroup>
 
 </Project>
