@@ -83,7 +83,7 @@ jobs:
       - name: Check for coverage report
         shell: powershell
         run: |
-          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/coverage.opencover.xml")) {
+          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/coverage.cobertura.xml")) {
             Write-Host "Coverage report not found!"
             exit 1
           } else {
@@ -96,7 +96,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="tests/StackNServe.Tests/TestResults/coverage.opencover.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="tests/StackNServe.Tests/TestResults/coverage.cobertura.xml"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       # Fetch detailed SonarCloud results and output in the logs
       - name: Fetch and display detailed SonarCloud analysis results
