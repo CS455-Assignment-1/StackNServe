@@ -46,6 +46,8 @@ jobs:
           dotnet test tests/StackNServe.Tests/StackNServe.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage"
           dotnet tool install --global coverlet.console
           dotnet coverlet tests/StackNServe.Tests/bin/Debug/net6.0/StackNServe.Tests.dll --target "dotnet" --targetargs "test tests/StackNServe.Tests/StackNServe.Tests.csproj --no-build" --format opencover --output coverage.opencover.xml
+          # Check if coverage report exists
+          if (!(Test-Path "coverage.opencover.xml")) { throw "Coverage report not found!" }
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       # Fetch detailed SonarCloud results and output in the logs
       - name: Fetch and display detailed SonarCloud analysis results
