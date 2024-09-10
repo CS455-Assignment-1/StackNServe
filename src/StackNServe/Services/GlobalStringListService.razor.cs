@@ -1,8 +1,8 @@
 namespace StackNServe.Services
 {
-    public class GlobalStringListService
+    public class GlobalStringListService 
     {
-        private List<string> _stringList = new List<string>();
+        public List<string> _stringList = new List<string>();
         public event Action? OnChange;
 
         public IReadOnlyList<string> StringList => _stringList.AsReadOnly();
@@ -24,13 +24,13 @@ namespace StackNServe.Services
             }
         }
 
-        public void ClearList()
+        public virtual void ClearList()
         {
             _stringList.Clear();
             NotifyStateChanged();
         }
 
-        private void NotifyStateChanged() => OnChange?.Invoke();
+        public void NotifyStateChanged() => OnChange?.Invoke();
     }
 
 }

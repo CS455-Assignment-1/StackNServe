@@ -101,11 +101,11 @@
 
 @code
 {
-    private bool isEnded=false;
-    private string message = "Hello World!";
-    private List<string> currentOrderList = new List<string>();
-    private int currentOrderPrice = 0;
-    private int makingCost = 0;
+    public bool isEnded=false;
+    public string message = "Hello World!";
+    public List<string> currentOrderList = new List<string>();
+    public int currentOrderPrice = 0;
+    public int makingCost = 0;
     public int GetSecureRandomNumber(int min, int max)
     {
         using (var rng = RandomNumberGenerator.Create())
@@ -116,23 +116,23 @@
             return value % (max - min) + min; 
         }
     }
-    Users New_Player= new Users();
-    private void HandleTimerFinished()
+    public Users New_Player= new Users();
+    public void HandleTimerFinished()
     {
         isEnded = true;
         Console.WriteLine("Timer Finished");
     }
-    private List<string> Fetch_Order_List()
+    public List<string> Fetch_Order_List()
     {
         BurgerComponents burgerComponents = new BurgerComponents();
         return burgerComponents.Order_List;
     }
-    private int Fetch_Order_Price()
+    public int Fetch_Order_Price()
     {
         return GetSecureRandomNumber(5,200);
     }
 
-    private void ReloadGame()
+    public void ReloadGame()
     {
         if (isEnded)
         {
@@ -140,14 +140,14 @@
             New_Player = new Users();
         }
     }
-    private void UpdateOrder()
+    public void UpdateOrder()
     {
         currentOrderList = Fetch_Order_List();
         currentOrderPrice = Fetch_Order_Price();
         StateHasChanged();
     }
 
-    private void Player_Skip()
+    public void Player_Skip()
     {
         New_Player.Balance -= 10;
         StringListService.ClearList();
@@ -166,7 +166,7 @@
         StringListService.OnChange -= StateHasChanged;
     }
 
-    private void CheckList()
+    public void CheckList()
     {
         //Compare the Elements in the two lists.
         //If they are the same, add the price to the player's balance
@@ -253,11 +253,11 @@
         UpdateOrder();
         StateHasChanged();
     }
-    private void Clear_List()
+    public void Clear_List()
     {
         StringListService.ClearList();
     }
-    private async Task ShowNotification()
+    public async Task ShowNotification()
     {
         await JSRuntime.InvokeVoidAsync("showNotification");
     }

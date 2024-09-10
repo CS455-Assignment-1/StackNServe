@@ -84,7 +84,7 @@ namespace StackNServe
             }
         }
 
-        private List<string> RandomizeList(List<string> list)
+        public List<string> RandomizeList(List<string> list)
         {
             List<string> randomizedList = new List<string>(list);
             for (int i = 0; i < randomizedList.Count; i++)
