@@ -11,6 +11,7 @@ namespace StackNServe
 {
     public class BurgerComponents
     {
+        private static readonly Random random = new Random();
         Dictionary<int, string> Bun= new Dictionary<int, string>();
         Dictionary<int, string> Patty= new Dictionary<int, string>();
         Dictionary<int, string> Toppings= new Dictionary<int, string>();
@@ -25,28 +26,26 @@ namespace StackNServe
             InitializeSauces();
 
             // select the ingredients
-            Random random = new Random();
-            int Bun_Type = random.Next(1, 5);
-            Random Num_Patties = new Random();
-            int Num_Patty = Num_Patties.Next(1, 5);
+            int Bun_Type = random.Next(1, 5);  // Use single Random instance
+            int Num_Patty = random.Next(1, 5); // Use single Random instance
             HashSet<int> Patty_Type = new HashSet<int>();
             while (Patty_Type.Count < Num_Patty)
             {
-                Patty_Type.Add(random.Next(1, Patty.Count + 1));
+                Patty_Type.Add(random.Next(1, Patty.Count + 1));  // Use single Random instance
             }
-            Random Num_Toppings = new Random();
-            int Num_Topping = Num_Toppings.Next(1, 5);
+
+            int Num_Topping = random.Next(1, 5); // Use single Random instance
             HashSet<int> Topping_Type = new HashSet<int>();
             while (Topping_Type.Count < Num_Topping)
             {
-                Topping_Type.Add(random.Next(1, Toppings.Count + 1));
+                Topping_Type.Add(random.Next(1, Toppings.Count + 1)); // Use single Random instance
             }
-            Random Num_Sauces = new Random();
-            int Num_Sauce = Num_Sauces.Next(1, 5);
+
+            int Num_Sauce = random.Next(1, 5); // Use single Random instance
             HashSet<int> Sauce_Type = new HashSet<int>();
             while (Sauce_Type.Count < Num_Sauce)
             {
-                Sauce_Type.Add(random.Next(1, Sauces.Count + 1));
+                Sauce_Type.Add(random.Next(1, Sauces.Count + 1)); // Use single Random instance
             }
             
             // make the order list
