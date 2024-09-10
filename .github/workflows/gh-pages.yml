@@ -56,6 +56,32 @@ jobs:
           else
             echo "Quality gate passed!"
           fi
+          
+      # Fetch detailed SonarCloud results and output in the logs
+      - name: Fetch and display detailed SonarCloud analysis results
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Fetching detailed analysis results..."
+          curl -u $SONAR_TOKEN: "https://sonarcloud.io/api/issues/search?componentKeys=CS455-Assignment-1_StackNServe" > sonarcloud-results.json
+          echo "Analysis results:"
+          cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}'  # You can adjust the fields you want to display
+
+      # Optional: Fail the build if there are critical or blocker issues
+      - name: Fail if critical/blocker issues exist
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Checking for critical or blocker issues..."
+          BLOCKER_COUNT=$(cat sonarcloud-results.json | jq '[.issues[] | select(.severity == "BLOCKER")] | length')
+          CRITICAL_COUNT=$(cat sonarcloud-results.json | jq '[.issues[] | select(.severity == "CRITICAL")] | length')
+          echo "Blocker issues: $BLOCKER_COUNT, Critical issues: $CRITICAL_COUNT"
+          if [ "$BLOCKER_COUNT" -gt 0 ] || [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "Build failed due to blocker or critical issues."
+            exit 1
+          fi
 
   deploy-to-github-pages:
     needs: build
