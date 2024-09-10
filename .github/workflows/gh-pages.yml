@@ -58,7 +58,9 @@ jobs:
           fi
 
   deploy-to-github-pages:
+    needs: build
     runs-on: ubuntu-latest
+    if: success()
     steps:
     # Checkout the code from the master branch
     - uses: actions/checkout@v3
