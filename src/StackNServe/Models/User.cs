@@ -1,10 +1,13 @@
-public class Users
+namespace StackNServe
 {
-    public int Id{ get; set; }
-    public int Balance{ get; set; }
-    public Users()
+    public class Users
     {
-        Id = 1;
-        Balance = 100;
+        public int Id { get; set; }
+        public int Balance { get; set; }
+        public Users()
+        {
+            Id = 1;
+            Balance = 100;
+        }
     }
 }
