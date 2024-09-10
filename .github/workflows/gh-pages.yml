@@ -58,14 +58,15 @@ jobs:
             Write-Host "Test results file not found!"
             exit 1
           }
-          $testResults = Get-Content "tests/StackNServe.Tests/TestResults/test_results.trx" | Select-String -Pattern "<UnitTestResult outcome=\"Failed\""
-          if ($testResults.Length -gt 0) {
+          # Load the .trx file as XML and check for failed tests
+          [xml]$trx = Get-Content "tests/StackNServe.Tests/TestResults/test_results.trx"
+          $failedTests = $trx.TestRun.Results.UnitTestResult | Where-Object { $_.outcome -eq 'Failed' }
+          if ($failedTests.Count -gt 0) {
             Write-Host "Some tests failed!"
             exit 1
           } else {
             Write-Host "All tests passed!"
           }
-
       # Check for coverage report (using PowerShell syntax)
       - name: Check for coverage report
         shell: powershell
