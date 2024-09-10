@@ -50,29 +50,32 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           dotnet test tests/StackNServe.Tests/StackNServe.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test_results.trx" --verbosity normal
-      # Ensure tests ran successfully
+      # Ensure tests ran successfully (using PowerShell syntax)
       - name: Ensure tests ran successfully
+        shell: powershell
         run: |
-          if [ ! -f tests/StackNServe.Tests/TestResults/test_results.trx ]; then
-            echo "Test results file not found!"
+          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/test_results.trx")) {
+            Write-Host "Test results file not found!"
             exit 1
-          fi
-          TEST_RESULTS=$(grep -c "<UnitTestResult outcome=\"Failed\"" tests/StackNServe.Tests/TestResults/test_results.trx || true)
-          if [ "$TEST_RESULTS" -gt 0 ]; then
-            echo "Some tests failed!"
+          }
+          $testResults = Get-Content "tests/StackNServe.Tests/TestResults/test_results.trx" | Select-String -Pattern "<UnitTestResult outcome=\"Failed\""
+          if ($testResults.Length -gt 0) {
+            Write-Host "Some tests failed!"
             exit 1
-          else
-            echo "All tests passed!"
-          fi
-      # Check for coverage report after tests have run
+          } else {
+            Write-Host "All tests passed!"
+          }
+
+      # Check for coverage report (using PowerShell syntax)
       - name: Check for coverage report
+        shell: powershell
         run: |
-          if [ ! -f tests/StackNServe.Tests/TestResults/coverage.opencover.xml ]; then
-            echo "Coverage report not found!"
+          if (-Not (Test-Path "tests/StackNServe.Tests/TestResults/coverage.opencover.xml")) {
+            Write-Host "Coverage report not found!"
             exit 1
-          else
-            echo "Coverage report found!"
-          fi
+          } else {
+            Write-Host "Coverage report found!"
+          }
       # Begin SonarCloud analysis using SonarCloud scanner
       - name: Run SonarCloud Analysis
         env:
