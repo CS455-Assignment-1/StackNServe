@@ -129,11 +129,11 @@
             "images/Patty/Portobello_Mushroom_Patty.png",
         };
     
-    private bool isExpanded = false;
-    private PattyInfo currentHoverInfo;
-    private string currentHoverPatty;
-    private Timer autoCloseTimer;
-    private void Display_Info(string patty)
+    public bool isExpanded = false;
+    public PattyInfo currentHoverInfo;
+    public string currentHoverPatty;
+    public Timer autoCloseTimer;
+    public void Display_Info(string patty)
     {
         currentHoverPatty = patty;
         if (patty == "images/Patty/Veggie_Patty.png")
@@ -159,7 +159,7 @@
         }
     }
 
-    private void ClearHoverInfo()
+    public void ClearHoverInfo()
     {
         currentHoverInfo = null;
         currentHoverPatty = null;
@@ -167,7 +167,7 @@
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
     
-    private async Task ToggleMenu()
+    public async Task ToggleMenu()
     {
         if(isExpanded) {
             isExpanded = false;
@@ -182,25 +182,25 @@
         }
         await OnStateChanged.InvokeAsync(isExpanded);
     }
-    private void StartAutoClose()
+    public void StartAutoClose()
     {
         CancelAutoClose(); // Cancel any existing timer
         autoCloseTimer = new Timer(CloseMenu, null, 1, Timeout.Infinite);
         
     }
 
-    private void CancelAutoClose()
+    public void CancelAutoClose()
     {
         autoCloseTimer?.Dispose();
         autoCloseTimer = null;
     }
 
-    private void CloseMenu(object state)
+    public void CloseMenu(object state)
     {
         isExpanded = false;
         InvokeAsync(StateHasChanged);
     }
-    private class PattyInfo
+    public class PattyInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -214,7 +214,7 @@
         }
     }
 
-    private void AddItem(string newItem)
+    public void AddItem(string newItem)
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
@@ -234,14 +234,14 @@
         else if (patty == "images/Patty/Portobello_Mushroom_Patty.png") AddItem("Portobello Mushroom Patty");
     }
 
-    private System.Threading.Timer _timer;
+    public System.Threading.Timer _timer;
 
     protected override void OnInitialized()
     {
         _timer = new System.Threading.Timer(CheckPattySelectVar, null, 0, 100); // Check every 100ms
     }
 
-    private void CheckPattySelectVar(object state)
+    public void CheckPattySelectVar(object state)
     {
         if (!SelectionButtonService.PattySelectVar && isExpanded)
         {

@@ -127,10 +127,10 @@
             "images/Bun/Sesame_Bun.png",
         };
 
-    private bool isExpanded = false;
-    private BunInfo currentHoverInfo;
-    private string currentHoverPatty;
-    private void Display_Info(string Bun)
+    public bool isExpanded = false;
+    public BunInfo currentHoverInfo;
+    public string currentHoverPatty;
+    public void Display_Info(string Bun)
     {
         currentHoverPatty = Bun;
         if (Bun == "images/Bun/Garlic_Bun.png")
@@ -154,7 +154,7 @@
             currentHoverInfo = new BunInfo("Sesame Bun", temp_object.Description, temp_object.Price);
         }
     }
-    private void ClearHoverInfo()
+    public void ClearHoverInfo()
     {
         currentHoverInfo = null;
         currentHoverPatty = null;
@@ -162,7 +162,7 @@
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
         
-    private async Task ToggleMenu()
+    public async Task ToggleMenu()
     {
         if(isExpanded) {
             isExpanded = false;
@@ -177,7 +177,7 @@
         }
         await OnStateChanged.InvokeAsync(isExpanded);
     }
-    private class BunInfo
+    public class BunInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -191,7 +191,7 @@
         }
     }
 
-    private void AddItem(string newItem)
+    public void AddItem(string newItem)
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
@@ -233,14 +233,14 @@
         }
     }
 
-    private System.Threading.Timer _timer;
+    public System.Threading.Timer _timer;
 
     protected override void OnInitialized()
     {
         _timer = new System.Threading.Timer(CheckBunSelectVar, null, 0, 100); // Check every 100ms
     }
 
-    private void CheckBunSelectVar(object state)
+    public void CheckBunSelectVar(object state)
     {
         if (!SelectionButtonService.BunSelectVar && isExpanded)
         {
