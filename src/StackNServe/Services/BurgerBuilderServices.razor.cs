@@ -11,20 +11,20 @@ namespace StackNServe.Services
 
     public class BurgerService
     {
-        private List<BurgerComponent> _burgerStack = new List<BurgerComponent>();
+        private readonly List<BurgerComponent> burgerStack = new List<BurgerComponent>();
         public event Action OnBurgerChanged;
 
-        public IReadOnlyList<BurgerComponent> BurgerStack => _burgerStack.AsReadOnly();
+        public IReadOnlyList<BurgerComponent> BurgerStack => burgerStack.AsReadOnly();
 
         public void AddComponent(BurgerComponent component)
         {
-            _burgerStack.Add(component);
+            burgerStack.Add(component);
             NotifyBurgerChanged();
         }
 
         public void ClearBurger()
         {
-            _burgerStack.Clear();
+            burgerStack.Clear();
             NotifyBurgerChanged();
         }
 

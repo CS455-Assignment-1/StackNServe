@@ -1,23 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
-using System.Data;
-using System.Security.Cryptography;
+
 using Microsoft.AspNetCore.Components.WebAssembly.Services;
-using StackNServe.Services;
+
 using StackNServe.Models;
+using StackNServe.Services;
 
 namespace StackNServe
 {
     public class BurgerComponents
     {
-        Dictionary<int, string> Bun= new Dictionary<int, string>();
-        Dictionary<int, string> Patty= new Dictionary<int, string>();
-        Dictionary<int, string> Toppings= new Dictionary<int, string>();
-        Dictionary<int, string> Sauces= new Dictionary<int, string>();
+        readonly Dictionary<int, string> Bun = new Dictionary<int, string>();
+        readonly Dictionary<int, string> Patty = new Dictionary<int, string>();
+        readonly Dictionary<int, string> Toppings = new Dictionary<int, string>();
+        readonly Dictionary<int, string> Sauces = new Dictionary<int, string>();
         public List<string> Order_List = new List<string>();
 
         public BurgerComponents()
@@ -27,39 +29,38 @@ namespace StackNServe
             InitializeToppings();
             InitializeSauces();
 
-            int Bun_Type = GetSecureRandomNumber(1, 5); // Select a bun type
-            int Num_Patty = GetSecureRandomNumber(1, 5); // Number of patties
-            HashSet<int> Patty_Type = new HashSet<int>();
-            while (Patty_Type.Count < Num_Patty)
+            int bunType = GetSecureRandomNumber(1, 5); // Select a bun type
+            int numPatty = GetSecureRandomNumber(1, 5); // Number of patties
+            HashSet<int> pattyType = new HashSet<int>();
+            while (pattyType.Count < numPatty)
             {
-                Patty_Type.Add(GetSecureRandomNumber(1, Patty.Count + 1)); // Select patty types
+                pattyType.Add(GetSecureRandomNumber(1, Patty.Count + 1)); // Select patty types
             }
 
-            int Num_Topping = GetSecureRandomNumber(1, 5); // Number of toppings
-            HashSet<int> Topping_Type = new HashSet<int>();
-            while (Topping_Type.Count < Num_Topping)
+            int numTopping = GetSecureRandomNumber(1, 5); // Number of toppings
+            HashSet<int> toppingType = new HashSet<int>();
+            while (toppingType.Count < numTopping)
             {
-                Topping_Type.Add(GetSecureRandomNumber(1, Toppings.Count + 1)); // Select toppings
+                toppingType.Add(GetSecureRandomNumber(1, Toppings.Count + 1)); // Select toppings
             }
 
-            int Num_Sauce = GetSecureRandomNumber(1, 5); // Number of sauces
-            HashSet<int> Sauce_Type = new HashSet<int>();
-            while (Sauce_Type.Count < Num_Sauce)
+            int numSauce = GetSecureRandomNumber(1, 5); // Number of sauces
+            HashSet<int> sauceType = new HashSet<int>();
+            while (sauceType.Count < numSauce)
             {
-                Sauce_Type.Add(GetSecureRandomNumber(1, Sauces.Count + 1)); // Select sauces
+                sauceType.Add(GetSecureRandomNumber(1, Sauces.Count + 1)); // Select sauces
             }
-            
-            // make the order list
-            Order_List.Add(Bun[Bun_Type]);
-            foreach (int patty in Patty_Type)
+            // Make the order list
+            Order_List.Add(Bun[bunType]);
+            foreach (int patty in pattyType)
             {
                 Order_List.Add(Patty[patty]);
             }
-            foreach (int topping in Topping_Type)
+            foreach (int topping in toppingType)
             {
                 Order_List.Add(Toppings[topping]);
             }
-            foreach (int sauce in Sauce_Type)
+            foreach (int sauce in sauceType)
             {
                 Order_List.Add(Sauces[sauce]);
             }
@@ -79,8 +80,8 @@ namespace StackNServe
             {
                 byte[] data = new byte[4];
                 rng.GetBytes(data);
-                int value = BitConverter.ToInt32(data, 0) & int.MaxValue; 
-                return value % (max - min) + min; 
+                int value = BitConverter.ToInt32(data, 0) & int.MaxValue;
+                return value % (max - min) + min;
             }
         }
 

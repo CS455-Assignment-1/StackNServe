@@ -62,7 +62,7 @@ namespace StackNServe.Models
         /// Gets or sets the price of the bun.
         /// </summary>
         public decimal Price { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the URL of the image for the bun.
         /// </summary>
