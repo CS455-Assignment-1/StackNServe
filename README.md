@@ -1,9 +1,3 @@
----
-noteId: "0f4ab1706e7f11efb1a3c7673a0851de"
-tags: []
-
----
-
 # StackNServe
 
 StackNServe is an interactive game developed as a course project for CS455: Introduction to Software Engineering during the 2024-25 Semester I, under the guidance of [Prof. Sruti Ragavan](https://sruti-s-ragavan.github.io).
@@ -86,11 +80,6 @@ Both of these tools are run in the CI/CD Pipeline, on GitHub Actions.
 
 ## Tests and Coverage
 
-In order to test we have used the following libraries : XUnit, BUnit and Moq
-
-
-## Tests and Coverage
-
 We have used the following libraries :
 
 - **[xUnit](https://xunit.net/):** A popular unit testing framework for .NET applications. 
@@ -122,3 +111,7 @@ The tests are automatically executed in the CI/CD pipeline as part of the GitHub
 - Runs Code Quality Tests.
 - Generate a code coverage report.
 
+## Reports
+Detailed Code Analysis Reports can be found in the `reports` folder
+
+- Report on Date of Submission : `report/Code_Report_12_09_24.pdf`
