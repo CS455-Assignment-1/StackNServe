@@ -103,6 +103,10 @@ We utilize Coverlet to track code coverage for our test cases. The generated rep
 
 We aim for at least 50% coverage for both new and old code.
 
+```bash
+dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML
+```
+
 ## Continuous Integration (CI) with GitHub Actions
 The tests are automatically executed in the CI/CD pipeline as part of the GitHub Actions workflow. Each commit triggers the following actions:
 
