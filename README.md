@@ -1,9 +1,3 @@
----
-noteId: "0f4ab1706e7f11efb1a3c7673a0851de"
-tags: []
-
----
-
 # StackNServe
 
 StackNServe is an interactive game developed as a course project for CS455: Introduction to Software Engineering during the 2024-25 Semester I, under the guidance of [Prof. Sruti Ragavan](https://sruti-s-ragavan.github.io).

@@ -82,7 +82,17 @@ jobs:
 
       # Run tests and collect coverage
       - name: Run tests and collect coverage
-        run: dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML                  
+        run: |
+          dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML > test-results.txt
+          cat test-results.txt
+
+      # Upload unit test results and coverage reports as artifacts
+      - name: Upload Unit Test and Coverage Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results.txt                
 
       # Finalize the SonarCloud analysis after building the project
       - name: End SonarCloud Analysis
