@@ -114,4 +114,7 @@ The tests are automatically executed in the CI/CD pipeline as part of the GitHub
 ## Reports
 Detailed Code Analysis Reports can be found in the `reports` folder
 
-- Report on Date of Submission : `report/Code_Report_12_09_24.pdf`
+- Report on Date of Submission : `report/Report.pdf`
+- Report at the beginning : `report/Report_HomeWork1.pdf`
+
+The results are also available at the Actions/Workflow Dashboard.
