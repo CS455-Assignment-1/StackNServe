@@ -134,10 +134,10 @@
             "images/Sauces/Ranch.png",
         };
 
-    private bool isExpanded = false;
-    private SaucesInfo currentHoverInfo;
-    private string currentHoverPatty;
-    private void Display_Info(string Sauces)
+    public bool isExpanded = false;
+    public SaucesInfo currentHoverInfo;
+    public string currentHoverPatty;
+    public void Display_Info(string Sauces)
     {
         currentHoverPatty = Sauces;
         if (Sauces == "images/Sauces/Aioli.png")
@@ -176,7 +176,7 @@
             currentHoverInfo = new SaucesInfo("Ranch", temp_object.Description, temp_object.Price);
         }
     }
-    private void ClearHoverInfo()
+    public void ClearHoverInfo()
     {
         currentHoverInfo = null;
         currentHoverPatty = null;
@@ -184,7 +184,7 @@
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
         
-    private async Task ToggleMenu()
+    public async Task ToggleMenu()
     {
         if(isExpanded) {
             isExpanded = false;
@@ -199,7 +199,7 @@
         }
         await OnStateChanged.InvokeAsync(isExpanded);
     }
-    private class SaucesInfo
+    public class SaucesInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -214,7 +214,7 @@
     }
 
 
-    private void AddItem(string newItem)
+    public void AddItem(string newItem)
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
@@ -237,14 +237,14 @@
         else if(sauces == "images/Sauces/Ranch.png") AddItem("Ranch");
     }
 
-    private System.Threading.Timer _timer;
+    public System.Threading.Timer _timer;
 
     protected override void OnInitialized()
     {
         _timer = new System.Threading.Timer(CheckSaucesSelectVar, null, 0, 100); // Check every 100ms
     }
 
-    private void CheckSaucesSelectVar(object state)
+    public void CheckSaucesSelectVar(object state)
     {
         if (!SelectionButtonService.SaucesSelectVar && isExpanded)
         {

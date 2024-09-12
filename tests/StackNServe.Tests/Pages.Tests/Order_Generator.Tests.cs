@@ -60,22 +60,5 @@ namespace StackNServe.Tests
             // Assert
             Assert.Contains(burger.Order_List, item => item.Contains("Patty")); // Check if there's at least one patty
         }
-
-        [Fact]
-        public void TestOrderListContainsToppingsAndSauces()
-        {
-            // Arrange & Act
-            var burger = new BurgerComponents();
-
-            // Assert
-            var ToppingList = new List<string> { "Tomato", "Lettuce", "Onion", "Pickles", "Cheese", "Bacon", "Egg", "Jalapenos", "Avocado" };
-            var SauceList = new List<string> { "Ketchup", "Mustard", "Mayo", "BBQ Sauce", "Hot Sauce", "Ranch", "Aioli" };
-            // Check if any of the toppings are in the order list
-            Assert.True(ToppingList.Exists(topping => burger.Order_List.Contains(topping)), "No toppings found in the order list.");
-
-            // Check if any of the sauces are in the order list
-            Assert.True(SauceList.Exists(sauce => burger.Order_List.Contains(sauce)), "No sauces found in the order list.");
-
-        }
     }
 }

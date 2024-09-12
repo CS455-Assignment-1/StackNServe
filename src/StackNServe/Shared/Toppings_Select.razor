@@ -136,10 +136,10 @@
             "images/Toppings/Tomato.png"
         };
 
-    private bool isExpanded = false;
-    private ToppingInfo currentHoverInfo;
-    private string currentHoverPatty;
-    private void Display_Info(string topping)
+    public bool isExpanded = false;
+    public ToppingInfo currentHoverInfo;
+    public string currentHoverPatty;
+    public void Display_Info(string topping)
     {
         currentHoverPatty = topping;
         if (topping == "images/Toppings/Avocado.png")
@@ -188,7 +188,7 @@
             currentHoverInfo = new ToppingInfo("Tomato", temp_object.Description, temp_object.Price);
         }
     }
-    private void ClearHoverInfo()
+    public void ClearHoverInfo()
     {
         currentHoverInfo = null;
         currentHoverPatty = null;
@@ -196,7 +196,7 @@
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
         
-    private async Task ToggleMenu()
+    public async Task ToggleMenu()
     {
         if(isExpanded) {
             isExpanded = false;
@@ -213,7 +213,7 @@
         await OnStateChanged.InvokeAsync(isExpanded);
     }
 
-    private class ToppingInfo
+    public class ToppingInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -227,7 +227,7 @@
         }
     }
 
-    private void AddItem(string newItem)
+    public void AddItem(string newItem)
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
@@ -252,14 +252,14 @@
         else if(topping == "images/Toppings/Tomato.png") AddItem("Tomato");
     }
 
-    private System.Threading.Timer _timer;
+    public System.Threading.Timer _timer;
 
     protected override void OnInitialized()
     {
         _timer = new System.Threading.Timer(CheckToppingsSelectVar, null, 0, 100); // Check every 100ms
     }
 
-    private void CheckToppingsSelectVar(object state)
+    public void CheckToppingsSelectVar(object state)
     {
         if (!SelectionButtonService.ToppingSelectVar && isExpanded)
         {

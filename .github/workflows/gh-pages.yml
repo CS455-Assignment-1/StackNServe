@@ -23,7 +23,7 @@ jobs:
         run: dotnet format src/StackNServe/StackNServe.csproj --verify-no-changes
     
 
-  build :
+  SonarCloud :
     name: SonarCloud
     runs-on: windows-latest
     steps:
@@ -121,7 +121,7 @@ jobs:
           fi
 
   deploy-to-github-pages:
-    needs: build
+    needs: [SonarCloud, dotnetformat]
     runs-on: ubuntu-latest
     if: success()
     steps:
