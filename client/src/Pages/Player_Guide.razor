@@ -1,4 +1,5 @@
 @namespace StackNServe.Pages
+@inject HttpClient Http
 @page "/"
 @using StackNServe.Shared
 <style>
@@ -61,7 +62,41 @@
         <Play_Again />
     </div>
 
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">Error: @errorMessage</p>
+    }
+    else
+    {
+        <p>Initial Balance: @initialBalance</p>
+    }
 </div>
 
-@code
-{}
+@code {
+    private int initialBalance = 100; 
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetStringAsync("http://localhost:8000/initialBalance");
+            if (int.TryParse(response, out int serverBalance))
+            {
+                initialBalance = serverBalance;
+            }
+            else
+            {
+                errorMessage = "Could not parse the initial balance from the server response.";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = $"Error fetching initial balance: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An unexpected error occurred: {ex.Message}";
+        }
+    }
+}
