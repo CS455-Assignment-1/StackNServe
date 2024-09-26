@@ -1,4 +1,5 @@
-﻿@using StackNServe.Shared
+﻿@namespace StackNServe
+@using StackNServe.Shared
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
