@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/StackNServe/StackNServe.csproj" />
+    <ProjectReference Include="../../client/StackNServe.csproj" />
   </ItemGroup>
 
 </Project>
