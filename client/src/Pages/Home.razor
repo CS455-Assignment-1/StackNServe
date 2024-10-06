@@ -238,6 +238,7 @@
         if ("Bun Bottom" != StringListService.StringList[0])
         {
             current_player_score -= 10;
+            update_player_score();
             truth = false;
         }
         if (truth)
@@ -245,6 +246,7 @@
             message = "Perfect Order!";
             show_notification();
             current_player_score += current_order_price;
+            update_player_score();
         }
         else
         {
