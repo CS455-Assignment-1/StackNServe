@@ -7,53 +7,25 @@
 @using StackNServe.Models
 @using System.Security.Cryptography;
 
-
+@inject HttpClient Http
 @inject GlobalStringListService StringListService
 @inject IJSRuntime JSRuntime
 
-
-<style>
-    .Play_Again 
-    {
-        background-color: black;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        margin: 10px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-    }
-    .Play_Again_Heading 
-    {
-        font-size: 40px;
-        align-self: center;
-        justify-self: center;
-        margin-top:10px;
-
-    }
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: black;
-        color: white;
-        padding: 15px;
-        border-radius: 5px;
-        display: none;
-    }
-</style>
 <div class="Home_Page">
-    @if(isEnded)
+    @if (isEnded)
     {
-        <h1 class="Time_Elapsed_Message">Your time finished!</h1><br>
-        <h2 class="Time_Elapsed_Score">Your score was:@New_Player.Balance</h2><br>
+        <h1 class="Time_Elapsed_Message">Your time finished!</h1>
+
+        <br>
+        <h2 class="Time_Elapsed_Score">Your score was:@current_player_score</h2>
+
+        <br>
         <h3 class="Time_Elapsed_Instruction">Click on the button below to play again</h3>
         <div class="Play_Again_Button">
-            <div class="Play_Again" @onclick="ReloadGame">
-                <h1 class="Play_Again_Heading">PLAY AGAIN</h1>
-            </div>
+        <div class="Play_Again" @onclick="reload_game">
+            <h1 class="Play_Again_Heading">PLAY AGAIN</h1>
         </div>
+    </div>
     }
     else
     {
@@ -66,100 +38,129 @@
             <br>
             <Sauces_Select />
         </div>
-        <!-- <button class="btn btn-primary" @onclick="ShowNotification">Show Notification</button> -->
         <div id="notification" class="notification" style="display: none;">
-            @message
-        </div>
+        @message
+    </div>
         <Main_Page_Header />
         <div class="Timer_Divison">
-            <CountdownTimer InitialTimeInSeconds="120" OnTimerFinished= "HandleTimerFinished" ShowResetButton = "false" />
+            <CountdownTimer InitialTimeInSeconds="@initial_timer_time" OnTimerFinished="handle_timer_finished"
+                ShowResetButton="false" />
         </div>
-        @* <div class="burger-and-table-container"> *@
         <div class="Cooking_Table_Division">
-            <div class="burger-container">
-                @foreach (var ingredient in StringListService.StringList)
+        <div class="burger-container">
+            @foreach (var ingredient in StringListService.StringList)
                 {
                     <div class="@ingredient.ToLower().Replace(" ", "-")"></div>
                 }
             </div>
             <Cooking_Table />
         </div>
-        @* </div> *@
 
         <div class="Order_Division">
-            <Order Order_List="@currentOrderList" Order_Price="@currentOrderPrice" />
+            <Order Order_List="@current_order_list" Order_Price="@current_order_price" />
         </div>
         <div class="Skip_Play_Buttons">
-            <Skip OnSkip="Player_Skip"/>
-            <Submit OnSubmit="CheckList"/>
+            <Skip OnSkip="player_skip" />
+            <Submit OnSubmit="CheckList" />
         </div>
 
         <div class="Score_Board_Divison">
-            <Score_Board CurrentScore="New_Player.Balance"/>
-        </div>
+        <Score_Board CurrentScore="current_player_score" />
+    </div>
     }
 </div>
 
 @code
 {
-    public bool isEnded=false;
+    public bool isEnded = false;
     public string message = "Hello World!";
-    public List<string> currentOrderList = new List<string>();
-    public int currentOrderPrice = 0;
     public int makingCost = 0;
-    public int GetSecureRandomNumber(int min, int max)
+
+    // New Player
+    public int current_player_id = 0;
+    private async Task create_player()
     {
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            byte[] data = new byte[4];
-            rng.GetBytes(data);
-            int value = BitConverter.ToInt32(data, 0) & int.MaxValue; 
-            return value % (max - min) + min; 
-        }
+        string response = await Http.GetStringAsync("http://localhost:8000/createPlayer");
+        current_player_id = int.Parse(response);
+        StateHasChanged();
     }
-    public Users New_Player= new Users();
-    public void HandleTimerFinished()
+    public int current_player_score = 0;
+    private async Task fetch_player_score()
+    {
+        Dictionary<string, int> post_data = new Dictionary<string, int>();
+        post_data["player_id"] = current_player_id;
+        var response = await Http.PostAsJsonAsync("http://localhost:8000/fetchScore", post_data);
+        var scoreString = await response.Content.ReadAsStringAsync();
+        current_player_score = int.Parse(scoreString);
+        StateHasChanged();
+    }
+
+    private async Task update_player_score()
+    {
+        Dictionary<string, int> post_data = new Dictionary<string, int>();
+        post_data["player_id"] = current_player_id;
+        post_data["score"] = current_player_score;
+        var response = await Http.PostAsJsonAsync("http://localhost:8000/updateScore", post_data);
+    }
+
+    // New Order
+    private async Task update_order()
+    {
+        await fetch_order_list();
+        await fetch_order_price();
+        StateHasChanged();
+    }
+    public int current_order_price = 0;
+    private async Task fetch_order_price()
+    {
+        string response = await Http.GetStringAsync("http://localhost:8000/orderPrice");
+        current_order_price = int.Parse(response);
+        Console.WriteLine(current_order_price);
+    }
+    public List<string> current_order_list = new List<string>();
+    private async Task fetch_order_list()
+    {
+        string response = await Http.GetStringAsync("http://localhost:8000/orderList");
+        current_order_list = response.Split(',').ToList();
+        for (int i = 0; i < current_order_list.Count; i++)
+        {
+            current_order_list[i] = current_order_list[i].Replace("\"", "");
+        }
+        current_order_list[0] = current_order_list[0].Substring(1);
+        current_order_list[current_order_list.Count - 1] = current_order_list[current_order_list.Count - 1].Substring(0,
+        current_order_list[current_order_list.Count - 1].Length - 1);
+        Console.WriteLine(current_order_list);
+    }
+
+    public int initial_timer_time = 120;
+    public void handle_timer_finished()
     {
         isEnded = true;
         Console.WriteLine("Timer Finished");
     }
-    public List<string> Fetch_Order_List()
-    {
-        BurgerComponents burgerComponents = new BurgerComponents();
-        return burgerComponents.Order_List;
-    }
-    public int Fetch_Order_Price()
-    {
-        return GetSecureRandomNumber(5,200);
-    }
-
-    public void ReloadGame()
+    private async Task reload_game()
     {
         if (isEnded)
         {
             isEnded = false;
-            New_Player = new Users();
+            await create_player();
         }
     }
-    public void UpdateOrder()
+    private async Task player_skip()
     {
-        currentOrderList = Fetch_Order_List();
-        currentOrderPrice = Fetch_Order_Price();
+        current_player_score -= 10;
+        await update_player_score();
+        StringListService.ClearList();
+        await update_order();
         StateHasChanged();
     }
 
-    public void Player_Skip()
-    {
-        New_Player.Balance -= 10;
-        StringListService.ClearList();
-        UpdateOrder();
-        StateHasChanged();
-    }
-    
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         StringListService.OnChange += StateHasChanged;
-        UpdateOrder();
+        await create_player();
+        await fetch_player_score();
+        await update_order();
     }
 
     public void Dispose()
@@ -177,42 +178,43 @@
         if (StringListService.StringList.Count == 0)
         {
             message = "No Order!";
-            ShowNotification();
+            show_notification();
             return;
         }
-    
+
         foreach (var item in StringListService.StringList)
         {
-            if(item == "Bun Bottom") makingCost += 0;
-            else if(item == "Plain Bun") makingCost += 10;
-            else if(item == "Sesame Bun") makingCost += 12;
-            else if(item == "Garlic Bun") makingCost += 20;
-            else if(item == "Parmesan Bun") makingCost += 25;
-            else if(item == "Veggie Patty") makingCost += 15;
-            else if(item == "Chicken Patty") makingCost += 20;
-            else if(item == "Fish Patty") makingCost += 25;
-            else if(item == "Portobello Mushroom Patty") makingCost += 18;
-            else if(item == "Avocado") makingCost += 8;
-            else if(item == "Bacon") makingCost += 7;
-            else if(item == "Cheese") makingCost += 5;
-            else if(item == "Egg") makingCost += 4;
-            else if(item == "Jalapenos") makingCost += 6;
-            else if(item == "Lettuce") makingCost += 3;
-            else if(item == "Onion") makingCost += 4;
-            else if(item == "Pickles") makingCost += 2;
-            else if(item == "Tomato") makingCost += 5;
-            else if(item == "Aioli") makingCost += 5;
-            else if(item == "BBQ Sauce") makingCost += 5;
-            else if(item == "Hot Sauce") makingCost += 5;
-            else if(item == "Ketchup") makingCost += 5;
-            else if(item == "Mayonnaise") makingCost += 5;
-            else if(item == "Mustard") makingCost += 5;
-            else if(item == "Ranch") makingCost += 5;
+            if (item == "Bun Bottom") makingCost += 0;
+            else if (item == "Plain Bun") makingCost += 10;
+            else if (item == "Sesame Bun") makingCost += 12;
+            else if (item == "Garlic Bun") makingCost += 20;
+            else if (item == "Parmesan Bun") makingCost += 25;
+            else if (item == "Veggie Patty") makingCost += 15;
+            else if (item == "Chicken Patty") makingCost += 20;
+            else if (item == "Fish Patty") makingCost += 25;
+            else if (item == "Portobello Mushroom Patty") makingCost += 18;
+            else if (item == "Avocado") makingCost += 8;
+            else if (item == "Bacon") makingCost += 7;
+            else if (item == "Cheese") makingCost += 5;
+            else if (item == "Egg") makingCost += 4;
+            else if (item == "Jalapenos") makingCost += 6;
+            else if (item == "Lettuce") makingCost += 3;
+            else if (item == "Onion") makingCost += 4;
+            else if (item == "Pickles") makingCost += 2;
+            else if (item == "Tomato") makingCost += 5;
+            else if (item == "Aioli") makingCost += 5;
+            else if (item == "BBQ Sauce") makingCost += 5;
+            else if (item == "Hot Sauce") makingCost += 5;
+            else if (item == "Ketchup") makingCost += 5;
+            else if (item == "Mayonnaise") makingCost += 5;
+            else if (item == "Mustard") makingCost += 5;
+            else if (item == "Ranch") makingCost += 5;
             else makingCost += 0;
         }
-        New_Player.Balance -= makingCost;
+        current_player_score -= makingCost;
+        update_player_score();
         bool truth = true;
-        foreach (var item in currentOrderList)
+        foreach (var item in current_order_list)
         {
             if (StringListService.StringList.Contains(item))
             {
@@ -228,37 +230,33 @@
                 break;
             }
         }
-        if(currentOrderList.Count + 1 != StringListService.StringList.Count)
+        if (current_order_list.Count + 1 != StringListService.StringList.Count)
         {
             truth = false;
         }
         //Check the first element of the list
-        if ("Bun Bottom"!= StringListService.StringList[0])
+        if ("Bun Bottom" != StringListService.StringList[0])
         {
-            New_Player.Balance -= 10;
+            current_player_score -= 10;
             truth = false;
         }
         if (truth)
         {
             message = "Perfect Order!";
-            ShowNotification();
-            New_Player.Balance += currentOrderPrice;
+            show_notification();
+            current_player_score += current_order_price;
         }
         else
         {
             message = "Wrong Order!";
-            ShowNotification();
+            show_notification();
         }
-        
+
         StringListService.ClearList();
-        UpdateOrder();
+        update_order();
         StateHasChanged();
     }
-    public void Clear_List()
-    {
-        StringListService.ClearList();
-    }
-    public async Task ShowNotification()
+    public async Task show_notification()
     {
         await JSRuntime.InvokeVoidAsync("showNotification");
     }
@@ -273,14 +271,11 @@
 }
 
 <script>
-    function initializeNotification() 
-    {
-        window.showNotification = function () 
-        {
+    function initializeNotification() {
+        window.showNotification = function () {
             var notification = document.getElementById('notification');
             notification.style.display = 'block';
-            setTimeout(function () 
-            {
+            setTimeout(function () {
                 notification.style.display = 'none';
             }, 5000);
         }

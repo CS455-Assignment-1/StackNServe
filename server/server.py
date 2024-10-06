@@ -4,6 +4,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import sys
 sys.path.insert(0, "/opt/homebrew/lib/python3.11/site-packages")
 from pymongo import MongoClient
+import random
+import json
 
 # Add the MongoDB connection string, and create collections
 client = MongoClient("mongodb+srv://StackNServe:aditi_kushagra@cluster0.rvwjh.mongodb.net/")
@@ -14,15 +16,9 @@ PattyBurgerColection = BurgerDB["patty"]
 ToppingsBurgerColection = BurgerDB["toppings"]
 SaucesBurgerColection = BurgerDB["sauces"]
 
-# Check connection
-print(client.list_database_names())
-print(BurgerDB.list_collection_names())
-chicken_patty_price = PattyBurgerColection.find_one({"Name": "Chicken Patty"})["Price"]
-print(chicken_patty_price)
-num_sauces = SaucesBurgerColection.count_documents({})
-print(num_sauces)
-jalapenos_description = ToppingsBurgerColection.find_one({"Name": "Jalapenos"})["Description"]
-print(jalapenos_description)
+UserDB = client["user"]
+DetailsUserCollection = UserDB["details"]
+LeaderboardUserCollection = UserDB["leaderboard"]
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -32,10 +28,84 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')  
             self.end_headers()
             self.wfile.write(b"150")  
-        else:
-            self.send_response(400)
+        if self.path == "/orderPrice":
+            order_price = random.randint(5, 200)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
+            print(order_price)
+            self.wfile.write(str(order_price).encode())
+        if self.path == "/orderList":
+            list = []
+            bunIte = 1 
+            for i in range(bunIte):
+                bunID = random.randint(1, BunBurgerColection.count_documents({}))
+                bun = BunBurgerColection.find_one({"ID": bunID})
+                bunName = bun["Name"]
+                list.append(bunName)
 
+            pattyIte = random.randint(1, PattyBurgerColection.count_documents({}))
+            for i in range(pattyIte):
+                pattyID = random.randint(1, PattyBurgerColection.count_documents({}))
+                patty = PattyBurgerColection.find_one({"ID": pattyID})
+                pattyName = patty["Name"]
+                list.append(pattyName)
+            
+            toppingsIte = random.randint(1, ToppingsBurgerColection.count_documents({}))
+            for i in range(toppingsIte):
+                toppingsID = random.randint(1, ToppingsBurgerColection.count_documents({}))
+                toppings = ToppingsBurgerColection.find_one({"ID": toppingsID})
+                toppingsName = toppings["Name"]
+                list.append(toppingsName)
+            
+            saucesIte = random.randint(1, SaucesBurgerColection.count_documents({}))
+            for i in range(saucesIte):
+                saucesID = random.randint(1, SaucesBurgerColection.count_documents({}))
+                sauces = SaucesBurgerColection.find_one({"ID": saucesID})
+                saucesName = sauces["Name"]
+                list.append(saucesName)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(list).encode())  
+        if self.path == "/createPlayer":
+            player_id = DetailsUserCollection.count_documents({})+1
+            player = {"ID": player_id, "Name": "Player"+str(player_id), "Score": 100}  
+            DetailsUserCollection.insert_one(player)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(str(player_id).encode())
+    def do_POST(self):
+        if self.path == "/updateScore":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
+            player_id = data["player_id"]
+            score = data["score"]
+            DetailsUserCollection.update_one({"ID": player_id}, {"$set": {"Score": score}})
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(b"Score updated")
+        if self.path == "/fetchScore":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
+            player_id = data["player_id"]
+            player = DetailsUserCollection.find_one({"ID": player_id})
+            print(player)
+            score = player["Score"]
+            print(score)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(str(score).encode())
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
