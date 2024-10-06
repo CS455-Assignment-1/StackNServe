@@ -1,0 +1,11 @@
+.CountdownTimer
+{
+    background-color: black;
+    width:30%;
+    max-height: 2.5rem;
+}   
+.Timer
+{
+    font-size: 2rem;
+    color: red;
+}

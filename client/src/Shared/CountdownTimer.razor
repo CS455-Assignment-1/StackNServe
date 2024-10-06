@@ -1,19 +1,7 @@
 @namespace StackNServe.Shared
 @using System.Timers
 @implements IDisposable
-<style>
-    .CountdownTimer
-    {
-        background-color: black;
-        width:30%;
-        max-height: 2.5rem;
-    }   
-    .Timer
-    {
-        font-size: 2rem;
-        color: red;
-    }
-</style>
+
 <div class="CountdownTimer">
     <h3 class="Timer">@FormatTimeSpan(TimeRemaining)</h3>
     @if (ShowResetButton)
@@ -21,6 +9,8 @@
         <button @onclick="ResetTimer">Reset</button>
     }
 </div>
+
+<link href="src/Shared/CountdownTimer.razor.css" rel="stylesheet">
 
 @code {
     [Parameter]

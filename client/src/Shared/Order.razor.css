@@ -1,0 +1,40 @@
+.Order 
+{
+    background-image: url("images/Background/Burger_Menu.png");
+    height: 300px;
+    width: 300px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display:grid;
+    grid-template-columns: 0.1fr 1fr 0.1fr;
+    grid-template-rows: 0.1fr 1fr 0.1fr; 
+}
+.Order_Content
+{
+    margin-top: 20px;
+    grid-column: 2;
+    grid-row: 2;
+    display:grid;
+    text-align: center;
+    font-family: "Cedarville Cursive", cursive;
+}
+
+.Order_Greeting
+{
+    font-size: 1.3em;
+    color: #E36565;
+}
+
+.Order_Price
+{
+    font-size: 1.3em;
+    color: #E36565;
+}
+
+.Order_List
+{
+    margin-left: -20px;
+    max-height: 150px;
+    overflow-y: scroll;
+}

@@ -3,30 +3,13 @@
 @using StackNServe.Pages
 @using StackNServe.Shared
 @inject NavigationManager NavigationManager
-<style>
-    .Play_Again 
-    {
-        background-color: black;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        margin: 10px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-    }
-    .Play_Again_Heading 
-    {
-        font-size: 40px;
-        align-self: center;
-        justify-self: center;
-        margin-top:10px;
 
-    }
-</style>
 <div class="Play_Again" @onclick="InvokeOnPlayAgain">
     <h1 class="Play_Again_Heading">PLAY</h1>
 </div>
+
+<link href="src/Shared/Play_Again.razor.css" rel="stylesheet">
+
 @code
 {
     [Parameter]

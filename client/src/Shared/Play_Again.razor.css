@@ -1,0 +1,19 @@
+.Play_Again 
+{
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+.Play_Again_Heading 
+{
+    font-size: 40px;
+    align-self: center;
+    justify-self: center;
+    margin-top:10px;
+
+}
