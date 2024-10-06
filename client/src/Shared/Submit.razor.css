@@ -1,0 +1,14 @@
+.Submit {
+    background-color: #FFCBA2;
+    width: 150px;
+    border-radius: 25px;
+    border: 1px solid #E38282;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Submit_Heading {
+    font-size: 1.5rem;
+    margin-top: 10px;
+}

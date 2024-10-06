@@ -1,0 +1,76 @@
+.SaucesSelect {
+    display: flex;
+    flex-direction: row;
+}
+
+.SaucesToggleButton {
+    background-color: #FFCBA2;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid #E38282;
+}
+
+.SaucesToggleButton:hover {
+    background-color: rgb(208, 168, 221);
+    transition: 0.5s;
+}
+
+.Sauces_Select_Image {
+    padding-left: 10px;
+    padding-top: 12px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.ClickExpandMenu {
+    z-index: 1000;
+    background-color: #fce1cc;
+    position: absolute;
+    align-items: center;
+    margin-left: 10rem;
+    margin-top: 1.5rem;
+    padding: 5px;
+    padding-left: 25px;
+    border-radius: 15px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    animation: 0.5s;
+}
+
+.ClickExpandMenu li {
+    z-index: 1000;
+    margin-right: 10px;
+}
+
+.ImageSmallCircular {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.HoverInfo {
+    z-index: 2000;
+    text-align: center;
+    font-family: "Cedarville Cursive", cursive;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    top: 70px;
+    left: 0;
+    width: 200px;
+}
+
+.HoverInfoHeading {
+    color: #E36565;
+}
+
+.HoverInfoPrice {
+    color: #E36565;
+}

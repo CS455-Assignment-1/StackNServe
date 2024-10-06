@@ -2,30 +2,6 @@
 @inject HttpClient Http
 @page "/"
 @using StackNServe.Shared
-<style>
-    .Player_Guide
-    {
-        font-family: 'Poppins', sans-serif;
-    }
-    .Player_Guide_Heading
-    {
-        text-align: center;
-        font-size: 2.5rem;
-        color: #ff7f50;
-    }
-    .Player_Guide_Rules
-    {
-        background-color: bisque;
-        border: 1px solid black;
-        padding: 10px;
-    }
-    .Player_Guide_Controls
-    {
-        background-color: bisque;
-        border: 1px solid black;
-        padding: 10px;
-    }
-</style>
 
 <div class="Player_Guide">
     <h1 class="Player_Guide_Heading">Player Guide</h1>
@@ -63,6 +39,8 @@
     </div>
 
 </div>
+
+<link href="src/Pages/Player_Guide.razor.css" rel="stylesheet">
 
 @code {
     

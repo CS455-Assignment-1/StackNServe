@@ -1,0 +1,15 @@
+.Skip {
+    background-color: #FFCBA2;
+    width: 150px;
+    border-radius: 25px;
+    border: 1px solid #E38282;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Skip_Heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    margin-top: 10px;
+}

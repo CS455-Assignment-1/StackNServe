@@ -2,7 +2,6 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import sys
-sys.path.insert(0, "/opt/homebrew/lib/python3.11/site-packages")
 from pymongo import MongoClient
 import random
 import json
@@ -22,12 +21,15 @@ LeaderboardUserCollection = UserDB["leaderboard"]
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # Serve initial balance as plain text
         if self.path == "/initialBalance":
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.send_header('Access-Control-Allow-Origin', '*')  
             self.end_headers()
             self.wfile.write(b"150")  
+
+        # Serve random order price
         if self.path == "/orderPrice":
             order_price = random.randint(5, 200)
             self.send_response(200)
@@ -36,6 +38,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             print(order_price)
             self.wfile.write(str(order_price).encode())
+
+        # Serve random burger order list (randomly selected components from the database)
         if self.path == "/orderList":
             list = []
             bunIte = 1 
@@ -70,6 +74,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(list).encode())  
+
+        # Create a new player, and return the player ID
         if self.path == "/createPlayer":
             player_id = DetailsUserCollection.count_documents({})+1
             player = {"ID": player_id, "Name": "Player"+str(player_id), "Score": 100}  
@@ -79,7 +85,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(str(player_id).encode())
+
     def do_POST(self):
+        # Update the player score in the database
         if self.path == "/updateScore":
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -92,6 +100,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(b"Score updated")
+
+        # Fetch the score for a player from the database
         if self.path == "/fetchScore":
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -106,6 +116,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(str(score).encode())
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
