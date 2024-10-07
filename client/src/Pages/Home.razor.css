@@ -289,3 +289,50 @@
     margin: 2px;
     border-radius: 10px;
 }
+
+.Player_Name_Input {
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid  #E36565;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    width: 600px;
+}
+
+.Player_Name_Label {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.Player_Name_Field {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.Player_Name_Button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    color: white;
+    background-color:  #E36565;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.Player_Name_Button:hover {
+    background-color:  #E36565;
+}

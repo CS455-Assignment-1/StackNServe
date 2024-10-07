@@ -5,12 +5,22 @@
 @using StackNServe.Shared
 @using StackNServe.Services
 
+@using System.Text.Json;
+
 @inject HttpClient Http
 @inject GlobalStringListService StringListService
 @inject IJSRuntime JSRuntime
 
 <div class="Home_Page">
-    @if (isEnded)
+    @if (isGameStarting)
+    {
+        <div class="Player_Name_Input">
+            <h3 class="Player_Name_Label">Please enter your name to start the game:</h3>
+            <input type="text" class="Player_Name_Field" @bind="playerName" placeholder="Enter your name" />
+            <button class="Player_Name_Button" @onclick="start_game">Start Game</button>
+        </div>
+    }
+    else if (isEnded)
     {
         <h1 class="Time_Elapsed_Message">Your time finished!</h1>
 
@@ -71,6 +81,8 @@
 @code
 {
     public bool isEnded = false;
+    public bool isGameStarting = true;
+    public string playerName = "";
     public string message = "Hello World!";
     public int makingCost = 0;
 
@@ -78,8 +90,15 @@
     public int current_player_id = 0;
     private async Task create_player()
     {
-        string response = await Http.GetStringAsync("http://localhost:8000/createPlayer");
-        current_player_id = int.Parse(response);
+        var post_data = new Dictionary<string, string>();
+        post_data["player_name"] = playerName;
+        var response = await Http.PostAsJsonAsync("http://localhost:8000/createPlayer", post_data);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        // Deserialize JSON response to extract player_id
+        var playerData = JsonSerializer.Deserialize<Dictionary<string, int>>(responseContent);
+        current_player_id = playerData["player_id"];
+        
         StateHasChanged();
     }
     public int current_player_score = 0;
@@ -120,13 +139,18 @@
     {
         string response = await Http.GetStringAsync("http://localhost:8000/orderList");
         current_order_list = response.Split(',').ToList();
+        
         for (int i = 0; i < current_order_list.Count; i++)
         {
-            current_order_list[i] = current_order_list[i].Replace("\"", "");
+            // Remove extra spaces and double quotes
+            current_order_list[i] = current_order_list[i].Replace("\"", "").Trim();
         }
-        current_order_list[0] = current_order_list[0].Substring(1);
+        
+        // Clean the first and last items to remove any leftover brackets
+        current_order_list[0] = current_order_list[0].Substring(1).Trim();
         current_order_list[current_order_list.Count - 1] = current_order_list[current_order_list.Count - 1].Substring(0,
-        current_order_list[current_order_list.Count - 1].Length - 1);
+            current_order_list[current_order_list.Count - 1].Length - 1).Trim();
+        
         Console.WriteLine(current_order_list);
     }
 
@@ -141,7 +165,7 @@
         if (isEnded)
         {
             isEnded = false;
-            await create_player();
+            isGameStarting = true;
         }
     }
     private async Task player_skip()
@@ -156,14 +180,19 @@
     protected override async Task OnInitializedAsync()
     {
         StringListService.OnChange += StateHasChanged;
-        await create_player();
-        await fetch_player_score();
-        await update_order();
     }
 
     public void Dispose()
     {
         StringListService.OnChange -= StateHasChanged;
+    }
+
+    public async Task start_game()
+    {
+        isGameStarting = false;
+        await create_player();
+        await fetch_player_score();
+        await update_order();
     }
 
     public void CheckList()
@@ -204,7 +233,7 @@
             else if (item == "BBQ Sauce") makingCost += 5;
             else if (item == "Hot Sauce") makingCost += 5;
             else if (item == "Ketchup") makingCost += 5;
-            else if (item == "Mayonnaise") makingCost += 5;
+            else if (item == "Mayo") makingCost += 5;
             else if (item == "Mustard") makingCost += 5;
             else if (item == "Ranch") makingCost += 5;
             else makingCost += 0;
@@ -212,18 +241,27 @@
         current_player_score -= makingCost;
         update_player_score();
         bool truth = true;
+        // Print the current order list
+        Console.WriteLine("Current Order List:");
+        foreach (var item in current_order_list)
+        {
+            Console.WriteLine(item);
+        }
+        Console.WriteLine("Your Order List:");
+        foreach (var item in StringListService.StringList)
+        {
+            Console.WriteLine(item);
+        }
         foreach (var item in current_order_list)
         {
             if (StringListService.StringList.Contains(item))
             {
-                Console.WriteLine("You passed the order");
-                Console.WriteLine(item);
+                Console.WriteLine("You passed the order for " + item);
                 continue;
             }
             else
             {
-                Console.WriteLine("You failed the order");
-                Console.WriteLine(item);
+                Console.WriteLine("You failed the order, it was:" + item);
                 truth = false;
                 break;
             }
