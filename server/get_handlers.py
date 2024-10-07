@@ -4,31 +4,14 @@ import random
 import json
 from urllib.parse import urlparse, parse_qs
 from database import Collections, DetailsUserCollection
+from response_handler import send_response
 
 def handle_initial_balance(handler):
-    handler.send_response(200)
-    handler.send_header('Content-type', 'text/plain')
-    handler.send_header('Access-Control-Allow-Origin', '*')
-    handler.end_headers()
-    handler.wfile.write(b"100")
+    send_response(handler, 200, 'text/plain', "100")
 
 def handle_order_price(handler):
-    price = random.randint(50, 200)
-    handler.send_response(200)
-    handler.send_header('Content-type', 'text/plain')
-    handler.send_header('Access-Control-Allow-Origin', '*')
-    handler.end_headers()
-    handler.wfile.write(str(price).encode())
-
-def handle_create_player(handler):
-    player_id = DetailsUserCollection.count_documents({}) + 1
-    player = {"ID": player_id, "Name": "Player" + str(player_id), "Score": 100}
-    DetailsUserCollection.insert_one(player)
-    handler.send_response(200)
-    handler.send_header('Content-type', 'text/plain')
-    handler.send_header('Access-Control-Allow-Origin', '*')
-    handler.end_headers()
-    handler.wfile.write(str(player_id).encode())
+    price = random.randint(150, 400)
+    send_response(handler, 200, 'text/plain', price)
 
 def handle_fetch_leaderboard(handler):
     leaderboard = []
@@ -38,13 +21,10 @@ def handle_fetch_leaderboard(handler):
         player_name = player["Name"]
         player_score = player["Score"]
         leaderboard.append({"name": player_name, "score": player_score})
-    handler.send_response(200)
-    handler.send_header('Content-type', 'application/json')
-    handler.send_header('Access-Control-Allow-Origin', '*')
-    handler.end_headers()
-    handler.wfile.write(json.dumps(leaderboard).encode())
+    send_response(handler, 200, 'application/json', leaderboard, is_json=True)
 
 def handle_order_list(handler):
+    print("Order list fetched.")
     items_list = []
     bun_count = 1 
     for _ in range(bun_count):
@@ -73,12 +53,10 @@ def handle_order_list(handler):
         sauces = Collections.get("sauces").find_one({"ID": saucesID})
         saucesName = sauces["Name"]
         items_list.append(saucesName)
-    
-    handler.send_response(200)
-    handler.send_header('Content-type', 'application/json')
-    handler.send_header('Access-Control-Allow-Origin', '*')
-    handler.end_headers()
-    handler.wfile.write(json.dumps(items_list).encode())  
+
+    items_list = list(set(items_list))
+
+    send_response(handler, 200, 'application/json', items_list, is_json=True)
 
 def handle_burger_description(handler):
     query = parse_qs(urlparse(handler.path).query)
@@ -108,10 +86,6 @@ def handle_burger_description(handler):
 
         print(response_data)
 
-        handler.send_response(200)
-        handler.send_header('Content-type', 'application/json')
-        handler.send_header('Access-Control-Allow-Origin', '*')
-        handler.end_headers()
-        handler.wfile.write(json.dumps(response_data).encode('utf-8'))
+        send_response(handler, 200, 'application/json', response_data, is_json=True)
     else:
         handler.send_error(404, f"{item_type.capitalize()} '{name}' not found")

@@ -16,12 +16,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             '/orderPrice': get_handlers.handle_order_price,
             '/burger/description': get_handlers.handle_burger_description,
             '/orderList': get_handlers.handle_order_list,
-            '/createPlayer': get_handlers.handle_create_player,
+            # '/createPlayer': get_handlers.handle_create_player,
             '/fetchLeaderboard': get_handlers.handle_fetch_leaderboard
         },
         'POST': {
             '/updateScore': post_handlers.handle_update_score,
             '/fetchScore': post_handlers.handle_fetch_score,
+            '/createPlayer': post_handlers.handle_create_player,
         }
     }
 
