@@ -1,8 +1,9 @@
 @namespace StackNServe.Shared
 
 @using StackNServe.Services
-@using StackNServe.Models
 
+@using System.Text.Json;
+@inject HttpClient Http
 @inject GlobalStringListService StringListService
 @inject SelectionButtonService SelectionButtonService
 
@@ -55,43 +56,50 @@
     public bool isExpanded = false;
     public SaucesInfo currentHoverInfo;
     public string currentHoverPatty;
-    public void Display_Info(string Sauces)
+    public async Task Display_Info(string sauce)
     {
-        currentHoverPatty = Sauces;
-        if (Sauces == "images/Sauces/Aioli.png")
+        currentHoverPatty = sauce;
+
+        string sauceName = sauce switch
         {
-            Aioli temp_object = new Aioli();
-            currentHoverInfo = new SaucesInfo("Aioli", temp_object.Description, temp_object.Price);
+            "images/Sauces/Aioli.png" => "Aioli",
+            "images/Sauces/BBQSauce.png" => "BBQ Sauce",
+            "images/Sauces/HotSauce.png" => "Hot Sauce",
+            "images/Sauces/Ketchup.png" => "Ketchup",
+            "images/Sauces/Mayo.png" => "Mayo",
+            "images/Sauces/Mustard.png" => "Mustard",
+            "images/Sauces/Ranch.png" => "Ranch",
+            _ => null
+        };
+
+        if (!string.IsNullOrEmpty(sauceName))
+        {
+            try
+            {
+                string url = $"http://localhost:8000/burger/description?type=sauces&name={Uri.EscapeDataString(sauceName)}";
+                var response = await Http.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    currentHoverInfo = JsonSerializer.Deserialize<SaucesInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                else
+                {
+                    currentHoverInfo = new SaucesInfo(sauceName, $"Error: {response.StatusCode} - {content}", 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                currentHoverInfo = new SaucesInfo(sauceName, $"Exception: {ex.Message}", 0);
+            }
+
+            StateHasChanged();
         }
-        else if (Sauces == "images/Sauces/BBQSauce.png")
+        else
         {
-            BBQSauce temp_object = new BBQSauce();
-            currentHoverInfo = new SaucesInfo("BBQ Sauce", temp_object.Description, temp_object.Price);
-        }
-        else if (Sauces == "images/Sauces/HotSauce.png")
-        {
-            HotSauce temp_object = new HotSauce();
-            currentHoverInfo = new SaucesInfo("Hot Sauce", temp_object.Description, temp_object.Price);
-        }
-        else if (Sauces == "images/Sauces/Ketchup.png")
-        {
-            Ketchup temp_object = new Ketchup();
-            currentHoverInfo = new SaucesInfo("Ketchup", temp_object.Description, temp_object.Price);
-        }
-        else if (Sauces == "images/Sauces/Mayo.png")
-        {
-            Mayo temp_object = new Mayo();
-            currentHoverInfo = new SaucesInfo("Mayo", temp_object.Description, temp_object.Price);
-        }
-        else if (Sauces == "images/Sauces/Mustard.png")
-        {
-            Mustard temp_object = new Mustard();
-            currentHoverInfo = new SaucesInfo("Mustard", temp_object.Description, temp_object.Price);
-        }
-        else if (Sauces == "images/Sauces/Ranch.png")
-        {
-            Ranch temp_object = new Ranch();
-            currentHoverInfo = new SaucesInfo("Ranch", temp_object.Description, temp_object.Price);
+            currentHoverInfo = new SaucesInfo("Unknown Sauce", "Description not available.", 0);
+            StateHasChanged();
         }
     }
     public void ClearHoverInfo()

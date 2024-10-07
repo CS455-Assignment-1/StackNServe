@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
-using StackNServe.Models;
 using StackNServe.Pages;
 using StackNServe.Services;
 using StackNServe.Shared;

@@ -1,8 +1,9 @@
 @namespace StackNServe.Shared
 
 @using StackNServe.Services
-@using StackNServe.Models
 
+@using System.Text.Json;
+@inject HttpClient Http
 @inject GlobalStringListService StringListService
 @inject SelectionButtonService SelectionButtonService
 
@@ -19,7 +20,7 @@
             @foreach (var item in PattyImages.Select((Patty, index) => new { Patty, index }))
             {
                 <li @onmouseenter="() => Display_Info(item.Patty)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Patty)">
-                    <img src="@item.Patty" class="ImageSmallCircular" alt="Bun" />
+                    <img src="@item.Patty" class="ImageSmallCircular" alt="Patty" />
                     @if (currentHoverInfo != null && currentHoverPatty == item.Patty)
                     {
                         <div class="HoverInfo" style="margin-left:@($"{item.index * 3.5}vw")">
@@ -53,29 +54,54 @@
     public PattyInfo currentHoverInfo;
     public string currentHoverPatty;
     public Timer autoCloseTimer;
-    public void Display_Info(string patty)
-    {
-        currentHoverPatty = patty;
-        if (patty == "images/Patty/Veggie_Patty.png")
-        {
-            Veggie_Patty temp_object = new Veggie_Patty();
-            currentHoverInfo = new PattyInfo("Veggie Patty", temp_object.Description, temp_object.Price);
-        }
-        else if (patty == "images/Patty/Chicken_Patty.png")
-        {
-            Chicken_Patty temp_object = new Chicken_Patty();    
-            currentHoverInfo = new PattyInfo("Chicken Patty", temp_object.Description, temp_object.Price);
 
-        }
-        else if (patty == "images/Patty/Fish_Patty.png")
+
+    public async Task Display_Info(string Patty)
+    {
+        currentHoverPatty = Patty;
+
+        // Map image path to patty name
+        string pattyName = Patty switch
         {
-            Fish_Patty temp_object = new Fish_Patty();
-            currentHoverInfo = new PattyInfo("Fish Patty", temp_object.Description, temp_object.Price);
-        }
-        else if (patty == "images/Patty/Portobello_Mushroom_Patty.png")
+            "images/Patty/Veggie_Patty.png" => "Veggie Patty",
+            "images/Patty/Chicken_Patty.png" => "Chicken Patty",
+            "images/Patty/Fish_Patty.png" => "Fish Patty",
+            "images/Patty/Portobello_Mushroom_Patty.png" => "Portobello Mushroom Patty",
+            _ => null
+        };
+
+        if (!string.IsNullOrEmpty(pattyName))
         {
-            Portobello_Mushroom_Patty temp_object = new Portobello_Mushroom_Patty();
-            currentHoverInfo = new PattyInfo("Portobello Mushroom Patty", temp_object.Description, temp_object.Price);
+            try
+            {
+                string url = $"http://localhost:8000/burger/description?type=patty&name={Uri.EscapeDataString(pattyName)}";
+                var response = await Http.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    currentHoverInfo = JsonSerializer.Deserialize<PattyInfo>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive
+                        = true
+                        });
+                }
+                else
+                {
+                    currentHoverInfo = new PattyInfo(pattyName, $"Error: {response.StatusCode} - {content}", 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                currentHoverInfo = new PattyInfo(pattyName, $"Exception: {ex.Message}", 0);
+            }
+
+            StateHasChanged();
+        }
+        else
+        {
+            currentHoverInfo = new PattyInfo("Unknown Patty", "Description not available.", 0);
+            StateHasChanged();
         }
     }
 

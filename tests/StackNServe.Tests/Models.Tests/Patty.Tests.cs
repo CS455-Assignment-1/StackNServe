@@ -1,5 +1,4 @@
 using Xunit;
-using StackNServe.Models;
 
 namespace StackNServe.Tests;
 

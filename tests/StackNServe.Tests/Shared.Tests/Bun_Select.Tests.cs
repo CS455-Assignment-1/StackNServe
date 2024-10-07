@@ -5,7 +5,6 @@ using StackNServe.Services;
 using StackNServe.Pages;
 using System.Threading.Tasks;
 using StackNServe.Shared;
-using StackNServe.Models;
 
 namespace StackNServe.Tests
 {

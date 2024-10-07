@@ -1,23 +1,25 @@
 @namespace StackNServe.Shared
 
 @using StackNServe.Services
-@using StackNServe.Models
 
+@using System.Text.Json;
+@inject HttpClient Http
 @inject GlobalStringListService StringListService
 @inject SelectionButtonService SelectionButtonService
 
-<div class = "ToppingsSelect">
-    <button @onclick="ToggleMenu" class = "ToppingToggleButton">
+<div class="ToppingsSelect">
+    <button @onclick="ToggleMenu" class="ToppingToggleButton">
         <div class="ToppingIconContainer">
             <img src="images/Toppings_Select.png" alt="Topping Select" class="Topping_Select_Image" />
         </div>
     </button>
     @if (isExpanded)
     {
-        <ul class = "ClickExpandMenu">
+        <ul class="ClickExpandMenu">
             @foreach (var item in ToppingImages.Select((Topping, index) => new { Topping, index }))
             {
-                <li @onmouseenter="() => Display_Info(item.Topping)" @onmouseleave="ClearHoverInfo" @onclick="() => AddToBurger(item.Topping)">
+                <li @onmouseenter="() => Display_Info(item.Topping)" @onmouseleave="ClearHoverInfo"
+                    @onclick="() => AddToBurger(item.Topping)">
                     <img src="@item.Topping" class="ImageSmallCircular" alt="Bun" />
                     @if (currentHoverInfo != null && currentHoverPatty == item.Topping)
                     {
@@ -31,81 +33,87 @@
             }
             <li></li>
         </ul>
-        
+
     }
 </div>
 
 <link href="src/Shared/Toppings_Select.razor.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
 
 @code
-{ 
- 
-    List<string> Toppings = new List<string> { "Tomato", "Lettuce" ,"Onion", "Pickles", "Jalapenos", "Avocado", "Bacon" ,"Cheese", "Egg"}; 
-    
+{
+
+    List<string> Toppings = new List<string> { "Tomato", "Lettuce" ,"Onion", "Pickles", "Jalapenos", "Avocado", "Bacon"
+,"Cheese", "Egg"};
+
     List<string> ToppingImages = new List<string>
-        {
-            "images/Toppings/Avocado.png",
-            "images/Toppings/Bacon.png",
-            "images/Toppings/Cheese.png",
-            "images/Toppings/Egg.png",
-            "images/Toppings/Jalapenos.png", 
-            "images/Toppings/Lettuce.png",
-            "images/Toppings/Onion.png", 
-            "images/Toppings/Pickles.png",
-            "images/Toppings/Tomato.png"
-        };
+    {
+    "images/Toppings/Avocado.png",
+    "images/Toppings/Bacon.png",
+    "images/Toppings/Cheese.png",
+    "images/Toppings/Egg.png",
+    "images/Toppings/Jalapenos.png",
+    "images/Toppings/Lettuce.png",
+    "images/Toppings/Onion.png",
+    "images/Toppings/Pickles.png",
+    "images/Toppings/Tomato.png"
+    };
 
     public bool isExpanded = false;
     public ToppingInfo currentHoverInfo;
     public string currentHoverPatty;
-    public void Display_Info(string topping)
+    public async Task Display_Info(string topping)
     {
         currentHoverPatty = topping;
-        if (topping == "images/Toppings/Avocado.png")
+
+        // Map image path to topping name
+        string toppingName = topping switch
         {
-            Avocado temp_object = new Avocado();
-            currentHoverInfo = new ToppingInfo("Avocado", temp_object.Description, temp_object.Price);
+            "images/Toppings/Avocado.png" => "Avocado",
+            "images/Toppings/Bacon.png" => "Bacon",
+            "images/Toppings/Cheese.png" => "Cheese",
+            "images/Toppings/Egg.png" => "Egg",
+            "images/Toppings/Jalapenos.png" => "Jalapenos",
+            "images/Toppings/Lettuce.png" => "Lettuce",
+            "images/Toppings/Onion.png" => "Onion",
+            "images/Toppings/Pickles.png" => "Pickles",
+            "images/Toppings/Tomato.png" => "Tomato",
+            _ => null
+        };
+
+        if (!string.IsNullOrEmpty(toppingName))
+        {
+            try
+            {
+                string url = $"http://localhost:8000/burger/description?type=toppings&name={Uri.EscapeDataString(toppingName)}";
+                var response = await Http.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    currentHoverInfo = JsonSerializer.Deserialize<ToppingInfo>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                }
+                else
+                {
+                    currentHoverInfo = new ToppingInfo(toppingName, $"Error: {response.StatusCode} - {content}", 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                currentHoverInfo = new ToppingInfo(toppingName, $"Exception: {ex.Message}", 0);
+            }
+
+            StateHasChanged();
         }
-        else if (topping == "images/Toppings/Bacon.png")
+        else
         {
-            Bacon temp_object = new Bacon();
-            currentHoverInfo = new ToppingInfo("Bacon", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Cheese.png")
-        {
-            Cheese temp_object = new Cheese();
-            currentHoverInfo = new ToppingInfo("Cheese", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Egg.png")
-        {
-            Egg temp_object = new Egg();
-            currentHoverInfo = new ToppingInfo("Egg", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Jalapenos.png")
-        {
-            Jalapenos temp_object = new Jalapenos();
-            currentHoverInfo = new ToppingInfo("Jalapenos", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Lettuce.png")
-        {
-            Lettuce temp_object = new Lettuce();
-            currentHoverInfo = new ToppingInfo("Lettuce", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Onion.png")
-        {
-            Onion temp_object = new Onion();
-            currentHoverInfo = new ToppingInfo("Onion", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Pickles.png")
-        {
-            Pickles temp_object = new Pickles();
-            currentHoverInfo = new ToppingInfo("Pickles", temp_object.Description, temp_object.Price);
-        }
-        else if (topping == "images/Toppings/Tomato.png")
-        {
-            Tomato temp_object = new Tomato();
-            currentHoverInfo = new ToppingInfo("Tomato", temp_object.Description, temp_object.Price);
+            currentHoverInfo = new ToppingInfo("Unknown Topping", "Description not available.", 0);
+            StateHasChanged();
         }
     }
     public void ClearHoverInfo()
@@ -115,13 +123,15 @@
     }
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
-        
+
     public async Task ToggleMenu()
     {
-        if(isExpanded) {
+        if (isExpanded)
+        {
             isExpanded = false;
         }
-        else {
+        else
+        {
             isExpanded = true;
             SelectionButtonService.BunSelectVar = false;
             SelectionButtonService.PattySelectVar = false;
@@ -161,15 +171,15 @@
         Console.WriteLine("Adding Topping to Burger");
         // Add Patty to Burger
         currentHoverPatty = topping;
-        if(topping == "images/Toppings/Avocado.png") AddItem("Avocado");
-        else if(topping == "images/Toppings/Bacon.png") AddItem("Bacon");
-        else if(topping == "images/Toppings/Cheese.png") AddItem("Cheese");
-        else if(topping == "images/Toppings/Egg.png") AddItem("Egg");
-        else if(topping == "images/Toppings/Jalapenos.png") AddItem("Jalapenos");
-        else if(topping == "images/Toppings/Lettuce.png") AddItem("Lettuce");
-        else if(topping == "images/Toppings/Onion.png") AddItem("Onion");
-        else if(topping == "images/Toppings/Pickles.png") AddItem("Pickles");
-        else if(topping == "images/Toppings/Tomato.png") AddItem("Tomato");
+        if (topping == "images/Toppings/Avocado.png") AddItem("Avocado");
+        else if (topping == "images/Toppings/Bacon.png") AddItem("Bacon");
+        else if (topping == "images/Toppings/Cheese.png") AddItem("Cheese");
+        else if (topping == "images/Toppings/Egg.png") AddItem("Egg");
+        else if (topping == "images/Toppings/Jalapenos.png") AddItem("Jalapenos");
+        else if (topping == "images/Toppings/Lettuce.png") AddItem("Lettuce");
+        else if (topping == "images/Toppings/Onion.png") AddItem("Onion");
+        else if (topping == "images/Toppings/Pickles.png") AddItem("Pickles");
+        else if (topping == "images/Toppings/Tomato.png") AddItem("Tomato");
     }
 
     public System.Threading.Timer _timer;
