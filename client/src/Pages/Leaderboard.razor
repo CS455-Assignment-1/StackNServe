@@ -1,0 +1,66 @@
+@namespace StackNServe.Pages
+@page "/Leaderboard"
+
+@using StackNServe.Pages
+@using StackNServe.Shared
+@using StackNServe.Services
+@using StackNServe.Models
+
+@inject HttpClient Http
+@inject GlobalStringListService StringListService
+@inject IJSRuntime JSRuntime
+
+<div class="Leaderboard_Page">
+    <div class="Leaderboard_Heading">
+        <img src="images/Leaderboard_Header.png" alt="Leaderboard Header" class="Leaderboard_Header_Image" />
+    </div>
+    <div class="Leaderboard_Table">
+        <div class="Leaderboard_Table_Header">
+            <div class="Leaderboard_Table_Header_Name">
+                Name
+            </div>
+            <div class="Leaderboard_Table_Header_Score">
+                Score
+            </div>
+        </div>
+        <div class="Leaderboard_Table_Data">
+            @foreach (var item in leaderboard_data)
+            {
+                <div class="Leaderboard_Table_Data_Entry">
+                    <div class="Leaderboard_Table_Data_Name">
+                        @item.name
+                    </div>
+                    <div class="Leaderboard_Table_Data_Score">
+                       @item.score
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<link href="src/Pages/Leaderboard.razor.css" rel="stylesheet">
+
+@code
+{
+    public class Player
+    {
+        public string name { get; set; }
+        public int score { get; set; }
+    }
+
+    public List<Player> leaderboard_data = new List<Player>();
+    public async Task load_leaderboard()
+    {
+        var response = await Http.GetFromJsonAsync<List<Player>>("http://localhost:8000/fetchLeaderboard");
+        foreach (var item in response)
+        {
+            leaderboard_data.Add(new Player { name = item.name, score = item.score });
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await load_leaderboard();
+    }
+}

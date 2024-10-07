@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import sys
+sys.path.insert(0,'/opt/homebrew/lib/python3.11/site-packages')
 from pymongo import MongoClient
 import random
 import json
@@ -17,7 +18,6 @@ SaucesBurgerColection = BurgerDB["sauces"]
 
 UserDB = client["user"]
 DetailsUserCollection = UserDB["details"]
-LeaderboardUserCollection = UserDB["leaderboard"]
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -85,6 +85,20 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(str(player_id).encode())
+        # Fetch the leaderboard from the database
+        if self.path == "/fetchLeaderboard":
+            leaderboard = []
+            numPlayers = 10
+            players = DetailsUserCollection.find().sort("Score", -1).limit(numPlayers)
+            for player in players:
+                player_name = player["Name"]
+                player_score = player["Score"]
+                leaderboard.append({"name": player_name, "score": player_score})
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(leaderboard).encode())
 
     def do_POST(self):
         # Update the player score in the database

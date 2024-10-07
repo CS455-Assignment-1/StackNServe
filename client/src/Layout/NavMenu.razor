@@ -11,12 +11,17 @@
     <nav class="flex-column">
         <div class="nav-item px-3" >
             <NavLink class="nav-link"  @onclick="LoadPlayerGuide">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Player Guide
+                <span class="bi bi-book-fill-nav-menu" aria-hidden="true"></span> Player Guide
             </NavLink>
         </div>
         <div class="nav-item px-3" @onclick="NewGame">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> New Game
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> New Game
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="LoadLeaderboard">
+                <span class="bi bi-bar-chart-fill-nav-menu" aria-hidden="true"></span> Leaderboard
             </NavLink>
         </div>
     </nav>
@@ -35,6 +40,12 @@
     private void LoadPlayerGuide()
     {
         NavigationManager.NavigateTo("");
+    }
+
+    private async void LoadLeaderboard()
+    {
+        NavigationManager.NavigateTo("Leaderboard");
+        await JSRuntime.InvokeVoidAsync("location.reload");
     }
     private void ToggleNavMenu()
     {

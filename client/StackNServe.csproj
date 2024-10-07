@@ -34,6 +34,9 @@
     <Content Update="src/Shared/Play_Again.razor.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="src/Pages/Leaderboard.razor.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

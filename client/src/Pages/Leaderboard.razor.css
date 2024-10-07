@@ -1,0 +1,52 @@
+.Leaderboard_Page
+{
+    display:grid;
+    grid-template-rows: 0.1fr 1fr;
+    justify-content: center;
+}
+
+.Leaderboard_Heading
+{
+    grid-row: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Leaderboard_Header_Image
+{
+    height:200px;
+}
+
+.Leaderboard_Table
+{
+    grid-row: 2;
+    min-height: 600px;
+    width: 100%;
+    background-color: #FFCBA2;
+    border: 2px solid black;
+    background-image: linear-gradient(rgba(255, 203, 162, 0.6), rgba(255, 203, 162, 0.6)), url('images/leaderboard_table_background_image.jpeg');
+    background-size: cover, 50% 50%; 
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-blend-mode: normal, multiply;
+}
+
+.Leaderboard_Table_Header
+{
+    display:flex;
+    font-size: 2rem;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.Leaderboard_Table_Data_Entry
+{
+    display: flex;
+    font-size: 1.5rem;
+    justify-content: space-between;
+    margin: 20px;
+    border-bottom: 2px solid #E38282;
+    padding-bottom: 2px; 
+    line-height: 1.2;
+}
