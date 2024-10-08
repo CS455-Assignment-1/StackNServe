@@ -17,7 +17,11 @@
         <div class="Player_Name_Input">
             <h3 class="Player_Name_Label">Please enter your name to start the game:</h3>
             <input type="text" class="Player_Name_Field" @bind="playerName" placeholder="Enter your name" />
-            <button class="Player_Name_Button" @onclick="start_game">Start Game</button>
+            <button class="Player_Name_Button" @onclick="validateAndStartGame">Start Game</button>
+            @if (isNameEmpty)
+            {
+                <p class="error-message">Name cannot be empty.</p>
+            }
         </div>
     }
     else if (isEnded)
@@ -85,6 +89,19 @@
     public string playerName = "";
     public string message = "Hello World!";
     public int makingCost = 0;
+    private bool isNameEmpty = false;
+    private void validateAndStartGame()
+    {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            isNameEmpty = true;
+        }
+        else
+        {
+            isNameEmpty = false;
+            start_game();
+        }
+    }
 
     // New Player
     public int current_player_id = 0;
@@ -98,7 +115,7 @@
         // Deserialize JSON response to extract player_id
         var playerData = JsonSerializer.Deserialize<Dictionary<string, int>>(responseContent);
         current_player_id = playerData["player_id"];
-        
+
         StateHasChanged();
     }
     public int current_player_score = 0;
@@ -139,18 +156,18 @@
     {
         string response = await Http.GetStringAsync("http://localhost:8000/orderList");
         current_order_list = response.Split(',').ToList();
-        
+
         for (int i = 0; i < current_order_list.Count; i++)
         {
             // Remove extra spaces and double quotes
             current_order_list[i] = current_order_list[i].Replace("\"", "").Trim();
         }
-        
+
         // Clean the first and last items to remove any leftover brackets
         current_order_list[0] = current_order_list[0].Substring(1).Trim();
         current_order_list[current_order_list.Count - 1] = current_order_list[current_order_list.Count - 1].Substring(0,
-            current_order_list[current_order_list.Count - 1].Length - 1).Trim();
-        
+        current_order_list[current_order_list.Count - 1].Length - 1).Trim();
+
         Console.WriteLine(current_order_list);
     }
 
