@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using StackNServe.Services;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+using StackNServe.Services;
 
 namespace StackNServe
 {
