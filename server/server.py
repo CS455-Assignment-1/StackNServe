@@ -23,6 +23,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             '/updateScore': post_handlers.handle_update_score,
             '/fetchScore': post_handlers.handle_fetch_score,
             '/createPlayer': post_handlers.handle_create_player,
+            '/checkUniqueName': post_handlers.check_unique_player_name,
         }
     }
 
