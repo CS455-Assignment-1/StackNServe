@@ -96,7 +96,7 @@
     {
         var post_data = new Dictionary<string, string>();
         post_data["player_name"] = playerName;
-        var response = await Http.PostAsJsonAsync("http://localhost:8000/createPlayer", post_data);
+        var response = await Http.PostAsJsonAsync("createPlayer", post_data);
         var responseContent = await response.Content.ReadAsStringAsync();
 
         var playerData = JsonSerializer.Deserialize<Dictionary<string, int>>(responseContent);
@@ -139,7 +139,7 @@
     {
         Dictionary<string, string> post_data = new Dictionary<string, string>();
         post_data["player_name"] = playerName;
-        var response = await Http.PostAsJsonAsync("http://localhost:8000/checkUniqueName", post_data);
+        var response = await Http.PostAsJsonAsync("checkUniqueName", post_data);
         var responseContent = await response.Content.ReadAsStringAsync();
         return responseContent == "true";
     }
@@ -148,7 +148,7 @@
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
         post_data["player_id"] = current_player_id;
-        var response = await Http.PostAsJsonAsync("http://localhost:8000/fetchScore", post_data);
+        var response = await Http.PostAsJsonAsync("fetchScore", post_data);
         var scoreString = await response.Content.ReadAsStringAsync();
         current_player_score = int.Parse(scoreString);
         StateHasChanged();
@@ -159,7 +159,7 @@
         Dictionary<string, int> post_data = new Dictionary<string, int>();
         post_data["player_id"] = current_player_id;
         post_data["score"] = current_player_score;
-        var response = await Http.PostAsJsonAsync("http://localhost:8000/updateScore", post_data);
+        var response = await Http.PostAsJsonAsync("updateScore", post_data);
     }
 
     // New Order
@@ -172,14 +172,14 @@
     public int current_order_price = 0;
     private async Task fetch_order_price()
     {
-        string response = await Http.GetStringAsync("http://localhost:8000/orderPrice");
+        string response = await Http.GetStringAsync("orderPrice");
         current_order_price = int.Parse(response);
         Console.WriteLine(current_order_price);
     }
     public List<string> current_order_list = new List<string>();
     private async Task fetch_order_list()
     {
-        string response = await Http.GetStringAsync("http://localhost:8000/orderList");
+        string response = await Http.GetStringAsync("orderList");
         current_order_list = response.Split(',').ToList();
 
         for (int i = 0; i < current_order_list.Count; i++)

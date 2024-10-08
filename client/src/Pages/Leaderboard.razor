@@ -51,7 +51,7 @@
     public List<Player> leaderboard_data = new List<Player>();
     public async Task load_leaderboard()
     {
-        var response = await Http.GetFromJsonAsync<List<Player>>("http://localhost:8000/fetchLeaderboard");
+        var response = await Http.GetFromJsonAsync<List<Player>>("fetchLeaderboard");
         foreach (var item in response)
         {
             leaderboard_data.Add(new Player { name = item.name, score = item.score });
