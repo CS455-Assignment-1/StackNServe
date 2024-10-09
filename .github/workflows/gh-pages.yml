@@ -78,12 +78,12 @@ jobs:
 
       # Build the test project explicitly to generate test DLLs
       - name: Build the test project
-        run: dotnet build tests/StackNServe.Tests --configuration Debug
+        run: dotnet build tests/client.Tests/ --configuration Debug
 
       # Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML > test-results.txt
+          dotnet dotcover test tests/client.Tests/StackNServe.Tests.csproj --dcReportType=HTML > test-results.txt
           cat test-results.txt
 
       # Upload unit test results and coverage reports as artifacts
