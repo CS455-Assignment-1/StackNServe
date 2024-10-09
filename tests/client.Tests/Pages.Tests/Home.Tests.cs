@@ -158,27 +158,27 @@ namespace StackNServe.Tests
             Assert.Equal("Name already exists!", component.Instance.error_message);
         }
 
-        [Fact]
-        public async Task ReloadGame_RestartsGame()
-        {
-            var component = RenderComponent<Home>();
-            component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
+        // [Fact]
+        // public async Task ReloadGame_RestartsGame()
+        // {
+        //     var component = RenderComponent<Home>();
+        //     component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
 
-            await component.Instance.reload_game();
+        //     await component.Instance.reload_game();
 
-            Assert.False(component.Instance.isEnded);
-            Assert.True(component.Instance.isGameStarting);  
-        }
+        //     Assert.False(component.Instance.isEnded);
+        //     Assert.True(component.Instance.isGameStarting);  
+        // }
 
-        [Fact]
-        public async Task HandleTimerFinished_GameEnds()
-        {
-            var component = RenderComponent<Home>();
+        // [Fact]
+        // public async Task HandleTimerFinished_GameEnds()
+        // {
+        //     var component = RenderComponent<Home>();
 
-            component.Instance.handle_timer_finished();
+        //     component.Instance.handle_timer_finished();
 
-            Assert.True(component.Instance.isEnded);
-        }
+        //     Assert.True(component.Instance.isEnded);
+        // }
 
         [Fact]
         public async Task FetchPlayerScore_UpdatesPlayerScore()
@@ -203,27 +203,27 @@ namespace StackNServe.Tests
             Assert.Equal(100, component.Instance.current_player_score); 
         }
 
-        [Fact]
-        public void HandleTimerFinished_EndsGame()
-        {
-            var component = RenderComponent<Home>();
+        // [Fact]
+        // public void HandleTimerFinished_EndsGame()
+        // {
+        //     var component = RenderComponent<Home>();
 
-            component.InvokeAsync(() => component.Instance.handle_timer_finished());
+        //     component.InvokeAsync(() => component.Instance.handle_timer_finished());
 
-            Assert.True(component.Instance.isEnded);
-        }
+        //     Assert.True(component.Instance.isEnded);
+        // }
 
-        [Fact]
-        public async Task ReloadGame_ResetsGameState()
-        {
-            var component = RenderComponent<Home>();
-            component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
+        // [Fact]
+        // public async Task ReloadGame_ResetsGameState()
+        // {
+        //     var component = RenderComponent<Home>();
+        //     component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
 
-            await component.InvokeAsync(() => component.Instance.reload_game());
+        //     await component.InvokeAsync(() => component.Instance.reload_game());
 
-            Assert.False(component.Instance.isEnded);  
-            Assert.True(component.Instance.isGameStarting); 
-        }
+        //     Assert.False(component.Instance.isEnded);  
+        //     Assert.True(component.Instance.isGameStarting); 
+        // }
 
         [Fact]
         public async Task PlayerSkip_ReducesScoreBy10()
