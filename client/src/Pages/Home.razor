@@ -94,7 +94,7 @@
 
     // New Player
     public int current_player_id = 0;
-    private async Task create_player()
+    public async Task create_player()
     {
         var post_data = new Dictionary<string, string>();
         post_data["player_name"] = playerName;
@@ -106,9 +106,9 @@
 
         StateHasChanged();
     }
-    private bool is_input_valid = false;
+    public bool is_input_valid = false;
     public string error_message = "";
-    private async Task validate_and_start_game()
+    public async Task validate_and_start_game()
     {
         if (string.IsNullOrWhiteSpace(playerName))
         {
@@ -146,7 +146,7 @@
         return responseContent == "true";
     }
     public int current_player_score { get; set; } = 0;
-    private async Task fetch_player_score()
+    public async Task fetch_player_score()
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
         post_data["player_id"] = current_player_id;
@@ -172,14 +172,14 @@
         StateHasChanged();
     }
     public int current_order_price = 0;
-    private async Task fetch_order_price()
+    public async Task fetch_order_price()
     {
         string response = await Http.GetStringAsync("orderPrice");
         current_order_price = int.Parse(response);
         Console.WriteLine(current_order_price);
     }
     public List<string> current_order_list = new List<string>();
-    private async Task fetch_order_list()
+    public async Task fetch_order_list()
     {
         string response = await Http.GetStringAsync("orderList");
         current_order_list = response.Split(',').ToList();
@@ -201,7 +201,7 @@
         isEnded = true;
         Console.WriteLine("Timer Finished");
     }
-    private async Task reload_game()
+    public async Task reload_game()
     {
         if (isEnded)
         {
@@ -209,7 +209,7 @@
             isGameStarting = true;
         }
     }
-    private async Task player_skip()
+    public async Task player_skip()
     {
         current_player_score -= 10;
         await update_player_score();
