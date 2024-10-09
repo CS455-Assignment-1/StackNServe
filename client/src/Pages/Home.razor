@@ -6,6 +6,10 @@
 @using StackNServe.Services
 
 @using System.Text.Json;
+@using System.Text;
+@using System.Net.Http;
+@using System.Net.Http.Headers;
+
 
 @inject HttpClient Http
 @inject GlobalStringListService StringListService
@@ -98,7 +102,13 @@
     {
         var post_data = new Dictionary<string, string>();
         post_data["player_name"] = playerName;
-        var response = await Http.PostAsJsonAsync("createPlayer", post_data);
+        var jsonString = JsonSerializer.Serialize(post_data);
+
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(jsonString);
+
+        var response = await Http.PostAsync("createPlayer", content);
+
         var responseContent = await response.Content.ReadAsStringAsync();
 
         var playerData = JsonSerializer.Deserialize<Dictionary<string, int>>(responseContent);
@@ -106,6 +116,7 @@
 
         StateHasChanged();
     }
+
     public bool is_input_valid = false;
     public string error_message = "";
     public async Task validate_and_start_game()
@@ -115,14 +126,14 @@
             error_message = "Name cannot be empty!";
             is_input_valid = true;
         }
-        else if (playerName.Any(c => !char.IsLetterOrDigit(c)))
-        {
-            error_message = "Name can only contain letters and numbers!";
-            is_input_valid = true;
-        }
         else if (playerName.Contains(" "))
         {
             error_message = "Name cannot contain spaces!";
+            is_input_valid = true;
+        }
+        else if (playerName.Any(c => !char.IsLetterOrDigit(c)))
+        {
+            error_message = "Name can only contain letters and numbers!";
             is_input_valid = true;
         }
         else if(!await check_unique_name())
@@ -132,31 +143,46 @@
         }
         else
         {
+            Console.WriteLine("Player created successfully!");
             is_input_valid = false;
             start_game();
         }
     
     }
-    private async Task<bool> check_unique_name()
+
+
+    public async Task<bool> check_unique_name()
     {
         Dictionary<string, string> post_data = new Dictionary<string, string>();
         post_data["player_name"] = playerName;
-        var response = await Http.PostAsJsonAsync("checkUniqueName", post_data);
+
+        var jsonString = JsonSerializer.Serialize(post_data);
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(jsonString);
+
+        var response = await Http.PostAsync("checkUniqueName", content);
+
         var responseContent = await response.Content.ReadAsStringAsync();
         return responseContent == "true";
     }
+
     public int current_player_score { get; set; } = 0;
     public async Task fetch_player_score()
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
         post_data["player_id"] = current_player_id;
-        var response = await Http.PostAsJsonAsync("fetchScore", post_data);
+
+        var jsonString = JsonSerializer.Serialize(post_data);
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+        var response = await Http.PostAsync("fetchScore", content);
         var scoreString = await response.Content.ReadAsStringAsync();
+    
         current_player_score = int.Parse(scoreString);
-        StateHasChanged();
+        await InvokeAsync(() => StateHasChanged());
     }
 
-    private async Task update_player_score()
+    public async Task update_player_score()
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
         post_data["player_id"] = current_player_id;
@@ -165,7 +191,7 @@
     }
 
     // New Order
-    private async Task update_order()
+    public async Task update_order()
     {
         await fetch_order_list();
         await fetch_order_price();
@@ -231,110 +257,50 @@
     public async Task start_game()
     {
         isGameStarting = false;
+        await InvokeAsync(() => StateHasChanged());
         await create_player();
         await fetch_player_score();
         await update_order();
     }
 
-    public void CheckList()
+    //Classes to check for the right order.
+    public class OrderCheckRequest
     {
-        //Compare the Elements in the two lists.
-        //If they are the same, add the price to the player's balance
-        //Calculate the making cost of the burger
-        makingCost = 0;
+        public List<string> UserOrderList { get; set; }
+        public List<string> RequiredOrderList { get; set; }
+        public int CurrentPlayerScore { get; set; }
+        public int OrderPrice { get; set; }
+    }
 
-        if (StringListService.StringList.Count == 0)
+    public class OrderCheckResponse
+    {
+        public bool IsOrderCorrect { get; set; }
+        public int FinalScore { get; set; }
+        public string Message { get; set; }
+    }
+    public async Task CheckList()
+    {
+        var orderCheckRequest = new OrderCheckRequest
         {
-            message = "No Order!";
-            show_notification();
-            return;
-        }
+            UserOrderList = new List<string>(StringListService.StringList),
+            RequiredOrderList = current_order_list,
+            CurrentPlayerScore = current_player_score,
+            OrderPrice = current_order_price
+        };
 
-        foreach (var item in StringListService.StringList)
-        {
-            if (item == "Bun Bottom") makingCost += 0;
-            else if (item == "Plain Bun") makingCost += 10;
-            else if (item == "Sesame Bun") makingCost += 12;
-            else if (item == "Garlic Bun") makingCost += 20;
-            else if (item == "Parmesan Bun") makingCost += 25;
-            else if (item == "Veggie Patty") makingCost += 15;
-            else if (item == "Chicken Patty") makingCost += 20;
-            else if (item == "Fish Patty") makingCost += 25;
-            else if (item == "Portobello Mushroom Patty") makingCost += 18;
-            else if (item == "Avocado") makingCost += 8;
-            else if (item == "Bacon") makingCost += 7;
-            else if (item == "Cheese") makingCost += 5;
-            else if (item == "Egg") makingCost += 4;
-            else if (item == "Jalapenos") makingCost += 6;
-            else if (item == "Lettuce") makingCost += 3;
-            else if (item == "Onion") makingCost += 4;
-            else if (item == "Pickles") makingCost += 2;
-            else if (item == "Tomato") makingCost += 5;
-            else if (item == "Aioli") makingCost += 5;
-            else if (item == "BBQ Sauce") makingCost += 5;
-            else if (item == "Hot Sauce") makingCost += 5;
-            else if (item == "Ketchup") makingCost += 5;
-            else if (item == "Mayo") makingCost += 5;
-            else if (item == "Mustard") makingCost += 5;
-            else if (item == "Ranch") makingCost += 5;
-            else makingCost += 0;
-        }
-        current_player_score -= makingCost;
+        var response = await Http.PostAsJsonAsync("checkList", orderCheckRequest);
+        var result = await response.Content.ReadFromJsonAsync<OrderCheckResponse>();
+
+        message = result.Message;
+        current_player_score = result.FinalScore;
         update_player_score();
-        bool truth = true;
-        // Print the current order list
-        Console.WriteLine("Current Order List:");
-        foreach (var item in current_order_list)
-        {
-            Console.WriteLine(item);
-        }
-        Console.WriteLine("Your Order List:");
-        foreach (var item in StringListService.StringList)
-        {
-            Console.WriteLine(item);
-        }
-        foreach (var item in current_order_list)
-        {
-            if (StringListService.StringList.Contains(item))
-            {
-                Console.WriteLine("You passed the order for " + item);
-                continue;
-            }
-            else
-            {
-                Console.WriteLine("You failed the order, it was:" + item);
-                truth = false;
-                break;
-            }
-        }
-        if (current_order_list.Count + 1 != StringListService.StringList.Count)
-        {
-            truth = false;
-        }
-        //Check the first element of the list
-        if ("Bun Bottom" != StringListService.StringList[0])
-        {
-            current_player_score -= 10;
-            update_player_score();
-            truth = false;
-        }
-        if (truth)
-        {
-            message = "Perfect Order!";
-            show_notification();
-            current_player_score += current_order_price;
-            update_player_score();
-        }
-        else
-        {
-            message = "Wrong Order!";
-            show_notification();
-        }
 
+        show_notification();
         StringListService.ClearList();
-        update_order();
+        await update_order();
         StateHasChanged();
     }
+
     public async Task show_notification()
     {
         await JSRuntime.InvokeVoidAsync("showNotification");

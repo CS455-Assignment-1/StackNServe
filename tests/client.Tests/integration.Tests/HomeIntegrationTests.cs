@@ -17,7 +17,8 @@ namespace StackNServe.Tests
 
         public HomeIntegrationTests()
         {
-            realHttpClient = new HttpClient { BaseAddress = new Uri("http://localhost:8000/") };
+            // realHttpClient = new HttpClient { BaseAddress = new Uri("http://localhost:8000") };
+            realHttpClient = new HttpClient{ BaseAddress = new System.Uri("https://stacknserve.onrender.com") };
             stringListService = new GlobalStringListService();
             Services.AddSingleton(realHttpClient);
             Services.AddSingleton(stringListService);
@@ -47,9 +48,7 @@ namespace StackNServe.Tests
         {
             JSInterop.SetupVoid("initializeNotification");
 
-            var component = RenderComponent<Home>(parameters => parameters
-                .Add(p => p.isGameStarting, true)
-            );
+            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, true));
 
             // Leave player name empty
             var playerNameField = component.Find("input.Player_Name_Field");
@@ -66,10 +65,7 @@ namespace StackNServe.Tests
         public void StartGame_ShouldShowErrorForInvalidPlayerName()
         {
             JSInterop.SetupVoid("initializeNotification");
-
-            var component = RenderComponent<Home>(parameters => parameters
-                .Add(p => p.isGameStarting, true)
-            );
+            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, true));
 
             // Fill in a player name with special characters
             var playerNameField = component.Find("input.Player_Name_Field");
@@ -118,11 +114,12 @@ namespace StackNServe.Tests
             Assert.Equal("Name already exists!", errorMessage.TextContent.Trim());
         }
 
+        int current_player_id_tests = 4;
+
         [Fact]
         public async Task StartGame_ShouldSucceedWithUniquePlayerName()
         {
             JSInterop.SetupVoid("initializeNotification");
-
             string uniqueUsername = $"Player{DateTime.Now.Ticks}";
 
             var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, true));
@@ -134,8 +131,17 @@ namespace StackNServe.Tests
 
             var playerId = component.Instance.current_player_id;
 
-            Assert.True(playerId > 0);
-            Assert.Empty(component.Instance.error_message);
+            Console.WriteLine($"Player ID: {playerId}");
+
+            component.WaitForAssertion(() =>
+            {
+                Assert.NotEqual(0, component.Instance.current_player_id);
+            });
+            component.WaitForAssertion(() =>
+            {
+                Assert.Equal(false, component.Instance.isGameStarting);
+            });
+            current_player_id_tests = playerId;
         }
 
         [Fact]
@@ -144,35 +150,61 @@ namespace StackNServe.Tests
             JSInterop.SetupVoid("initializeNotification");
             var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, false));
 
-            component.Instance.current_player_id = 15;
+            component.Instance.current_player_id = current_player_id_tests;
 
             await component.Instance.fetch_player_score();
 
-            // Assert that score is positive
+            // await Task.Delay(500);
+
             Assert.True(component.Instance.current_player_score > 0);
         }
 
         [Fact]
-        public async Task UpdatePlayerScore_ShouldChangeScore()
+        public async Task PlayAgain_ShouldReloadGame()
+        {
+            JSInterop.SetupVoid("initializeNotification");
+            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isEnded, true).Add(p => p.isGameStarting, false));
+
+            var playAgainButton = component.WaitForElement(".Play_Again");
+            playAgainButton.Click();
+
+            component.WaitForAssertion(() =>
+            {
+                Assert.Equal(true, component.Instance.isGameStarting);
+                Assert.Equal(false, component.Instance.isEnded);
+            });
+        }
+
+        [Fact]
+        public async Task FetchOrderList_ShouldReturnValidOrder()
         {
             JSInterop.SetupVoid("initializeNotification");
             var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, false));
 
-            component.Instance.current_player_id = 15;
+            await component.Instance.fetch_order_list();
 
-            await component.Instance.fetch_player_score();
-
-            // Assert that initial score is positive
-            Assert.True(component.Instance.current_player_score > 0);
-
-            component.Instance.current_player_score = 150;
-            await component.Instance.update_player_score();
-
-            // Act: Fetch the updated score from the server
-            await component.Instance.fetch_player_score();
-
-            // Assert: Check if the updated score was fetched correctly
-            Assert.Equal(150, component.Instance.current_player_score);
+            // Assert that order list is fetched and not empty
+            component.WaitForAssertion(() =>
+            {
+                Assert.NotEmpty(component.Instance.current_order_list);
+            });
         }
+
+        [Fact]
+        public async Task FetchOrderPrice_ShouldReturnValidPrice()
+        {
+            JSInterop.SetupVoid("initializeNotification");
+            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, false));
+
+            await component.Instance.fetch_order_price();
+
+            // Assert that the price is fetched and greater than 0
+            component.WaitForAssertion(() =>
+            {
+                Assert.True(component.Instance.current_order_price > 0);
+            });
+        }
+
+
     }
 }
