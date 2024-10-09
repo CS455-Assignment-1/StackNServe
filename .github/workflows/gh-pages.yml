@@ -20,7 +20,7 @@ jobs:
         run: dotnet tool install -g dotnet-format
 
       - name: Run dotnet-format
-        run: dotnet format src/StackNServe/StackNServe.csproj --verify-no-changes
+        run: dotnet format client/StackNServe.csproj --verify-no-changes
     
 
   SonarCloud :
@@ -74,11 +74,11 @@ jobs:
 
       # Build the solution after starting SonarCloud analysis
       - name: Build the solution
-        run: dotnet build src/StackNServe/StackNServe.csproj --configuration Debug
+        run: dotnet build client/StackNServe.csproj --configuration Debug
 
       # Build the test project explicitly to generate test DLLs
       - name: Build the test project
-        run: dotnet build tests/StackNServe.Tests/StackNServe.Tests.csproj --configuration Debug
+        run: dotnet build tests/StackNServe.Tests --configuration Debug
 
       # Run tests and collect coverage
       - name: Run tests and collect coverage
@@ -146,7 +146,7 @@ jobs:
 
     # Publish the project
     - name: Publish .NET Core Project
-      run: dotnet publish src/StackNServe/StackNServe.csproj -c Release -o release --nologo
+      run: dotnet publish client/StackNServe.csproj -c Release -o release --nologo
     
     # Verify that index.html exists after the publish
     - name: Verify index.html exists

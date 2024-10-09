@@ -26,7 +26,10 @@ namespace StackNServe.Tests
         public LeaderboardTests()
         {
             mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Loose);
-            mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
+            mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
+            {
+                BaseAddress = new Uri("http://localhost:8000") 
+            };
             mockStringListService = new Mock<GlobalStringListService>();
             Services.AddSingleton(mockHttpClient);
             Services.AddSingleton(mockStringListService.Object);
@@ -43,11 +46,16 @@ namespace StackNServe.Tests
                 Content = new StringContent(JsonSerializer.Serialize(mockLeaderboardData))
             };
             
-            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync",ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>()  )
-            .ReturnsAsync(() => new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(mockLeaderboardData))  
-            });
+            mockHttpMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>()
+                )
+                .ReturnsAsync(() => new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(mockLeaderboardData))
+                });
         }
 
         [Fact]

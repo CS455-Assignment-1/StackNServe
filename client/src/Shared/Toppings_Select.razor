@@ -87,7 +87,7 @@
         {
             try
             {
-                string url = $"http://localhost:8000/burger/description?type=toppings&name={Uri.EscapeDataString(toppingName)}";
+                string url = $"burger/description?type=toppings&name={Uri.EscapeDataString(toppingName)}";
                 var response = await Http.GetAsync(url);
                 var content = await response.Content.ReadAsStringAsync();
 
