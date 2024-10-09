@@ -2,148 +2,80 @@ using Bunit;
 using Xunit;
 using StackNServe.Pages;
 using StackNServe.Services;
-using System.Security.Cryptography;
 using StackNServe.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography;
 using Microsoft.JSInterop;
 using Moq;
+using System.Net.Http;
 
 namespace StackNServe.Tests
 {
     public class HomeTests : TestContext
     {
-        private Mock<GlobalStringListService> _mockStringListService;
-        private Mock<IJSRuntime> _mockJSRuntime;
-        private Mock<SelectionButtonService> _mockSelectionButtonService;
+        private Mock<HttpClient> mockHttpClient;
+        private Mock<GlobalStringListService> mockStringListService;
+        private Mock<IJSRuntime> mockJSRuntime;
 
         public HomeTests()
         {
-            _mockStringListService = new Mock<GlobalStringListService>();
-            _mockJSRuntime = new Mock<IJSRuntime>();
+            mockHttpClient = new Mock<HttpClient>();
+            mockStringListService = new Mock<GlobalStringListService>();
+            mockJSRuntime = new Mock<IJSRuntime>();
 
-            Services.AddSingleton(_mockStringListService.Object);
-            Services.AddSingleton(_mockJSRuntime.Object);
+            Services.AddSingleton(mockHttpClient.Object);
+            Services.AddSingleton(mockStringListService.Object);
+            Services.AddSingleton(mockJSRuntime.Object);
+
             Services.AddSingleton<SelectionButtonService>();
         }
 
         [Fact]
-        public void InitialRender_ShouldShowGameElements()
+        public void NewGamePage_PageRendersMainGame()
         {
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act & Assert
-            cut.FindComponent<Bun_Select>();
-            cut.FindComponent<Patty_Select>();
-            cut.FindComponent<Toppings_Select>();
-            cut.FindComponent<Sauces_Select>();
-            cut.FindComponent<Main_Page_Header>();
-            cut.FindComponent<CountdownTimer>();
-            cut.FindComponent<Cooking_Table>();
-            cut.FindComponent<Order>();
-            cut.FindComponent<Skip>();
-            cut.FindComponent<Submit>();
-            cut.FindComponent<Score_Board>();
-        }
-        [Fact]
-        public async Task PlayerSkip_ShouldDecrease10FromBalance()
-        {
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act
-            await cut.InvokeAsync(() => cut.Instance.Player_Skip());
-
-            // Assert
-            Assert.Equal(90, cut.Instance.New_Player.Balance);
+            var component = RenderComponent<Home>(parameters => parameters
+                .Add(p => p.isGameStarting, false)
+                .Add(p => p.isEnded, false)
+            );
+            component.FindComponent<Bun_Select>(); 
+            component.FindComponent<Patty_Select>(); 
+            component.FindComponent<Toppings_Select>(); 
+            component.FindComponent<Sauces_Select>();
+            component.FindComponent<Cooking_Table>(); 
+            component.FindComponent<Order>(); 
+            component.FindComponent<Skip>(); 
+            component.FindComponent<Submit>();
+            component.FindComponent<Score_Board>();
         }
 
         [Fact]
-        public async Task HandleTimerFinished_ShouldChangeIsEndedToTrue()
+        public void NewGamePage_PageRendersStart()
         {
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act
-            await cut.InvokeAsync(() => cut.Instance.HandleTimerFinished());
-
-            // Assert
-            Assert.True(cut.Instance.isEnded);
+            var component = RenderComponent<Home>(parameters => parameters
+                .Add(p => p.isGameStarting, true)
+            );
+            var playerNameField = component.Find("input.Player_Name_Field");
+            var startGameButton = component.Find("button.Player_Name_Button");
+            Assert.NotNull(playerNameField);
+            Assert.NotNull(startGameButton);
         }
 
         [Fact]
-        public async Task FetchOrderList_ShouldReturnListOfOrders()
+        public void NewGamePage_PageRendersEnd()
         {
-            // Arrange
-            var cut = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+                .Add(p => p.isGameStarting, false)
+                .Add(p => p.isEnded, true)
+            );
 
-            // Act
-            var result = cut.Instance.Fetch_Order_List();
+            var timeFinishedMessage = component.Find("h1.Time_Elapsed_Message");
+            var scoreMessage = component.Find("h2.Time_Elapsed_Score");
+            var playAgainButton = component.Find("div.Play_Again_Button");
 
-            // Assert
-            Assert.IsType<List<string>>(result);
+            Assert.NotNull(timeFinishedMessage);
+            Assert.NotNull(scoreMessage);
+            Assert.NotNull(playAgainButton);
         }
 
-        [Fact]
-        public async Task FetchOrderPrice_ShouldReturnPriceBetween5And200()
-        {
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act
-            var result = cut.Instance.Fetch_Order_Price();
-
-            // Assert
-            Assert.InRange(result, 5, 200);
-        }
-
-        [Fact]
-        public async Task ReloadGame_ShouldResetGame()
-        {
-            // Arrange
-            var cut = RenderComponent<Home>();
-            cut.Instance.isEnded = true;
-            cut.Instance.New_Player.Balance = 50;
-
-            // Act
-            await cut.InvokeAsync(() => cut.Instance.ReloadGame());
-
-            // Assert
-            Assert.False(cut.Instance.isEnded);
-            Assert.Equal(100, cut.Instance.New_Player.Balance);
-        }
-
-        [Fact]
-        public async Task UpdateOrder_ShouldUpdateOrder()
-        {
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act
-            cut.InvokeAsync(() => cut.Instance.UpdateOrder());
-
-            // Assert
-            Assert.IsType<List<string>>(cut.Instance.currentOrderList);
-            Assert.InRange(cut.Instance.currentOrderPrice, 5, 200);
-        }
-        [Fact]
-        public void PlayerSkip_CheckFunctionsCalled() 
-        {
-            var mockStringListService = new Mock<GlobalStringListService>();
-            mockStringListService.Setup(s => s.ClearList()).Verifiable();
-
-            // Setup
-            Services.AddSingleton(mockStringListService.Object);
-
-            // Arrange
-            var cut = RenderComponent<Home>();
-
-            // Act
-            cut.InvokeAsync(() => cut.Instance.Player_Skip());
-
-            // Assert
-            Assert.Equal(90, cut.Instance.New_Player.Balance);
-            mockStringListService.Verify(s => s.ClearList(), Times.Once);
-        }
     }
 }

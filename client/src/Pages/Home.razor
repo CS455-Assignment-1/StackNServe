@@ -84,8 +84,10 @@
 
 @code
 {
-    public bool isEnded = false;
-    public bool isGameStarting = true;
+    [Parameter]
+    public bool isEnded { get; set; } = false;
+    [Parameter]
+    public bool isGameStarting { get; set; } = true;
     public string playerName = "";
     public string message = "Hello World!";
     public int makingCost = 0;
@@ -143,7 +145,7 @@
         var responseContent = await response.Content.ReadAsStringAsync();
         return responseContent == "true";
     }
-    public int current_player_score = 0;
+    public int current_player_score { get; set; } = 0;
     private async Task fetch_player_score()
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
@@ -184,11 +186,8 @@
 
         for (int i = 0; i < current_order_list.Count; i++)
         {
-            // Remove extra spaces and double quotes
             current_order_list[i] = current_order_list[i].Replace("\"", "").Trim();
         }
-
-        // Clean the first and last items to remove any leftover brackets
         current_order_list[0] = current_order_list[0].Substring(1).Trim();
         current_order_list[current_order_list.Count - 1] = current_order_list[current_order_list.Count - 1].Substring(0,
         current_order_list[current_order_list.Count - 1].Length - 1).Trim();

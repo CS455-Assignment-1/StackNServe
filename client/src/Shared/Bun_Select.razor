@@ -158,11 +158,9 @@
     public void AddToBurger(string buns)
     {
         Console.WriteLine("Adding Bun to Burger");
-        // Add Patty to Burger
+        
         currentHoverBun = buns;
 
-        //If there is no bun in the burger, add the bun to the bottom
-        //Travel through the list of ingredients and add the bun to the bottom
         int count = 0;
         foreach (var ingredient in StringListService.StringList)
         {
