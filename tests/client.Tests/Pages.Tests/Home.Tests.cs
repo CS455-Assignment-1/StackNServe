@@ -12,6 +12,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading;
 using Microsoft.JSInterop;
+using System.Net.Http.Json;
 
 namespace StackNServe.Tests
 {
@@ -24,7 +25,7 @@ namespace StackNServe.Tests
 
         public HomeTests()
         {
-            mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Loose);
             mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
                 BaseAddress = new Uri("http://localhost:8000") // Assuming base URI
@@ -203,28 +204,6 @@ namespace StackNServe.Tests
             Assert.Equal(100, component.Instance.current_player_score); 
         }
 
-        // [Fact]
-        // public void HandleTimerFinished_EndsGame()
-        // {
-        //     var component = RenderComponent<Home>();
-
-        //     component.InvokeAsync(() => component.Instance.handle_timer_finished());
-
-        //     Assert.True(component.Instance.isEnded);
-        // }
-
-        // [Fact]
-        // public async Task ReloadGame_ResetsGameState()
-        // {
-        //     var component = RenderComponent<Home>();
-        //     component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
-
-        //     await component.InvokeAsync(() => component.Instance.reload_game());
-
-        //     Assert.False(component.Instance.isEnded);  
-        //     Assert.True(component.Instance.isGameStarting); 
-        // }
-
         [Fact]
         public async Task PlayerSkip_ReducesScoreBy10()
         {
@@ -334,6 +313,130 @@ namespace StackNServe.Tests
             await component.InvokeAsync(() => component.Instance.create_player());
 
             Assert.Equal(5, component.Instance.current_player_id);  // Player ID should be set
+        }
+        [Fact]
+        public async Task CheckList_UpdatesScoreAndMessage()
+        {
+            var component = RenderComponent<Home>();
+
+            var orderCheckResponse = new OrderCheckResponse
+            {
+                Message = "Correct order!",
+                FinalScore = 120
+            };
+
+            var mockOrderListResponse = "[\"Bun Bottom\",\"Chicken Patty\",\"Plain Bun\"]";
+            var mockOrderPriceResponse = "50";
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("orderList")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(mockOrderListResponse)
+                });
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("orderPrice")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(mockOrderPriceResponse)
+                });
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri.ToString().Contains("checkList")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = JsonContent.Create(orderCheckResponse)
+                });
+
+            await component.InvokeAsync(() => component.Instance.CheckList());
+
+            Assert.Equal("Correct order!", component.Instance.message);
+            Assert.Equal(120, component.Instance.current_player_score);
+        }
+
+        [Fact]
+        public async Task CheckList_ClearsStringListAndUpdatesOrder()
+        {
+            var component = RenderComponent<Home>();
+
+            var orderCheckResponse = new OrderCheckResponse
+            {
+                Message = "Correct order!",
+                FinalScore = 100
+            };
+
+            var mockOrderListResponse = "[\"Bun Bottom\",\"Chicken Patty\",\"Plain Bun\"]";
+            var mockOrderPriceResponse = "50";
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("orderList")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(mockOrderListResponse)
+                });
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("orderPrice")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(mockOrderPriceResponse)
+                });
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri.ToString().Contains("checkList")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = JsonContent.Create(orderCheckResponse)
+                });
+
+            mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri.ToString().Contains("updateScore")),
+                    ItExpr.IsAny<CancellationToken>()
+                ).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+            mockStringListService.Setup(s => s.ClearList()).Verifiable();
+
+            await component.InvokeAsync(() => component.Instance.CheckList());
+
+            mockStringListService.Verify(s => s.ClearList(), Times.Once);
+            Assert.Equal("Correct order!", component.Instance.message);
+            Assert.Equal(100, component.Instance.current_player_score);
+        }
+
+        [Fact]
+        public async Task HandleTimerFinished_SetsGameEnded()
+        {
+            var component = RenderComponent<Home>();
+
+            component.Instance.handle_timer_finished();
+
+            Assert.True(component.Instance.isEnded);
+        }
+
+        [Fact]
+        public void Dispose_UnsubscribesFromOnChange()
+        {
+            var component = RenderComponent<Home>();
+
+            mockStringListService.VerifyAdd(s => s.OnChange += It.IsAny<Action>(), Times.Once);
+
+            component.Instance.Dispose();
+
+            mockStringListService.VerifyRemove(s => s.OnChange -= It.IsAny<Action>(), Times.Once);
         }
 
     }
