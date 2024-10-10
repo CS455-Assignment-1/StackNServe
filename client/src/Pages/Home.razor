@@ -150,7 +150,6 @@
     
     }
 
-
     public async Task<bool> check_unique_name()
     {
         Dictionary<string, string> post_data = new Dictionary<string, string>();
@@ -263,17 +262,37 @@
         await update_order();
     }
 
+    //Classes to check for the right order.
+    public class OrderCheckRequest
+    {
+        public List<string> userOrderList { get; set; }
+        public List<string> requiredOrderList { get; set; }
+        public int currentPlayerScore { get; set; }
+        public int orderPrice { get; set; }
+    }
+
+    public class OrderCheckResponse
+    {
+        public bool IsOrderCorrect { get; set; }
+        public int FinalScore { get; set; }
+        public string Message { get; set; }
+    }
     public async Task CheckList()
     {
         var orderCheckRequest = new OrderCheckRequest
         {
-            UserOrderList = new List<string>(StringListService.StringList),
-            RequiredOrderList = current_order_list,
-            CurrentPlayerScore = current_player_score,
-            OrderPrice = current_order_price
+            userOrderList = new List<string>(StringListService.StringList),
+            requiredOrderList = current_order_list ?? new List<string>(),
+            currentPlayerScore = current_player_score,
+            orderPrice = current_order_price
         };
 
-        var response = await Http.PostAsJsonAsync("checkList", orderCheckRequest);
+        var jsonString = JsonSerializer.Serialize(orderCheckRequest);
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(jsonString);
+
+        var response = await Http.PostAsync("checkList", content);
+
         var result = await response.Content.ReadFromJsonAsync<OrderCheckResponse>();
 
         message = result.Message;

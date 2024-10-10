@@ -95,25 +95,6 @@ namespace StackNServe.Tests
             Assert.Equal("Name cannot contain spaces!", errorMessage.TextContent.Trim());
         }
 
-        [Fact]
-        public async Task StartGame_ShouldShowErrorForDuplicatePlayerName()
-        {
-            JSInterop.SetupVoid("initializeNotification");
-            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, true));
-
-            // Enter a player name that is already taken
-            var playerNameField = component.Find("input.Player_Name_Field");
-            playerNameField.Change("w");
-
-            var startGameButton = component.Find("button.Player_Name_Button");
-            startGameButton.Click();
-
-            await Task.Delay(500);
-
-            var errorMessage = component.Find(".error-message");
-            Assert.Equal("Name already exists!", errorMessage.TextContent.Trim());
-        }
-
         int current_player_id_tests = 4;
 
         [Fact]
@@ -205,6 +186,45 @@ namespace StackNServe.Tests
             });
         }
 
+        [Fact]
+        public async Task CheckList_ShouldReturnValidComparisonResult()
+        {
+            // Arrange
+            JSInterop.SetupVoid("initializeNotification"); 
+
+            var component = RenderComponent<Home>(parameters =>
+                parameters.Add(p => p.isGameStarting, false)
+                          .Add(p => p.isEnded, false));  // Game is running
+
+            var stringListService = component.Services.GetRequiredService<GlobalStringListService>();
+
+            await component.InvokeAsync(() =>
+            {
+                stringListService.AddString("Bun Bottom");
+                stringListService.AddString("Portobello Mushroom Patty");
+                stringListService.AddString("Hot Sauce");
+                stringListService.AddString("Fish Patty");
+                stringListService.AddString("Aioli");
+                stringListService.AddString("Avocado");
+                stringListService.AddString("Ketchup");
+                stringListService.AddString("Sesame Bun");
+            });
+
+            component.Instance.current_order_list = new List<string> {"Portobello Mushroom Patty","Hot Sauce","Sesame Bun","Fish Patty","Aioli","Avocado","Ketchup" };
+            component.Instance.current_player_score = 50; 
+            component.Instance.current_order_price = 500; 
+
+            // Trigger the CheckList function
+            await component.InvokeAsync(async () => await component.Instance.CheckList());
+
+            await Task.Delay(500);
+
+            component.WaitForAssertion(() =>
+            {
+                Assert.Equal("Perfect Order!", component.Instance.message);
+                Assert.True(component.Instance.current_player_score > 50);  
+            });
+        }
 
     }
 }

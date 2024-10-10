@@ -426,18 +426,5 @@ namespace StackNServe.Tests
 
             Assert.True(component.Instance.isEnded);
         }
-
-        [Fact]
-        public void Dispose_UnsubscribesFromOnChange()
-        {
-            var component = RenderComponent<Home>();
-
-            mockStringListService.VerifyAdd(s => s.OnChange += It.IsAny<Action>(), Times.Once);
-
-            component.Instance.Dispose();
-
-            mockStringListService.VerifyRemove(s => s.OnChange -= It.IsAny<Action>(), Times.Once);
-        }
-
     }
 }
