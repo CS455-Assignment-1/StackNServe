@@ -6,7 +6,7 @@ The application is designed to evaluate players' memory, time management, and ri
 
 ## Development Team
 
-This project was developed by : [Aditi Khandelia](https://github.com/AditiKhandelia) and [Kushagra Srivastava](https://github.com/whizdor).
+This project was developed by : [Aditi Khandelia (220061)](https://github.com/AditiKhandelia) and [Kushagra Srivastava (220573)](https://github.com/whizdor).
 
 ## Deployment
 
@@ -21,16 +21,33 @@ Clone the repository-
 ```bash
 gh repo clone CS455-Assignment-1/StackNServe
 ```
+
+### [Terminal 1]
+
 Navigate to the project directory:
 
 ```bash
 cd StackNServe
+cd client
 ```
 Launch the application using the .NET CLI:
 ```bash
-dotnet watch
+dotnet run
 ```
-The application will start and be accessible via your local host.
+
+### [Terminal 2]
+
+Navigate to the project directory:
+
+```bash
+cd StackNServe
+cd Server
+```
+Launch the application using the .NET CLI:
+```bash
+python server.py
+```
+The application will start and be accessible via your local host at port 5000, with the server at port 8000.
 
 For further information or to report issues, please refer to the project's GitHub repository.
 
@@ -44,7 +61,6 @@ SonarCloud is integrated to perform static code analysis and continuously assess
 - **Code Smells** : Bad practices are identified and flagged.
 - **Reliability Rating** : Measures the likelihood of the code to produce bugs or unexpected behaviors.
 - **Maintainability Rating** : It tracks how easy it is to modify and extend the code.
-- **Security Rating** : Assesses the vulnerability of the codebase
 - **Code Coverage** : Test coverage is monitored to ensure that the majority of the codebase is covered by unit tests.
 
 The parameters at which the Quality Gate fails is
@@ -53,14 +69,11 @@ The parameters at which the Quality Gate fails is
 - Coverage < 50%
 - Duplicated Lines > 3%
 - Maintainability Rating < A
-- Security Rating < A
 - Reliability Rating < A
-- Security Hotspots Reviewed < 100%
 
 [Old Code]
 - Coverage < 50%
 - Duplicated Lines > 3%
-- Security Hotspots Reviewed < 100%
 ```
 
 The Static Report that is generated can be accessed at the link : [SonarCloud](https://sonarcloud.io/project/overview?id=CS455-Assignment-1_StackNServe)
@@ -80,18 +93,18 @@ Both of these tools are run in the CI/CD Pipeline, on GitHub Actions.
 
 ## Tests and Coverage
 
-We have used the following libraries :
-
-- **[xUnit](https://xunit.net/):** A popular unit testing framework for .NET applications. 
-- **[bUnit](https://bunit.dev/):** A testing library designed specifically for Blazor applications. It allows for testing Blazor components, ensuring that the UI components behave as expected.
-- **[Moq](https://github.com/Moq/moq4):** A mocking framework for .NET that allows for the creation of mock objects for testing code in isolation.
-
 ### How to Run Tests Locally
 
-To execute the test suite for StackNServe:
+To execute the test suite for StackNServe (client):
 
 ```bash
-dotnet tests/StackNServe.Tests/StackNServe.Tests.csproj
+dotnet tests/client.Tests/StackNServe.Tests.csproj
+```
+
+To execute the test suite for StackNServe (server):
+
+```bash
+pytest tests/server.Tests
 ```
 
 ### Mocking with Moq
@@ -103,8 +116,15 @@ We utilize Coverlet to track code coverage for our test cases. The generated rep
 
 We aim for at least 50% coverage for both new and old code.
 
+a. Client
 ```bash
-dotnet dotcover test tests/StackNServe.Tests/StackNServe.Tests.csproj --dcReportType=HTML
+dotnet dotcover test tests/client.Tests/StackNServe.Tests.csproj --dcReportType=HTML
+```
+
+b. Server
+```bash
+coverage run --source=server -m pytest tests/server.Tests
+coverage xml -o coverage.xml
 ```
 
 ## Continuous Integration (CI) with GitHub Actions
@@ -118,7 +138,7 @@ The tests are automatically executed in the CI/CD pipeline as part of the GitHub
 ## Reports
 Detailed Code Analysis Reports can be found in the `reports` folder
 
-- Report on Date of Submission : `report/Report.pdf`
+- Report on Date of Submission : `report/Report_Homework3.pdf`
 - Report at the beginning : `report/Report_HomeWork1.pdf`
 
 The results are also available at the Actions/Workflow Dashboard.
