@@ -73,34 +73,32 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       
-      # Install dotcover for code coverage
       - name: Install dotCover
         run: dotnet tool install --global JetBrains.dotCover.GlobalTool
 
-      # SonarCloud analysis begins
       - name: Begin SonarCloud Analysis
-        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html /d:sonar.exclusions="**/dotCover.Output/**,dotCover.Output.html"
-
-      # Build the solution after starting SonarCloud analysis
+        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html \
+          /d:sonar.python.coverage.reportPaths=server-coverage.xml \
+          /d:sonar.sources="client,server,tests" \
+          /d:sonar.exclusions="**/bin/**,**/obj/**,**/dotCover.Output/**,dotCover.Output.html"
+      
       - name: Build the solution
         run: dotnet build client/StackNServe.csproj --configuration Debug
 
-      # Build the test project explicitly to generate test DLLs
       - name: Build the test project
         run: dotnet build tests/client.Tests/ --configuration Debug
 
-      # Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet dotcover test tests/client.Tests/StackNServe.Tests.csproj --dcReportType=HTML > test-results.txt
           cat test-results.txt
 
-      # Run Python server tests and collect coverage
-      - name: Run Python tests and collect coverage
+      - name: Run Python server tests and collect coverage
         run: |
-          pytest tests/server.Tests --cov=server --cov-report xml:coverage.xml
-
-      # Upload unit test results and coverage reports as artifacts
+            pytest tests/server.Tests --cov=server --cov-report xml:server-coverage.xml
+      
       - name: Upload Unit Test and Coverage Results
         if: always()
         uses: actions/upload-artifact@v3
@@ -114,11 +112,9 @@ jobs:
           name: server-coverage-results
           path: coverage.xml           
 
-      # Finalize the SonarCloud analysis after building the project
       - name: End SonarCloud Analysis
         run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      # Fetch detailed SonarCloud results and output in the logs
       - name: Fetch and display detailed SonarCloud analysis results
         if: always()
         shell: bash
@@ -129,7 +125,6 @@ jobs:
           curl -u $SONAR_TOKEN: "https://sonarcloud.io/api/issues/search?componentKeys=CS455-Assignment-1_StackNServe" > sonarcloud-results.json
           echo "Analysis results:"
           cat sonarcloud-results.json | jq '.issues[] | {key, component, severity, message, line}' 
-      # Upload the SonarCloud results JSON as an artifact
       - name: Upload SonarCloud results artifact
         if: always()  
         uses: actions/upload-artifact@v3
@@ -155,20 +150,16 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     steps:
-    # Checkout the code from the master branch
     - uses: actions/checkout@v3
     
-    # Setup .NET Core SDK
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.107
 
-    # Publish the project
     - name: Publish .NET Core Project
       run: dotnet publish client/StackNServe.csproj -c Release -o release --nologo
     
-    # Verify that index.html exists after the publish
     - name: Verify index.html exists
       run: |
         if [ ! -f release/wwwroot/index.html ]; then
@@ -176,19 +167,15 @@ jobs:
           exit 1
         fi
 
-    # Change base tag in index.html to point to the correct subdirectory (StackNServe)
     - name: Change base-tag in index.html
       run: sed -i 's/<base href="\/" \/>/<base href="\/StackNServe\/" \/>/g' release/wwwroot/index.html
     
-    # Copy index.html to 404.html for GitHub Pages fallback routing
     - name: Copy index.html to 404.html
       run: cp release/wwwroot/index.html release/wwwroot/404.html
 
-    # Add a .nojekyll file to prevent Jekyll processing
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
 
-    # Deploy the wwwroot folder to the gh-pages branch
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
