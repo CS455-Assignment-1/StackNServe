@@ -109,6 +109,7 @@ namespace StackNServe.Tests
 
             var startGameButton = component.Find("button.Player_Name_Button");
             startGameButton.Click();
+            await Task.Delay(500);
 
             var playerId = component.Instance.current_player_id;
 
