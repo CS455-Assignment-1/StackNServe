@@ -21,7 +21,7 @@
                 <li @onmouseenter="() => Display_Info(item.Topping)" @onmouseleave="ClearHoverInfo"
                     @onclick="() => AddToBurger(item.Topping)">
                     <img src="@item.Topping" class="ImageSmallCircular" alt="Bun" />
-                    @if (currentHoverInfo != null && currentHoverPatty == item.Topping)
+                    @if (currentHoverInfo != null && currentHoverToppings == item.Topping)
                     {
                         <div class="HoverInfo" style="margin-left:@($"{item.index * 4}vw")">
                             <h5 class="HoverInfoHeading">@currentHoverInfo.Name</h5>
@@ -63,10 +63,10 @@
 
     public bool isExpanded = false;
     public ToppingInfo currentHoverInfo;
-    public string currentHoverPatty;
+    public string currentHoverToppings;
     public async Task Display_Info(string topping)
     {
-        currentHoverPatty = topping;
+        currentHoverToppings = topping;
 
         // Map image path to topping name
         string toppingName = topping switch
@@ -119,7 +119,7 @@
     public void ClearHoverInfo()
     {
         currentHoverInfo = null;
-        currentHoverPatty = null;
+        currentHoverToppings = null;
     }
     [Parameter]
     public EventCallback<bool> OnStateChanged { get; set; }
@@ -170,7 +170,7 @@
     {
         Console.WriteLine("Adding Topping to Burger");
         // Add Patty to Burger
-        currentHoverPatty = topping;
+        currentHoverToppings = topping;
         if (topping == "images/Toppings/Avocado.png") AddItem("Avocado");
         else if (topping == "images/Toppings/Bacon.png") AddItem("Bacon");
         else if (topping == "images/Toppings/Cheese.png") AddItem("Cheese");

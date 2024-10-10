@@ -22,6 +22,10 @@ namespace StackNServe.Tests
         private Mock<GlobalStringListService> _mockStringListService;
         private Mock<SelectionButtonService> _mockSelectionButtonService;
         private Mock<HttpClient> _mockHttpClient;
+        private GlobalStringListService globalStringListService;
+        private SelectionButtonService selectionButtonService;
+        private Timer _timer;
+        private Mock<HttpClient> mockHttpClientTemp;
 
         public ToppingsSelectComponentTests()
         {
@@ -33,6 +37,13 @@ namespace StackNServe.Tests
 
             _mockHttpClient = new Mock<HttpClient>();
             Services.AddSingleton(_mockHttpClient.Object);
+
+            globalStringListService = new GlobalStringListService();
+            selectionButtonService = new SelectionButtonService();
+            Services.AddSingleton(globalStringListService);
+            Services.AddSingleton(selectionButtonService);
+
+            mockHttpClientTemp = new Mock<HttpClient>();
         }
         [Fact]
         public void ToppingsSelectComponent_RendersCorrectly()
@@ -85,6 +96,73 @@ namespace StackNServe.Tests
             toggleButton.Click();
             
             Assert.DoesNotContain("ClickExpandMenu", component.Markup);
+        }
+        [Fact]
+        public void ToggleMenu_ExpandsAndCollapsesMenu()
+        {
+            var component = RenderComponent<Toppings_Select>();
+
+            component.Find("button.ToppingToggleButton").Click();
+            Assert.True(component.Instance.isExpanded);
+
+            component.Find("button.ToppingToggleButton").Click();
+            Assert.False(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void AddToBurger_AddsToppingsToBurgerStack()
+        {
+            var component = RenderComponent<StackNServe.Shared.Toppings_Select>();
+
+            component.InvokeAsync(() => component.Instance.AddToBurger("images/Toppings/Avocado.png"));
+
+            Assert.Contains("Avocado", globalStringListService.StringList);
+        }
+
+        [Fact]
+        public void ClearHoverInfo_ClearsHoverInfo()
+        {
+            var component = RenderComponent<Toppings_Select>();
+            component.Instance.currentHoverToppings = "images/Toppings/Avocado.png";
+            component.Instance.currentHoverInfo = new Toppings_Select.ToppingInfo("Avocado", "Description", 10);
+
+            component.InvokeAsync(() => component.Instance.ClearHoverInfo());
+
+            Assert.Null(component.Instance.currentHoverToppings);
+            Assert.Null(component.Instance.currentHoverInfo);
+        }
+        [Fact]
+        public void ToggleMenu_TogglesMenuState()
+        {
+            var component = RenderComponent<StackNServe.Shared.Toppings_Select>();
+
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+
+            Assert.True(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void CheckToppingsSelectVar_CollapsesMenuIfToppingsSelectVarIsFalse()
+        {
+            var component = RenderComponent<StackNServe.Shared.Toppings_Select>();
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+            Assert.True(component.Instance.isExpanded);
+
+            selectionButtonService.ToppingSelectVar = false;
+            component.Instance.CheckToppingsSelectVar(null);
+
+            Assert.False(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void CheckToppingsSelectVar_DoesNotCollapseMenuIfToppingsSelectVarIsTrue()
+        {
+            var component = RenderComponent<StackNServe.Shared.Toppings_Select>();
+
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+            Assert.True(component.Instance.isExpanded);
+
+            selectionButtonService.ToppingSelectVar = true;
+            component.Instance.CheckToppingsSelectVar(null);
+
+            Assert.True(component.Instance.isExpanded);
         }
     }
 }

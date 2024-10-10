@@ -22,6 +22,10 @@ namespace StackNServe.Tests
         private Mock<GlobalStringListService> _mockStringListService;
         private Mock<SelectionButtonService> _mockSelectionButtonService;
         private Mock<HttpClient> _mockHttpClient;
+        private GlobalStringListService globalStringListService;
+        private SelectionButtonService selectionButtonService;
+        private Timer _timer;
+        private Mock<HttpClient> mockHttpClientTemp;
 
         public PattySelectComponentTests()
         {
@@ -33,6 +37,13 @@ namespace StackNServe.Tests
 
             _mockHttpClient = new Mock<HttpClient>();
             Services.AddSingleton(_mockHttpClient.Object);
+
+            globalStringListService = new GlobalStringListService();
+            selectionButtonService = new SelectionButtonService();
+            Services.AddSingleton(globalStringListService);
+            Services.AddSingleton(selectionButtonService);
+
+            mockHttpClientTemp = new Mock<HttpClient>();
         }
         [Fact]
         public void PattySelectComponent_RendersCorrectly()
@@ -85,6 +96,73 @@ namespace StackNServe.Tests
             toggleButton.Click();
             
             Assert.DoesNotContain("ClickExpandMenu", component.Markup);
+        }
+        [Fact]
+        public void ToggleMenu_ExpandsAndCollapsesMenu()
+        {
+            var component = RenderComponent<Patty_Select>();
+
+            component.Find("button.PattyToggleButton").Click();
+            Assert.True(component.Instance.isExpanded);
+
+            component.Find("button.PattyToggleButton").Click();
+            Assert.False(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void AddToBurger_AddsPattyToBurgerStack()
+        {
+            var component = RenderComponent<StackNServe.Shared.Patty_Select>();
+
+            component.InvokeAsync(() => component.Instance.AddToBurger("images/Patty/Veggie_Patty.png"));
+
+            Assert.Contains("Veggie Patty", globalStringListService.StringList);
+        }
+
+        [Fact]
+        public void ClearHoverInfo_ClearsHoverInfo()
+        {
+            var component = RenderComponent<Patty_Select>();
+            component.Instance.currentHoverPatty = "images/Patty/Veggie_Patty.png";
+            component.Instance.currentHoverInfo = new Patty_Select.PattyInfo("Veggine Patty", "Description", 10);
+
+            component.InvokeAsync(() => component.Instance.ClearHoverInfo());
+
+            Assert.Null(component.Instance.currentHoverPatty);
+            Assert.Null(component.Instance.currentHoverInfo);
+        }
+        [Fact]
+        public void ToggleMenu_TogglesMenuState()
+        {
+            var component = RenderComponent<StackNServe.Shared.Patty_Select>();
+
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+
+            Assert.True(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void CheckPattySelectVar_CollapsesMenuIfPattySelectVarIsFalse()
+        {
+            var component = RenderComponent<StackNServe.Shared.Patty_Select>();
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+            Assert.True(component.Instance.isExpanded);
+
+            selectionButtonService.PattySelectVar = false;
+            component.Instance.CheckPattySelectVar(null);
+
+            Assert.False(component.Instance.isExpanded);
+        }
+        [Fact]
+        public void CheckPattySelectVar_DoesNotCollapseMenuIfPattySelectVarIsTrue()
+        {
+            var component = RenderComponent<StackNServe.Shared.Patty_Select>();
+
+            component.InvokeAsync(() => component.Instance.ToggleMenu());
+            Assert.True(component.Instance.isExpanded);
+
+            selectionButtonService.PattySelectVar = true;
+            component.Instance.CheckPattySelectVar(null);
+
+            Assert.True(component.Instance.isExpanded);
         }
     }
 }
