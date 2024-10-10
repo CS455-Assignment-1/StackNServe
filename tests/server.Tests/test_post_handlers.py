@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import sys
-sys.path.append('/Users/aditikhandelia/Desktop/IITK ACADS/cs455 assignment/server')
+sys.path.append('server')
 import post_handlers
 import json
 

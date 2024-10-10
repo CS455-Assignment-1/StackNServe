@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 import sys
-sys.path.append('/Users/aditikhandelia/Desktop/IITK ACADS/cs455 assignment/server')
+sys.path.append('server')
 import get_handlers
 from get_handlers import (
     handle_initial_balance, 
