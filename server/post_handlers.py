@@ -119,3 +119,13 @@ def check_order(user_order_list, required_order_list, current_player_score, orde
         'FinalScore': final_score,
         'Message': 'Perfect Order!' if is_order_correct else 'Wrong Order!'
     }
+
+def handle_fetch_score_name(handler):
+    content_length = int(handler.headers['Content-Length'])
+    post_data = handler.rfile.read(content_length)
+    data = json.loads(post_data)
+    player_name = data["player_name"]
+    print("Request received to fetch score for player name:", player_name)
+    player = DetailsUserCollection.find_one({"Name": player_name})
+    score = player["Score"]
+    send_response(handler, 200, 'text/plain', score)

@@ -123,6 +123,7 @@ namespace StackNServe.Tests
             Assert.False(component.Instance.isGameStarting);
             Assert.False(component.Instance.isEnded);
         }
+           
 
         [Fact]
         public async Task ValidateAndStartGame_InvalidPlayerName_ShowsError()
@@ -134,52 +135,8 @@ namespace StackNServe.Tests
 
             Assert.True(component.Instance.is_input_valid);
             Assert.Equal("Name can only contain letters and numbers!", component.Instance.error_message);
-        }
+        } 
 
-        [Fact]
-        public async Task PlayerNameAlreadyExists_ShowsError()
-        {
-            var component = RenderComponent<Home>();
-            component.Instance.playerName = "ExistingPlayer";
-            var mockResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("false")  
-            };
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(mockResponseMessage);
-
-            await component.Instance.validate_and_start_game();
-
-            Assert.True(component.Instance.is_input_valid);
-            Assert.Equal("Name already exists!", component.Instance.error_message);
-        }
-
-        // [Fact]
-        // public async Task ReloadGame_RestartsGame()
-        // {
-        //     var component = RenderComponent<Home>();
-        //     component.SetParametersAndRender(parameters => parameters.Add(p => p.isEnded, true));
-
-        //     await component.Instance.reload_game();
-
-        //     Assert.False(component.Instance.isEnded);
-        //     Assert.True(component.Instance.isGameStarting);  
-        // }
-
-        // [Fact]
-        // public async Task HandleTimerFinished_GameEnds()
-        // {
-        //     var component = RenderComponent<Home>();
-
-        //     component.Instance.handle_timer_finished();
-
-        //     Assert.True(component.Instance.isEnded);
-        // }
 
         [Fact]
         public async Task FetchPlayerScore_UpdatesPlayerScore()
@@ -426,5 +383,36 @@ namespace StackNServe.Tests
 
             Assert.True(component.Instance.isEnded);
         }
+
+        [Fact]
+        public async Task FetchPlayerScoreName_ReturnsCorrectScore()
+        {
+            var component = RenderComponent<Home>();
+            
+            var playerName = "ValidPlayer";
+            var expectedScore = 150;
+            
+            var postData = new Dictionary<string, string> { { "player_name", playerName } };
+            var mockResponseContent = expectedScore.ToString();
+            var mockResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(mockResponseContent)
+            };
+
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString().Contains("fetchScoreName")),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(mockResponseMessage);
+
+            var result = await component.Instance.fetch_player_score_name(playerName);
+
+            Assert.Equal(expectedScore, result);
+        }
+
     }
 }

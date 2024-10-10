@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import sys
-sys.path.append('server')
+sys.path.append('/Users/aditikhandelia/Desktop/IITK ACADS/cs455 assignment/server')
 import post_handlers
 import json
 
@@ -169,3 +169,19 @@ def test_handle_check_list_internal_error(mock_handler):
     mock_handler.send_header.assert_any_call('Access-Control-Allow-Origin', '*')
     mock_handler.end_headers.assert_called_once()
     mock_handler.wfile.write.assert_called_once_with(b'Internal Server Error')
+
+def test_handle_fetch_score_name(mock_handler, mock_db):
+    mock_handler.rfile.read.return_value = json.dumps({"player_name": "Player1"}).encode('utf-8')
+    mock_handler.headers = {'Content-Length': str(len(json.dumps({"player_name": "Player1"})))}
+    
+    mock_db.find_one.return_value = {"Name": "Player1", "Score": 250}
+    
+    post_handlers.handle_fetch_score_name(mock_handler)
+    
+    mock_handler.send_response.assert_called_once_with(200)
+    mock_handler.send_header.assert_any_call('Content-type', 'text/plain')
+    mock_handler.send_header.assert_any_call('Access-Control-Allow-Origin', '*')
+    mock_handler.end_headers.assert_called_once()
+    mock_handler.wfile.write.assert_called_once_with(b'250')
+    
+    mock_db.find_one.assert_called_once_with({"Name": "Player1"})

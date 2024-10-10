@@ -24,7 +24,8 @@
             <button class="Player_Name_Button" @onclick="validate_and_start_game">Start Game</button>
             @if (is_input_valid)
             {
-                <p class="error-message">@error_message</p>
+                
+                <p class="error-message">@error_message @information_message</p>
             }
         </div>
     }
@@ -119,6 +120,7 @@
 
     public bool is_input_valid = false;
     public string error_message = "";
+    public string information_message = "";
     public async Task validate_and_start_game()
     {
         if (string.IsNullOrWhiteSpace(playerName))
@@ -138,6 +140,8 @@
         }
         else if(!await check_unique_name())
         {
+            int previous_player_score = await fetch_player_score_name(playerName);
+            information_message = "Your previous score was: " + previous_player_score;
             error_message = "Name already exists!";
             is_input_valid = true;
         }
@@ -179,6 +183,20 @@
     
         current_player_score = int.Parse(scoreString);
         await InvokeAsync(() => StateHasChanged());
+    }
+
+    public async Task<int> fetch_player_score_name(string name)
+    {
+        Dictionary<string, string> post_data = new Dictionary<string, string>();
+        post_data["player_name"] = name;
+
+        var jsonString = JsonSerializer.Serialize(post_data);
+        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+        var response = await Http.PostAsync("fetchScoreName", content);
+        var scoreString = await response.Content.ReadAsStringAsync();
+
+        return int.Parse(scoreString);
     }
 
     public async Task update_player_score()

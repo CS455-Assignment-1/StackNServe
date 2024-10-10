@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 import sys
-sys.path.append('server')
+sys.path.append('/Users/aditikhandelia/Desktop/IITK ACADS/cs455 assignment/server')
 import get_handlers
 from get_handlers import (
     handle_initial_balance, 
@@ -177,11 +177,9 @@ def test_handle_burger_description_not_found(mock_send_response, monkeypatch):
     handler = MagicMock()
     handler.path = "/burger/description?type=bun&name=NonExistentBun"
 
-    # Mocking an empty result for the non-existent bun
     mock_bun = MagicMock()
     mock_bun.find_one.return_value = None
     
-    # Patch the 'Collections.get' method
     mock_collections = {"bun": mock_bun}
     monkeypatch.setattr('get_handlers.Collections', mock_collections)
 
