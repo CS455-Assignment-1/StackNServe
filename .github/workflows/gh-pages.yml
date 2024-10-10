@@ -77,12 +77,7 @@ jobs:
         run: dotnet tool install --global JetBrains.dotCover.GlobalTool
 
       - name: Begin SonarCloud Analysis
-        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" \
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html \
-          /d:sonar.python.coverage.reportPaths=server-coverage.xml \
-          /d:sonar.sources="client,server,tests" \
-          /d:sonar.exclusions="**/bin/**,**/obj/**,**/dotCover.Output/**,dotCover.Output.html"
+        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"CS455-Assignment-1_StackNServe" /o:"cs455-assignment-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html /d:sonar.python.coverage.reportPaths=server-coverage.xml /d:sonar.sources="client,server,tests" /d:sonar.exclusions="**/bin/**,**/obj/**,**/dotCover.Output/**,dotCover.Output.html"
       
       - name: Build the solution
         run: dotnet build client/StackNServe.csproj --configuration Debug
