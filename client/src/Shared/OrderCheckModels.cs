@@ -1,4 +1,4 @@
-namespace StackNServe.Shared 
+namespace StackNServe.Shared
 {
     public class OrderCheckRequest
     {
