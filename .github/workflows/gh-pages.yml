@@ -98,7 +98,7 @@ jobs:
       # Run Python server tests and collect coverage
       - name: Run Python tests and collect coverage
         run: |
-          pytest server/tests --cov=server --cov-report xml:coverage.xml
+          pytest tests/server.Tests --cov=server --cov-report xml:coverage.xml
 
       # Upload unit test results and coverage reports as artifacts
       - name: Upload Unit Test and Coverage Results
