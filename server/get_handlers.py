@@ -10,7 +10,7 @@ def handle_initial_balance(handler):
     send_response(handler, 200, 'text/plain', "100")
 
 def handle_order_price(handler):
-    price = random.randint(5, 200)
+    price = random.randint(150, 400)
     send_response(handler, 200, 'text/plain', price)
 
 def handle_fetch_leaderboard(handler):

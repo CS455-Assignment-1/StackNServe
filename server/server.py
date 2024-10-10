@@ -16,7 +16,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             '/orderPrice': get_handlers.handle_order_price,
             '/burger/description': get_handlers.handle_burger_description,
             '/orderList': get_handlers.handle_order_list,
-            # '/createPlayer': get_handlers.handle_create_player,
             '/fetchLeaderboard': get_handlers.handle_fetch_leaderboard
         },
         'POST': {
@@ -24,6 +23,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             '/fetchScore': post_handlers.handle_fetch_score,
             '/createPlayer': post_handlers.handle_create_player,
             '/checkUniqueName': post_handlers.check_unique_player_name,
+            '/checkList': post_handlers.handle_check_list
         }
     }
 
@@ -48,6 +48,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(200)
+        self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
