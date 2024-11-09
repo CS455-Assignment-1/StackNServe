@@ -55,6 +55,49 @@ class TestHomePage(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "Score_Board_Divison")
         print("Button click functionality works as expected")
 
+    def test_home_page_select_button_time(self):
+        start = time.time()
+        self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Field").send_keys(generate_random_name())
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Button").click()
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Select_Buttons");
+        self.driver.find_element(By.CLASS_NAME, "BunSelect").click();
+        self.driver.find_element(By.CLASS_NAME, "PattySelect").click();
+        self.driver.find_element(By.CLASS_NAME, "SaucesSelect").click();
+        self.driver.find_element(By.CLASS_NAME, "ToppingsSelect").click();
+        end = time.time()
+        self.assertLess(end - start, 6)
+        print("Select button click time is less than 6 seconds");
+    
+    def test_home_page_select_button_description(self):
+        start = time.time()
+        self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Field").send_keys(generate_random_name())
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Button").click()
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Select_Buttons");
+        self.driver.find_element(By.CLASS_NAME, "BunToggleButton").click();
+        time.sleep(1)
+        self.driver.find_element(By.CLASS_NAME, "ClickExpandMenu");
+        end = time.time()
+        self.assertLess(end - start, 7);
+        print("Select button description click time is less than 7 seconds");
+    
+    def test_home_page_skip_button_time(self):
+        start = time.time()
+        self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Field").send_keys(generate_random_name())
+        self.driver.find_element(By.CLASS_NAME, "Player_Name_Button").click()
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, "Skip").click();
+        end = time.time()
+        self.assertLess(end - start, 5);
+        print("Skip button click time is less than 5 seconds");
+        
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
