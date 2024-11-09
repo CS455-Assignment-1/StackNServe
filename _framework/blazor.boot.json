@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "StackNServe",
   "resources": {
-    "hash": "sha256-qofhgzo/ztOvOADIqgla5c2TA3siAa1RXpZSKVPk3hI=",
+    "hash": "sha256-yh2pUqN8YcGLRjoPIsOi7eYIruknGX2KpZBZALvHJPA=",
     "jsModuleNative": {
       "dotnet.native.8.0.10.4xsnm8lwn6.js": "sha256-QVxMlY7ohmjgde/bZMA0dlWDAeuUP+tEfkiSdg4DFcE="
     },
@@ -43,7 +43,7 @@
       "netstandard.wasm": "sha256-841l22YLSy7MSH199Qtkt0Z2zt6XgQTpzOP/xVu5lYM=",
       "SharpCompress.wasm": "sha256-5T7C9zsTB8Pr6/ydLJ4ILwSeTbvSzCeyxVoEXO0Rl5Q=",
       "Snappier.wasm": "sha256-Gm94GtJQLL4cxpQaCqIJxc0dCxpC/lvYPK/tNy0pRVk=",
-      "StackNServe.wasm": "sha256-zSBz42D6Bde9glZMLtlWFbtNE4LYnLzSKusL0BpZEgU=",
+      "StackNServe.wasm": "sha256-7Jmy/KWfwQq/JkIO6dvUbnCySBD96V/41wuls1Lzbu4=",
       "System.Collections.Concurrent.wasm": "sha256-puDolVf0wgczsleJuDSd6vJRA0Vc+p0OwU3fkDkxbSU=",
       "System.Collections.NonGeneric.wasm": "sha256-bABOHzx0wJsy6wkWrLK6+eybT3z16v3nPs6OmySzXN8=",
       "System.Collections.Specialized.wasm": "sha256-GKoSR/8c7XQHRbyuEjrQnwmb+BkHmgZdnf9ZvcFz/AQ=",
