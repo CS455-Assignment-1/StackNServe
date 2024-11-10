@@ -4,7 +4,6 @@ sys.path.insert(0, '/opt/homebrew/lib/python3.11/site-packages')
 from urllib.parse import urlparse, parse_qs
 import requests
 from urllib.parse import urlparse, urlencode, urlunparse
-import socket
 import threading
 import time
 import json
