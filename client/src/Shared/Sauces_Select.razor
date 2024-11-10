@@ -59,6 +59,11 @@
     {
         currentHoverSauces = sauce;
 
+        //Clear any existing hover info
+        currentHoverInfo.Description = "";
+        currentHoverInfo.Name = "";
+        currentHoverInfo.Price = 0;
+
         string sauceName = sauce switch
         {
             "images/Sauces/Aioli.png" => "Aioli",

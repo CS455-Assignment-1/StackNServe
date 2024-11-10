@@ -59,6 +59,11 @@
     {
         currentHoverPatty = Patty;
 
+        //Clear any existing hover info
+        currentHoverInfo.Description = "";
+        currentHoverInfo.Name = "";
+        currentHoverInfo.Price = 0;
+
         // Map image path to patty name
         string pattyName = Patty switch
         {

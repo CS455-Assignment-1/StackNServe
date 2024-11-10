@@ -61,6 +61,11 @@
     {
         currentHoverBun = Bun;
 
+        //Clear any existing hover info
+        currentHoverInfo.Description = "";
+        currentHoverInfo.Name = "";
+        currentHoverInfo.Price = 0;
+
         // Map image path to bun name
         string bunName = Bun switch
         {
