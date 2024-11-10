@@ -55,11 +55,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=4000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f'Server running on port {port}...')
     httpd.serve_forever()
 
-if __name__ == "__main__":
-    run()
+# take port as argument
+if __name__ == '__main__':
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 4000
+    run(port=port)
