@@ -21,7 +21,12 @@ def handle_fetch_leaderboard(handler):
         player_name = player["Name"]
         player_score = player["Score"]
         leaderboard.append({"name": player_name, "score": player_score})
-    send_response(handler, 200, 'application/json', leaderboard, is_json=True)
+
+    try:
+        send_response(handler, 200, 'application/json', leaderboard, is_json=True)
+    except BrokenPipeError:
+        print("Broken pipe: Client disconnected before leaderboard data could be sent.")
+
 
 def handle_order_list(handler):
     print("Order list fetched.")
