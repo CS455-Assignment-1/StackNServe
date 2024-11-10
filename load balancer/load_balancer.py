@@ -3,10 +3,11 @@ import sys
 sys.path.insert(0, '/opt/homebrew/lib/python3.11/site-packages')
 from urllib.parse import urlparse, parse_qs
 import requests
-from urllib.parse import urlparse, urlencode
+from urllib.parse import urlparse, urlencode, urlunparse
 import socket
 import threading
 import time
+import json
 
 primary_servers = ["https://stacknservesecondserver.onrender.com", "https://stacknservethirdserver.onrender.com"]
 backup_servers = ["https://stacknservebackupserver.onrender.com"]
@@ -40,6 +41,11 @@ def run_health_check():
 def immediate_health_check():
     threading.Thread(target=run_health_check, daemon=True).start()
 
+def sanitize_url(url):
+    parsed_url = urlparse(url)
+    sanitized_path = urlencode({parsed_url.path: ''})
+    return urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, '', parsed_url.query, ''))
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global turn
@@ -51,9 +57,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     self.send_error(500, "No backend servers available")
                     return
                 backend_url = backend_servers[turn % len(backend_servers)]
+                print(f"Attempting to forward GET request to: {backend_url}")
                 turn = (turn + 1) % len(backend_servers)
             parsed_path = urlparse(self.path)
-            full_url = f"{backend_url}{parsed_path.path}"
+            sanitized_path = sanitize_url(parsed_path.path)
+            full_url = f"{backend_url}{sanitized_path}"
             query_params = parse_qs(parsed_path.query)
             try:
                 # Set a timeout for the request to the backend server
@@ -69,7 +77,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 
                 # Attempt to write the response content to the client
                 try:
-                    self.wfile.write(response.content)
+                    if 'application/json' in response.headers.get('Content-Type', '').lower():
+                        json_data = response.json()
+                        response_content = json.dumps(json_data).encode('utf-8')
+                    else:
+                        response_content = response.content
+                    self.wfile.write(response_content)
                     self.wfile.flush()
                 except (BrokenPipeError, ConnectionResetError) as e:
                     print(f"Client disconnected: {e}")
@@ -90,10 +103,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     self.send_error(500, "No backend servers available")
                     return
                 backend_url = backend_servers[turn % len(backend_servers)]
+                print(f"Attempting to forward POST request to: {backend_url}")
                 turn = (turn + 1) % len(backend_servers)
             
             parsed_path = urlparse(self.path)
-            full_url = f"{backend_url}{parsed_path.path}"
+            sanitized_path = sanitize_url(parsed_path.path)
+            full_url = f"{backend_url}{sanitized_path}"
 
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -112,7 +127,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
                 # Attempt to write the response content to the client
                 try:
-                    self.wfile.write(response.content)
+                    if 'application/json' in response.headers.get('Content-Type', '').lower():
+                        json_data = response.json()
+                        response_content = json.dumps(json_data).encode('utf-8')
+                    else:
+                        response_content = response.content
+                    self.wfile.write(response_content)
                     self.wfile.flush()
                 except (BrokenPipeError, ConnectionResetError) as e:
                     print(f"Client disconnected: {e}")
