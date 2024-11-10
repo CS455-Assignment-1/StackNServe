@@ -16,7 +16,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             '/orderPrice': get_handlers.handle_order_price,
             '/burger/description': get_handlers.handle_burger_description,
             '/orderList': get_handlers.handle_order_list,
-            '/fetchLeaderboard': get_handlers.handle_fetch_leaderboard
+            '/fetchLeaderboard': get_handlers.handle_fetch_leaderboard,
+            '/health': get_handlers.handle_health
         },
         'POST': {
             '/updateScore': post_handlers.handle_update_score,
@@ -55,11 +56,17 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=4000):
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    print(f'Server running on port {port}...')
-    httpd.serve_forever()
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
+    while True:
+        try:
+            server_address = ('', port)
+            httpd = server_class(server_address, handler_class)
+            print(f'Server running on port {port}...')
+            httpd.serve_forever()
+            break
+        except OSError as e:
+            print(f"Port {port} is unavailable. Trying next port...")
+            port += 1  # Increment port and try again
 
 # take port as argument
 if __name__ == '__main__':

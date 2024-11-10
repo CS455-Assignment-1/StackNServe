@@ -6,6 +6,9 @@ from urllib.parse import urlparse, parse_qs
 from database import Collections, DetailsUserCollection
 from response_handler import send_response
 
+def handle_health(handler):
+    send_response(handler, 200, 'text/plain', "Healthy")
+    
 def handle_initial_balance(handler):
     send_response(handler, 200, 'text/plain', "100")
 
