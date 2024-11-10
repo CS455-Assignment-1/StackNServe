@@ -150,6 +150,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
+    def do_HEAD(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
