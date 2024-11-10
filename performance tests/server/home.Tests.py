@@ -40,6 +40,6 @@ class HomeTestUser(TaskSet):
 
 class GameUser(HttpUser):
     wait = between(10, 15)
-    host = "http://localhost:8000"
+    host = "https://stacknserve.onrender.com"
     tasks = [HomeTestUser]
 

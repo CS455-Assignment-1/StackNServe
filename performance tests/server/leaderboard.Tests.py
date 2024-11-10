@@ -1,4 +1,4 @@
-from locust import HttpUser, TaskSet, task, between
+from locust import HttpUser, TaskSet, task, between, constant
 
 class LeaderboardTestUser(TaskSet):
     # Check for the leaderboard page
@@ -8,7 +8,5 @@ class LeaderboardTestUser(TaskSet):
         self.client.get("/fetchLeaderboard")
 
 class GameUser(HttpUser):
-    wait = between(3, 5)
-    host = "http://localhost:8000"
+    host = "https://stacknserve.onrender.com"
     tasks = [LeaderboardTestUser]
-

@@ -1,0 +1,44 @@
+name: Nightly Performance Test
+
+on:
+  schedule:
+    # Runs at midnight (IST) every day
+    - cron: '30 18 * * *'
+  workflow_dispatch: 
+
+jobs:
+  locust_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install locust
+
+      - name: Test Server Accessibility
+        run: |
+          curl -I https://stacknserve.onrender.com  
+
+      - name: Run Locust performance test 1
+        run: |
+          locust -f "performance tests/server/leaderboard.Tests.py" --headless -u 100 -r 10 -t 1m --html=leaderboard_report.html
+
+      - name: Run Locust performance test 2
+        run: |
+          locust -f "performance tests/server/home.Tests.py" --headless -u 100 -r 10 -t 1m --html=home_report.html
+
+      - name: Upload Locust reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-reports
+          path: |
+            leaderboard_report.html
+            home_report.html
