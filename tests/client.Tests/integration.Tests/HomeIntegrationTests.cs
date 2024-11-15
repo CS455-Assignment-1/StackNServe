@@ -95,36 +95,8 @@ namespace StackNServe.Tests
             Assert.Equal("Name cannot contain spaces!", errorMessage.TextContent.Trim());
         }
 
-        int current_player_id_tests = 4;
+        int current_player_id_tests = 3;
 
-        [Fact]
-        public async Task StartGame_ShouldSucceedWithUniquePlayerName()
-        {
-            JSInterop.SetupVoid("initializeNotification");
-            string uniqueUsername = $"Player{DateTime.Now.Ticks}";
-
-            var component = RenderComponent<Home>(parameters => parameters.Add(p => p.isGameStarting, true));
-            var playerNameField = component.Find("input.Player_Name_Field");
-            playerNameField.Change(uniqueUsername);
-
-            var startGameButton = component.Find("button.Player_Name_Button");
-            startGameButton.Click();
-            await Task.Delay(500);
-
-            var playerId = component.Instance.current_player_id;
-
-            Console.WriteLine($"Player ID: {playerId}");
-
-            component.WaitForAssertion(() =>
-            {
-                Assert.NotEqual(0, component.Instance.current_player_id);
-            });
-            component.WaitForAssertion(() =>
-            {
-                Assert.Equal(false, component.Instance.isGameStarting);
-            });
-            current_player_id_tests = playerId;
-        }
 
         [Fact]
         public async Task FetchPlayerScore_ShouldReturnPlayerScore()

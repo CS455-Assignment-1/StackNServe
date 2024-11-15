@@ -138,13 +138,6 @@
             error_message = "Name can only contain letters and numbers!";
             is_input_valid = true;
         }
-        else if(!await check_unique_name())
-        {
-            int previous_player_score = await fetch_player_score_name(playerName);
-            information_message = "Your previous score was: " + previous_player_score;
-            error_message = "Name already exists!";
-            is_input_valid = true;
-        }
         else
         {
             Console.WriteLine("Player created successfully!");
@@ -154,22 +147,8 @@
     
     }
 
-    public async Task<bool> check_unique_name()
-    {
-        Dictionary<string, string> post_data = new Dictionary<string, string>();
-        post_data["player_name"] = playerName;
-
-        var jsonString = JsonSerializer.Serialize(post_data);
-        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(jsonString);
-
-        var response = await Http.PostAsync("checkUniqueName", content);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        return responseContent == "true";
-    }
-
     public int current_player_score { get; set; } = 0;
+
     public async Task fetch_player_score()
     {
         Dictionary<string, int> post_data = new Dictionary<string, int>();
@@ -207,14 +186,14 @@
         var response = await Http.PostAsJsonAsync("updateScore", post_data);
     }
 
-    // New Order
     public async Task update_order()
     {
         if (preloadedOrders.Count > 0)
         {
-            current_order_list = preloadedOrders.First().Split(',').ToList();
-            current_order_price = preloadedOrderPrice;
-            preloadedOrders.RemoveAt(0); // Remove the used preloaded order
+            var nextOrder = preloadedOrders.First();
+            current_order_list = nextOrder.Items;
+            current_order_price = nextOrder.Price;
+            preloadedOrders.RemoveAt(0);
         }
         else
         {
@@ -223,6 +202,7 @@
         }
         StateHasChanged();
     }
+
     public int current_order_price = 0;
     public async Task fetch_order_price()
     {
@@ -269,13 +249,18 @@
         await update_order();
         StateHasChanged();
     }
-    public List<string> preloadedOrders = new List<string>();
-    public int preloadedOrderPrice = 0;
+
+    public class PreloadedOrder
+    {
+        public List<string> Items { get; set; }
+        public int Price { get; set; }
+    }
+    public List<PreloadedOrder> preloadedOrders = new List<PreloadedOrder>();
+
 
     protected override async Task OnInitializedAsync()
     {
         StringListService.OnChange += StateHasChanged;
-        await PreloadOrders();
     }
 
     public async Task PreloadOrders()
@@ -284,10 +269,13 @@
         {
             await fetch_order_list();
             await fetch_order_price();
-            preloadedOrders.Add(string.Join(", ", current_order_list));
-            preloadedOrderPrice = current_order_price;
+            preloadedOrders.Add(new PreloadedOrder
+            {
+                Items = new List<string>(current_order_list),
+                Price = current_order_price
+            });
         }
-    }
+}
 
     public void Dispose()
     {
@@ -297,10 +285,18 @@
     public async Task start_game()
     {
         isGameStarting = false;
-        await InvokeAsync(() => StateHasChanged());
         await create_player();
         await fetch_player_score();
-        await update_order();
+
+        if (preloadedOrders.Count > 0)
+        {
+            var initialOrder = preloadedOrders.First();
+            current_order_list = initialOrder.Items;
+            current_order_price = initialOrder.Price;
+            preloadedOrders.RemoveAt(0);
+        }
+
+        StateHasChanged();
     }
 
     //Classes to check for the right order.

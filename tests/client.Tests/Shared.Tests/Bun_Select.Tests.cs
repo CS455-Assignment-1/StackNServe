@@ -69,21 +69,26 @@ namespace StackNServe.Tests
 
             Assert.Contains("ClickExpandMenu", component.Markup);
         }
+        
         [Fact]
         public async Task BunSelectComponent_HoverDisplaysInfo()
         {
             var component = RenderComponent<Bun_Select>();
+
             var toggleButton = component.Find("button.BunToggleButton");
             toggleButton.Click();
+
             var bunItems = component.FindAll("img.ImageSmallCircular");
+            Assert.NotEmpty(bunItems);
 
-            Assert.NotEmpty(bunItems);  
-
-            var bunImage = bunItems[0];
+            var firstBunImage = bunItems[0];
             await component.InvokeAsync(() => component.Instance.Display_Info("images/Bun/Garlic_Bun.png"));
 
+
+            component.Render(); 
             Assert.Contains("Garlic Bun", component.Markup);
         }
+
         [Fact]
         public void BunSelectComponent_CollapsesMenuOnToggle()
         {

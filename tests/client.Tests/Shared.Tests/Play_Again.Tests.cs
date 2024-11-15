@@ -40,7 +40,7 @@ namespace StackNServe.Tests
 
             component.Find("div.Play_Again").Click();
 
-            Assert.Equal("http://localhost/New_Game", mockNavigationManager.Uri);  
+            Assert.Equal("https://stacknserve.onrender.com/New_Game", mockNavigationManager.Uri);  
         }
     }
 }

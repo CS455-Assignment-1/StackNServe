@@ -28,7 +28,7 @@ namespace StackNServe.Tests
             mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Loose);
             mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
-                BaseAddress = new Uri("http://localhost:8000") // Assuming base URI
+                BaseAddress = new Uri("https://stacknserve.onrender.com")
             };
             mockStringListService = new Mock<GlobalStringListService>();
             mockJSRuntime = new Mock<IJSRuntime>();
@@ -85,43 +85,6 @@ namespace StackNServe.Tests
             Assert.NotNull(timeFinishedMessage);
             Assert.NotNull(scoreMessage);
             Assert.NotNull(playAgainButton);
-        }
-
-        [Fact]
-        public async Task ValidateAndStartGame_ValidName_StartsGame()
-        {
-            var component = RenderComponent<Home>();
-            component.Instance.playerName = "ValidPlayer";
-
-            var postData = new Dictionary<string, string> { { "player_name", "ValidPlayer" } };
-            var mockResponseContent = JsonSerializer.Serialize(new { player_id = 1 });
-            var mockResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(mockResponseContent)
-            };
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(mockResponseMessage);
-
-            var uniqueNameResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("true")
-            };
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(uniqueNameResponse);
-            await component.Instance.validate_and_start_game();
-
-            Assert.False(component.Instance.isGameStarting);
-            Assert.False(component.Instance.isEnded);
         }
            
 

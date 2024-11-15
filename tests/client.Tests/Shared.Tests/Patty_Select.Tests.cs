@@ -69,21 +69,27 @@ namespace StackNServe.Tests
 
             Assert.Contains("ClickExpandMenu", component.Markup);
         }
+
         [Fact]
         public async Task PattySelectComponent_HoverDisplaysInfo()
         {
             var component = RenderComponent<Patty_Select>();
+
+            await component.InvokeAsync(() => component.Instance.PrefetchPattyDescriptions());
+
             var toggleButton = component.Find("button.PattyToggleButton");
             toggleButton.Click();
+
             var pattyItems = component.FindAll("img.ImageSmallCircular");
+            Assert.NotEmpty(pattyItems);
 
-            Assert.NotEmpty(pattyItems);  
-
-            var pattyImage = pattyItems[0];
+            var firstPattyImage = pattyItems[0];
             await component.InvokeAsync(() => component.Instance.Display_Info("images/Patty/Veggie_Patty.png"));
 
+            component.Render(); 
             Assert.Contains("Veggie Patty", component.Markup);
         }
+
         [Fact]
         public void PattySelectComponent_CollapsesMenuOnToggle()
         {

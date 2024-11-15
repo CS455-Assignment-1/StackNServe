@@ -28,7 +28,7 @@ namespace StackNServe.Tests
             mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Loose);
             mockHttpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
-                BaseAddress = new Uri("http://localhost:8000") 
+                BaseAddress = new Uri("https://stacknserve.onrender.com")
             };
             mockStringListService = new Mock<GlobalStringListService>();
             Services.AddSingleton(mockHttpClient);
