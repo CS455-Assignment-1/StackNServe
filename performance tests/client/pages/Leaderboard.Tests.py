@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(0, '/opt/homebrew/lib/python3.11/site-packages')
 import unittest
 import time
 from selenium import webdriver

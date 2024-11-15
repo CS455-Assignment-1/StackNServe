@@ -27,11 +27,6 @@ def user_collection(user_db):
     collection = user_db["details"]
     return collection
 
-@pytest.fixture(autouse=True)
-def clear_user_collection(user_collection):
-    # Ensure the collection is clear before each test to maintain isolation
-    user_collection.delete_many({})
-
 def test_create_player(user_collection):
     player_name = "Test Player"
     payload = {
