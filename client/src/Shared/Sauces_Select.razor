@@ -41,6 +41,7 @@
 
 @code
 {  
+    private Dictionary<string, SaucesInfo> saucesDescriptions = new Dictionary<string, SaucesInfo>();
     List<string> SaucesImages = new List<string>
         {
             "images/Sauces/Aioli.png",
@@ -53,57 +54,72 @@
         };
 
     public bool isExpanded = false;
-    public SaucesInfo currentHoverInfo;
+    public SaucesInfo currentHoverInfo = new SaucesInfo("", "", 0);
     public string currentHoverSauces;
-    public async Task Display_Info(string sauce)
+    protected override async Task OnInitializedAsync()
+    {
+        await PrefetchSaucesDescriptions();
+        _timer = new System.Threading.Timer(CheckSaucesSelectVar, null, 0, 100); // Check every 100ms
+    }
+
+    private async Task PrefetchSaucesDescriptions()
+    {
+        foreach (var sauceImage in SaucesImages)
+        {
+            string sauceName = sauceImage switch
+            {
+                "images/Sauces/Aioli.png" => "Aioli",
+                "images/Sauces/BBQSauce.png" => "BBQ Sauce",
+                "images/Sauces/HotSauce.png" => "Hot Sauce",
+                "images/Sauces/Ketchup.png" => "Ketchup",
+                "images/Sauces/Mayo.png" => "Mayo",
+                "images/Sauces/Mustard.png" => "Mustard",
+                "images/Sauces/Ranch.png" => "Ranch",
+                _ => null
+            };
+
+            if (!string.IsNullOrEmpty(sauceName))
+            {
+                try
+                {
+                    string url = $"burger/description?type=sauces&name={Uri.EscapeDataString(sauceName)}";
+                    var response = await Http.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var sauceInfo = JsonSerializer.Deserialize<SaucesInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (sauceInfo != null)
+                        {
+                            saucesDescriptions[sauceImage] = sauceInfo;
+                        }
+                    }
+                    else
+                    {
+                        saucesDescriptions[sauceImage] = new SaucesInfo(sauceName, "Description not available.", 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    saucesDescriptions[sauceImage] = new SaucesInfo(sauceName, $"Exception: {ex.Message}", 0);
+                }
+            }
+        }
+    }
+
+    public void Display_Info(string sauce)
     {
         currentHoverSauces = sauce;
 
-        //Clear any existing hover info
-        currentHoverInfo.Description = "";
-        currentHoverInfo.Name = "";
-        currentHoverInfo.Price = 0;
-
-        string sauceName = sauce switch
+        // Use prefetched data if available
+        if (saucesDescriptions.ContainsKey(sauce))
         {
-            "images/Sauces/Aioli.png" => "Aioli",
-            "images/Sauces/BBQSauce.png" => "BBQ Sauce",
-            "images/Sauces/HotSauce.png" => "Hot Sauce",
-            "images/Sauces/Ketchup.png" => "Ketchup",
-            "images/Sauces/Mayo.png" => "Mayo",
-            "images/Sauces/Mustard.png" => "Mustard",
-            "images/Sauces/Ranch.png" => "Ranch",
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(sauceName))
-        {
-            try
-            {
-                string url = $"burger/description?type=sauces&name={Uri.EscapeDataString(sauceName)}";
-                var response = await Http.GetAsync(url);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    currentHoverInfo = JsonSerializer.Deserialize<SaucesInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                }
-                else
-                {
-                    currentHoverInfo = new SaucesInfo(sauceName, $"Error: {response.StatusCode} - {content}", 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                currentHoverInfo = new SaucesInfo(sauceName, $"Exception: {ex.Message}", 0);
-            }
-
-            StateHasChanged();
+            currentHoverInfo = saucesDescriptions[sauce];
         }
         else
         {
             currentHoverInfo = new SaucesInfo("Unknown Sauce", "Description not available.", 0);
-            StateHasChanged();
         }
     }
     public void ClearHoverInfo()
@@ -166,14 +182,7 @@
         else if(sauces == "images/Sauces/Mustard.png") AddItem("Mustard");
         else if(sauces == "images/Sauces/Ranch.png") AddItem("Ranch");
     }
-
     public System.Threading.Timer _timer;
-
-    protected override void OnInitialized()
-    {
-        _timer = new System.Threading.Timer(CheckSaucesSelectVar, null, 0, 100); // Check every 100ms
-    }
-
     public void CheckSaucesSelectVar(object state)
     {
         if (!SelectionButtonService.SaucesSelectVar && isExpanded)

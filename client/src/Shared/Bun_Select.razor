@@ -45,6 +45,8 @@
 
 @code
 {
+    private Dictionary<string, BunInfo> bunDescriptions = new Dictionary<string, BunInfo>();
+
     List<string> BunImages = new List<string>
 {
 "images/Bun/Garlic_Bun.png",
@@ -54,60 +56,67 @@
 };
 
     public bool isExpanded = false;
-    public BunInfo currentHoverInfo;
+    public BunInfo currentHoverInfo = new BunInfo("", "", 0);
     public string currentHoverBun;
 
-    public async Task Display_Info(string Bun)
+    private async Task PrefetchBunDescriptions()
+    {
+        foreach (var bunImage in BunImages)
+        {
+            string bunName = bunImage switch
+            {
+                "images/Bun/Garlic_Bun.png" => "Garlic Bun",
+                "images/Bun/Parmesan_Bun.png" => "Parmesan Bun",
+                "images/Bun/Plain_Bun.png" => "Plain Bun",
+                "images/Bun/Sesame_Bun.png" => "Sesame Bun",
+                _ => null
+            };
+
+            if (!string.IsNullOrEmpty(bunName))
+            {
+                try
+                {
+                    string url = $"burger/description?type=bun&name={Uri.EscapeDataString(bunName)}";
+                    var response = await Http.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var bunInfo = JsonSerializer.Deserialize<BunInfo>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                        if (bunInfo != null)
+                        {
+                            bunDescriptions[bunImage] = bunInfo;
+                        }
+                    }
+                    else
+                    {
+                        bunDescriptions[bunImage] = new BunInfo(bunName, "Description not available.", 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    bunDescriptions[bunImage] = new BunInfo(bunName, $"Exception: {ex.Message}", 0);
+                }
+            }
+        }
+    }
+
+    public void Display_Info(string Bun)
     {
         currentHoverBun = Bun;
 
-        //Clear any existing hover info
-        currentHoverInfo.Description = "";
-        currentHoverInfo.Name = "";
-        currentHoverInfo.Price = 0;
-
-        // Map image path to bun name
-        string bunName = Bun switch
+        // Use prefetched data if available
+        if (bunDescriptions.ContainsKey(Bun))
         {
-            "images/Bun/Garlic_Bun.png" => "Garlic Bun",
-            "images/Bun/Parmesan_Bun.png" => "Parmesan Bun",
-            "images/Bun/Plain_Bun.png" => "Plain Bun",
-            "images/Bun/Sesame_Bun.png" => "Sesame Bun",
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(bunName))
-        {
-            try
-            {
-                string url = $"burger/description?type=bun&name={Uri.EscapeDataString(bunName)}";
-                var response = await Http.GetAsync(url);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    currentHoverInfo = JsonSerializer.Deserialize<BunInfo>(content, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive
-                        = true
-                        });
-                }
-                else
-                {
-                    currentHoverInfo = new BunInfo(bunName, $"Error: {response.StatusCode} - {content}", 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                currentHoverInfo = new BunInfo(bunName, $"Exception: {ex.Message}", 0);
-            }
-
-            StateHasChanged();
+            currentHoverInfo = bunDescriptions[Bun];
         }
         else
         {
             currentHoverInfo = new BunInfo("Unknown Bun", "Description not available.", 0);
-            StateHasChanged();
         }
     }
 
@@ -195,9 +204,10 @@
 
     public System.Threading.Timer _timer;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _timer = new System.Threading.Timer(CheckBunSelectVar, null, 0, 100); // Check every 100ms
+        await PrefetchBunDescriptions();
     }
 
     public void CheckBunSelectVar(object state)

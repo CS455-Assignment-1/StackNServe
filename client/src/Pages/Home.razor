@@ -210,8 +210,17 @@
     // New Order
     public async Task update_order()
     {
-        await fetch_order_list();
-        await fetch_order_price();
+        if (preloadedOrders.Count > 0)
+        {
+            current_order_list = preloadedOrders.First().Split(',').ToList();
+            current_order_price = preloadedOrderPrice;
+            preloadedOrders.RemoveAt(0); // Remove the used preloaded order
+        }
+        else
+        {
+            await fetch_order_list();
+            await fetch_order_price();
+        }
         StateHasChanged();
     }
     public int current_order_price = 0;
@@ -260,10 +269,24 @@
         await update_order();
         StateHasChanged();
     }
+    public List<string> preloadedOrders = new List<string>();
+    public int preloadedOrderPrice = 0;
 
     protected override async Task OnInitializedAsync()
     {
         StringListService.OnChange += StateHasChanged;
+        await PreloadOrders();
+    }
+
+    public async Task PreloadOrders()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            await fetch_order_list();
+            await fetch_order_price();
+            preloadedOrders.Add(string.Join(", ", current_order_list));
+            preloadedOrderPrice = current_order_price;
+        }
     }
 
     public void Dispose()

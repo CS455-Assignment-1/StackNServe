@@ -40,7 +40,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
 @code
-{  
+{ 
+    private Dictionary<string, PattyInfo> pattyDescriptions = new Dictionary<string, PattyInfo>();
     List<string> PattyImages = new List<string>
         {
             "images/Patty/Veggie_Patty.png",
@@ -50,62 +51,67 @@
         };
     
     public bool isExpanded = false;
-    public PattyInfo currentHoverInfo;
+    public PattyInfo currentHoverInfo = new PattyInfo("", "", 0);
     public string currentHoverPatty;
     public Timer autoCloseTimer;
+    
+    private async Task PrefetchPattyDescriptions()
+    {
+        foreach (var pattyImage in PattyImages)
+        {
+            string pattyName = pattyImage switch
+            {
+                "images/Patty/Veggie_Patty.png" => "Veggie Patty",
+                "images/Patty/Chicken_Patty.png" => "Chicken Patty",
+                "images/Patty/Fish_Patty.png" => "Fish Patty",
+                "images/Patty/Portobello_Mushroom_Patty.png" => "Portobello Mushroom Patty",
+                _ => null
+            };
 
+            if (!string.IsNullOrEmpty(pattyName))
+            {
+                try
+                {
+                    string url = $"burger/description?type=patty&name={Uri.EscapeDataString(pattyName)}";
+                    var response = await Http.GetAsync(url);
 
-    public async Task Display_Info(string Patty)
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var pattyInfo = JsonSerializer.Deserialize<PattyInfo>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                        if (pattyInfo != null)
+                        {
+                            pattyDescriptions[pattyImage] = pattyInfo;
+                        }
+                    }
+                    else
+                    {
+                        pattyDescriptions[pattyImage] = new PattyInfo(pattyName, "Description not available.", 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    pattyDescriptions[pattyImage] = new PattyInfo(pattyName, $"Exception: {ex.Message}", 0);
+                }
+            }
+        }
+    }
+
+    public void Display_Info(string Patty)
     {
         currentHoverPatty = Patty;
 
-        //Clear any existing hover info
-        currentHoverInfo.Description = "";
-        currentHoverInfo.Name = "";
-        currentHoverInfo.Price = 0;
-
-        // Map image path to patty name
-        string pattyName = Patty switch
+        if (pattyDescriptions.ContainsKey(Patty))
         {
-            "images/Patty/Veggie_Patty.png" => "Veggie Patty",
-            "images/Patty/Chicken_Patty.png" => "Chicken Patty",
-            "images/Patty/Fish_Patty.png" => "Fish Patty",
-            "images/Patty/Portobello_Mushroom_Patty.png" => "Portobello Mushroom Patty",
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(pattyName))
-        {
-            try
-            {
-                string url = $"burger/description?type=patty&name={Uri.EscapeDataString(pattyName)}";
-                var response = await Http.GetAsync(url);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    currentHoverInfo = JsonSerializer.Deserialize<PattyInfo>(content, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive
-                        = true
-                        });
-                }
-                else
-                {
-                    currentHoverInfo = new PattyInfo(pattyName, $"Error: {response.StatusCode} - {content}", 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                currentHoverInfo = new PattyInfo(pattyName, $"Exception: {ex.Message}", 0);
-            }
-
-            StateHasChanged();
+            currentHoverInfo = pattyDescriptions[Patty];
         }
         else
         {
             currentHoverInfo = new PattyInfo("Unknown Patty", "Description not available.", 0);
-            StateHasChanged();
         }
     }
 
@@ -186,8 +192,9 @@
 
     public System.Threading.Timer _timer;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await PrefetchPattyDescriptions();
         _timer = new System.Threading.Timer(CheckPattySelectVar, null, 0, 100); // Check every 100ms
     }
 

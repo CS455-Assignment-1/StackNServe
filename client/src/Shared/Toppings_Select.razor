@@ -44,6 +44,7 @@
 @code
 {
 
+    private Dictionary<string, ToppingInfo> toppingDescriptions = new Dictionary<string, ToppingInfo>();
     List<string> Toppings = new List<string> { "Tomato", "Lettuce" ,"Onion", "Pickles", "Jalapenos", "Avocado", "Bacon"
 ,"Cheese", "Egg"};
 
@@ -61,63 +62,74 @@
     };
 
     public bool isExpanded = false;
-    public ToppingInfo currentHoverInfo;
+    public ToppingInfo currentHoverInfo = new ToppingInfo("", "", 0);
     public string currentHoverToppings;
-    public async Task Display_Info(string topping)
+    protected override async Task OnInitializedAsync()
+    {
+        await PrefetchToppingDescriptions();
+        _timer = new System.Threading.Timer(CheckToppingsSelectVar, null, 0, 100); // Check every 100ms
+    }
+
+    private async Task PrefetchToppingDescriptions()
+    {
+        foreach (var toppingImage in ToppingImages)
+        {
+            string toppingName = toppingImage switch
+            {
+                "images/Toppings/Avocado.png" => "Avocado",
+                "images/Toppings/Bacon.png" => "Bacon",
+                "images/Toppings/Cheese.png" => "Cheese",
+                "images/Toppings/Egg.png" => "Egg",
+                "images/Toppings/Jalapenos.png" => "Jalapenos",
+                "images/Toppings/Lettuce.png" => "Lettuce",
+                "images/Toppings/Onion.png" => "Onion",
+                "images/Toppings/Pickles.png" => "Pickles",
+                "images/Toppings/Tomato.png" => "Tomato",
+                _ => null
+            };
+
+            if (!string.IsNullOrEmpty(toppingName))
+            {
+                try
+                {
+                    string url = $"burger/description?type=toppings&name={Uri.EscapeDataString(toppingName)}";
+                    var response = await Http.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var toppingInfo = JsonSerializer.Deserialize<ToppingInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (toppingInfo != null)
+                        {
+                            toppingDescriptions[toppingImage] = toppingInfo;
+                        }
+                    }
+                    else
+                    {
+                        toppingDescriptions[toppingImage] = new ToppingInfo(toppingName, "Description not available.", 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    toppingDescriptions[toppingImage] = new ToppingInfo(toppingName, $"Exception: {ex.Message}", 0);
+                }
+            }
+        }
+    }
+
+    public void Display_Info(string topping)
     {
         currentHoverToppings = topping;
 
-        //Clear any existing hover info
-        currentHoverInfo.Description = "";
-        currentHoverInfo.Name = "";
-        currentHoverInfo.Price = 0;
-        
-        // Map image path to topping name
-        string toppingName = topping switch
+        // Use prefetched data if available
+        if (toppingDescriptions.ContainsKey(topping))
         {
-            "images/Toppings/Avocado.png" => "Avocado",
-            "images/Toppings/Bacon.png" => "Bacon",
-            "images/Toppings/Cheese.png" => "Cheese",
-            "images/Toppings/Egg.png" => "Egg",
-            "images/Toppings/Jalapenos.png" => "Jalapenos",
-            "images/Toppings/Lettuce.png" => "Lettuce",
-            "images/Toppings/Onion.png" => "Onion",
-            "images/Toppings/Pickles.png" => "Pickles",
-            "images/Toppings/Tomato.png" => "Tomato",
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(toppingName))
-        {
-            try
-            {
-                string url = $"burger/description?type=toppings&name={Uri.EscapeDataString(toppingName)}";
-                var response = await Http.GetAsync(url);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    currentHoverInfo = JsonSerializer.Deserialize<ToppingInfo>(content, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-                }
-                else
-                {
-                    currentHoverInfo = new ToppingInfo(toppingName, $"Error: {response.StatusCode} - {content}", 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                currentHoverInfo = new ToppingInfo(toppingName, $"Exception: {ex.Message}", 0);
-            }
-
-            StateHasChanged();
+            currentHoverInfo = toppingDescriptions[topping];
         }
         else
         {
             currentHoverInfo = new ToppingInfo("Unknown Topping", "Description not available.", 0);
-            StateHasChanged();
         }
     }
     public void ClearHoverInfo()
@@ -187,11 +199,6 @@
     }
 
     public System.Threading.Timer _timer;
-
-    protected override void OnInitialized()
-    {
-        _timer = new System.Threading.Timer(CheckToppingsSelectVar, null, 0, 100); // Check every 100ms
-    }
 
     public void CheckToppingsSelectVar(object state)
     {
