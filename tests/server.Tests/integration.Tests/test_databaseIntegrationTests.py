@@ -9,7 +9,7 @@ MONGO_URI = "mongodb+srv://StackNServe:aditi_kushagra@cluster0.rvwjh.mongodb.net
 USER_DB_NAME = "user"
 BURGER_DB_NAME = "burger"
 
-API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = "https://stacknserve.onrender.com"
 
 @pytest.fixture
 def mongo_client():
