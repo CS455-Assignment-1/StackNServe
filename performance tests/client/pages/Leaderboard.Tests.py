@@ -4,6 +4,8 @@ import unittest
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class TestLeaderboard(unittest.TestCase):
 
@@ -11,8 +13,8 @@ class TestLeaderboard(unittest.TestCase):
     def setUpClass(cls):
         cls.driver = webdriver.Chrome()
         cls.driver.maximize_window()
+        cls.wait = WebDriverWait(cls.driver, 10)
         cls.driver.get("https://cs455-assignment-1.github.io/StackNServe/Leaderboard")
-        time.sleep(3)
 
     @classmethod
     def tearDownClass(cls):
@@ -30,17 +32,16 @@ class TestLeaderboard(unittest.TestCase):
         print("Page load time is less than 1 second")
 
     def test_leaderboard_page_component_loadtime(self):
-        start = time.time()
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/Leaderboard")
-        time.sleep(3)
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Page")
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Heading")
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Table")
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Table_Header_Name")
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Table_Header_Score")
-        self.driver.find_element(By.CLASS_NAME, "Leaderboard_Table_Data")
+        start = time.time()
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Page")))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Heading")))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table")))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table_Header_Name")))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table_Header_Score")))
+        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table_Data")))
         end = time.time()
-        self.assertLess(end - start, 4, "Component load time exceeds 6 seconds")
+        self.assertLess(end - start, 4, "Component load time exceeds 4 seconds")
         print("Component load time is less than 4 seconds")
 
 if __name__ == '__main__':
