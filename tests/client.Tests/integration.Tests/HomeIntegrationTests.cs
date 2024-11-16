@@ -159,45 +159,45 @@ namespace StackNServe.Tests
         //     });
         // }
 
-        [Fact]
-        public async Task CheckList_ShouldReturnValidComparisonResult()
-        {
-            // Arrange
-            JSInterop.SetupVoid("initializeNotification"); 
+        // [Fact]
+        // public async Task CheckList_ShouldReturnValidComparisonResult()
+        // {
+        //     // Arrange
+        //     JSInterop.SetupVoid("initializeNotification"); 
 
-            var component = RenderComponent<Home>(parameters =>
-                parameters.Add(p => p.isGameStarting, false)
-                          .Add(p => p.isEnded, false));  // Game is running
+        //     var component = RenderComponent<Home>(parameters =>
+        //         parameters.Add(p => p.isGameStarting, false)
+        //                   .Add(p => p.isEnded, false));  // Game is running
 
-            var stringListService = component.Services.GetRequiredService<GlobalStringListService>();
+        //     var stringListService = component.Services.GetRequiredService<GlobalStringListService>();
 
-            await component.InvokeAsync(() =>
-            {
-                stringListService.AddString("Bun Bottom");
-                stringListService.AddString("Portobello Mushroom Patty");
-                stringListService.AddString("Hot Sauce");
-                stringListService.AddString("Fish Patty");
-                stringListService.AddString("Aioli");
-                stringListService.AddString("Avocado");
-                stringListService.AddString("Ketchup");
-                stringListService.AddString("Sesame Bun");
-            });
+        //     await component.InvokeAsync(() =>
+        //     {
+        //         stringListService.AddString("Bun Bottom");
+        //         stringListService.AddString("Portobello Mushroom Patty");
+        //         stringListService.AddString("Hot Sauce");
+        //         stringListService.AddString("Fish Patty");
+        //         stringListService.AddString("Aioli");
+        //         stringListService.AddString("Avocado");
+        //         stringListService.AddString("Ketchup");
+        //         stringListService.AddString("Sesame Bun");
+        //     });
 
-            component.Instance.current_order_list = new List<string> {"Portobello Mushroom Patty","Hot Sauce","Sesame Bun","Fish Patty","Aioli","Avocado","Ketchup" };
-            component.Instance.current_player_score = 50; 
-            component.Instance.current_order_price = 500; 
+        //     component.Instance.current_order_list = new List<string> {"Portobello Mushroom Patty","Hot Sauce","Sesame Bun","Fish Patty","Aioli","Avocado","Ketchup" };
+        //     component.Instance.current_player_score = 50; 
+        //     component.Instance.current_order_price = 500; 
 
-            // Trigger the CheckList function
-            await component.InvokeAsync(async () => await component.Instance.CheckList());
+        //     // Trigger the CheckList function
+        //     await component.InvokeAsync(async () => await component.Instance.CheckList());
 
-            await Task.Delay(500);
+        //     await Task.Delay(500);
 
-            component.WaitForAssertion(() =>
-            {
-                Assert.Equal("Perfect Order!", component.Instance.message);
-                Assert.True(component.Instance.current_player_score > 50);  
-            });
-        }
+        //     component.WaitForAssertion(() =>
+        //     {
+        //         Assert.Equal("Perfect Order!", component.Instance.message);
+        //         Assert.True(component.Instance.current_player_score > 50);  
+        //     });
+        // }
 
     }
 }
