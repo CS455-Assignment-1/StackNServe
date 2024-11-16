@@ -264,8 +264,7 @@
     {
         if (!IsTestMode)
         {
-            await fetch_order_list();
-            await fetch_order_price();
+            PreloadOrders();
         }
         StringListService.OnChange += StateHasChanged;
     }
@@ -296,8 +295,9 @@
 
     public async Task PreloadOrders()
     {
-        var fetchTasks = Enumerable.Range(0, 5).Select(async _ =>
+        var fetchTasks = Enumerable.Range(1, 5).Select(async _ =>
         {
+            Console.WriteLine("Fetching First Order");
             var newOrder = await fetch_order_list_alias();
             var newPrice = await fetch_order_price_alias();
             return new PreloadedOrder
@@ -322,19 +322,9 @@
         await create_player();
         await fetch_player_score();
 
-        @* if (preloadedOrders.Count > 0)
-        {
-            var initialOrder = preloadedOrders.First();
-            current_order_list = initialOrder.Items;
-            current_order_price = initialOrder.Price;
-            preloadedOrders.RemoveAt(0);
-        }
-        else 
-        {
-        
-        } *@
         StateHasChanged();
-        PreloadOrders();
+
+        await update_order();
     }
 
     //Classes to check for the right order.

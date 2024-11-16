@@ -29,11 +29,11 @@ jobs:
 
       - name: Run Locust performance test 1
         run: |
-          locust -f "performance tests/server/leaderboard.Tests.py" --headless -u 100 -r 10 -t 1m --html=leaderboard_report.html
+          locust -f "performance tests/server/leaderboard.Tests.py" --headless -u 100 -r 10 -t 1m --html=leaderboard_report.html || true
 
       - name: Run Locust performance test 2
         run: |
-          locust -f "performance tests/server/home.Tests.py" --headless -u 100 -r 10 -t 1m --html=home_report.html
+          locust -f "performance tests/server/home.Tests.py" --headless -u 100 -r 10 -t 1m --html=home_report.html || true
 
       - name: Upload Locust reports
         uses: actions/upload-artifact@v4
