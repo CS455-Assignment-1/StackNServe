@@ -27,9 +27,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip
-          wget https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip -d /usr/local/bin
+          wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip -d /usr/local/bin
           sudo apt-get install -y google-chrome-stable
+        
+          # Verify installations
+          google-chrome --version
+          chromedriver --version
 
       - name: Test Server Accessibility
         run: |
@@ -45,15 +49,15 @@ jobs:
 
       - name: Run Selenium test 1
         run: |
-          python "selenium performance tests/client/Home.Tests.py" > selenium_home_output.txt || true
+          python "performance tests/client/Home.Tests.py" > selenium_home_output.txt || true
 
       - name: Run Selenium test 2
         run: |
-          python "selenium performance tests/client/Leaderboard.Tests.py" > selenium_leaderboard_output.txt || true
+          python "performance tests/client/Leaderboard.Tests.py" > selenium_leaderboard_output.txt || true
 
       - name: Run Selenium test 3
         run: |
-          python "selenium performance tests/client/Player_Guide.Tests.py" > selenium_playerguide_output.txt || true
+          python "performance tests/client/Player_Guide.Tests.py" > selenium_playerguide_output.txt || true
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4

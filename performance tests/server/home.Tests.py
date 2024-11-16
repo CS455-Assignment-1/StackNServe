@@ -25,7 +25,7 @@ class HomeTestUser(TaskSet):
     @task
     def fetch_player_score(self):
         # Fetch the player score by ID
-        data = {"player_id": 111}  # Sample player ID
+        data = {"player_id": 4}  # Sample player ID
         self.client.post("/fetchScore", json=data)
 
     @task
