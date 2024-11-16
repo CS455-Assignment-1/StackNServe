@@ -10,7 +10,14 @@ from selenium.webdriver.support import expected_conditions as EC
 class TestPlayerGuide(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Chrome()
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless=new')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--disable-gpu')
+
+        # Use specific path for ChromeDriver
+        cls.driver = webdriver.Chrome(options=chrome_options)
         cls.driver.maximize_window()
         cls.wait = WebDriverWait(cls.driver, 10)
         cls.driver.get("https://cs455-assignment-1.github.io/StackNServe/")
