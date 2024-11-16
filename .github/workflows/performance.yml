@@ -49,15 +49,15 @@ jobs:
 
       - name: Run Selenium test 1
         run: |
-          python "performance tests/client/Home.Tests.py" > selenium_home_output.txt || true
+          python "performance tests/client/pages/Home.Tests.py" > selenium_home_output.txt || true
 
       - name: Run Selenium test 2
         run: |
-          python "performance tests/client/Leaderboard.Tests.py" > selenium_leaderboard_output.txt || true
+          python "performance tests/client/pages/Leaderboard.Tests.py" > selenium_leaderboard_output.txt || true
 
       - name: Run Selenium test 3
         run: |
-          python "performance tests/client/Player_Guide.Tests.py" > selenium_playerguide_output.txt || true
+          python "performance tests/client/pages/Player_Guide.Tests.py" > selenium_playerguide_output.txt || true
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
