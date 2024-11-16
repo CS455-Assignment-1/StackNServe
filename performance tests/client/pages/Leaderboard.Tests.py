@@ -28,7 +28,7 @@ class TestLeaderboard(unittest.TestCase):
         start = time.time()
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/Leaderboard")
         end = time.time()
-        self.assertLess(end - start, 1, "Page load time exceeds 1 second")
+        self.assertLess(end - start, 1, "Page load time exceeds 1 second : " + str(end - start))
         print("Page load time is less than 1 second")
 
     def test_leaderboard_page_component_loadtime(self):
@@ -41,7 +41,7 @@ class TestLeaderboard(unittest.TestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table_Header_Score")))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Leaderboard_Table_Data")))
         end = time.time()
-        self.assertLess(end - start, 4, "Component load time exceeds 4 seconds")
+        self.assertLess(end - start, 4, "Component load time exceeds 4 seconds : " + str(end - start))
         print("Component load time is less than 4 seconds")
 
 if __name__ == '__main__':

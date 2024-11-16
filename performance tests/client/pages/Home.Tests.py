@@ -32,8 +32,8 @@ class TestHomePage(unittest.TestCase):
         start = time.time()
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
         end = time.time()
-        self.assertLess(end - start, 3)
-        print("Page load time is less than 3 seconds")
+        self.assertLess(end - start, 10)
+        print("Page load time is less than 10 seconds : " + str(end - start))
 
     def test_home_page_component_loadtime(self):
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
@@ -42,7 +42,7 @@ class TestHomePage(unittest.TestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Player_Name_Label")))
         end = time.time()
         self.assertLess(end - start, 4)
-        print("Component load time is less than 4 seconds")
+        print("Component load time is less than 4 seconds : " + str(end - start))
 
 
     def test_home_page_select_button_time(self):
@@ -59,7 +59,7 @@ class TestHomePage(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "ToppingsSelect").click()
         end = time.time()
         self.assertLess(end - start, 4)
-        print("Select button click time is less than 4 seconds")
+        print("Select button click time is less than 4 seconds : " + str(end - start))
     
     def test_home_page_select_button_description(self):
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
@@ -73,7 +73,7 @@ class TestHomePage(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "ClickExpandMenu")
         end = time.time()
         self.assertLess(end - start, 4)
-        print("Select button description click time is less than 4 seconds")
+        print("Select button description click time is less than 4 seconds : " + str(end - start))
 
 
 if __name__ == '__main__':

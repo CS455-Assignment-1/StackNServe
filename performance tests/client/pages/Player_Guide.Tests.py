@@ -27,7 +27,7 @@ class TestPlayerGuide(unittest.TestCase):
         start = time.time()
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/")
         end = time.time()
-        self.assertLess(end - start, 1, "Page load time exceeds 2 seconds")
+        self.assertLess(end - start, 1, "Page load time exceeds 2 seconds : " + str(end - start))
         print("Page load time is less than 1 seconds")
 
     def test_player_guide_page_component_loadtime(self):
@@ -39,7 +39,7 @@ class TestPlayerGuide(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "Player_Guide_Intent")
         self.driver.find_element(By.CLASS_NAME, "Play_Game_Button")
         end = time.time()
-        self.assertLess(end - start, 4, "Component load time exceeds 4 seconds")
+        self.assertLess(end - start, 4, "Component load time exceeds 4 seconds : " + str(end - start))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
