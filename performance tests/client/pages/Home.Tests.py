@@ -1,4 +1,5 @@
 import sys
+sys.path.insert(0, '/opt/homebrew/lib/python3.11/site-packages')
 import unittest
 import time
 from selenium import webdriver
@@ -40,8 +41,8 @@ class TestHomePage(unittest.TestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Player_Name_Input")))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Player_Name_Label")))
         end = time.time()
-        self.assertLess(end - start, 10)
-        print("Component load time is less than 10 seconds")
+        self.assertLess(end - start, 4)
+        print("Component load time is less than 4 seconds")
 
 
     def test_home_page_select_button_time(self):
@@ -57,8 +58,8 @@ class TestHomePage(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "SaucesSelect").click()
         self.driver.find_element(By.CLASS_NAME, "ToppingsSelect").click()
         end = time.time()
-        self.assertLess(end - start, 6)
-        print("Select button click time is less than 6 seconds")
+        self.assertLess(end - start, 4)
+        print("Select button click time is less than 4 seconds")
     
     def test_home_page_select_button_description(self):
         self.driver.get("https://cs455-assignment-1.github.io/StackNServe/New_Game")
@@ -71,8 +72,8 @@ class TestHomePage(unittest.TestCase):
         self.driver.find_element(By.CLASS_NAME, "BunToggleButton").click()
         self.driver.find_element(By.CLASS_NAME, "ClickExpandMenu")
         end = time.time()
-        self.assertLess(end - start, 7)
-        print("Select button description click time is less than 7 seconds")
+        self.assertLess(end - start, 4)
+        print("Select button description click time is less than 4 seconds")
 
 
 if __name__ == '__main__':

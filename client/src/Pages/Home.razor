@@ -257,25 +257,58 @@
     }
     public List<PreloadedOrder> preloadedOrders = new List<PreloadedOrder>();
 
+    [Parameter]
+    public bool IsTestMode { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        if (!IsTestMode)
+        {
+            await fetch_order_list();
+            await fetch_order_price();
+        }
         StringListService.OnChange += StateHasChanged;
+    }
+
+    public async Task<List<string>> fetch_order_list_alias()
+    {
+        string response = await Http.GetStringAsync("orderList");
+        var fetchedList = response.Split(',').ToList();
+
+        for (int i = 0; i < fetchedList.Count; i++)
+        {
+            fetchedList[i] = fetchedList[i].Replace("\"", "").Trim();
+        }
+
+        fetchedList[0] = fetchedList[0].Substring(1).Trim();
+        fetchedList[fetchedList.Count - 1] = fetchedList[fetchedList.Count - 1].Substring(0, fetchedList[fetchedList.Count - 1].Length - 1).Trim();
+
+        return fetchedList; 
+    }
+
+    public async Task<int> fetch_order_price_alias()
+    {
+        string response = await Http.GetStringAsync("orderPrice");
+        int fetchedPrice = int.Parse(response);
+        Console.WriteLine(fetchedPrice);
+        return fetchedPrice;
     }
 
     public async Task PreloadOrders()
     {
-        for (int i = 0; i < 5; i++)
+        var fetchTasks = Enumerable.Range(0, 5).Select(async _ =>
         {
-            await fetch_order_list();
-            await fetch_order_price();
-            preloadedOrders.Add(new PreloadedOrder
+            var newOrder = await fetch_order_list_alias();
+            var newPrice = await fetch_order_price_alias();
+            return new PreloadedOrder
             {
-                Items = new List<string>(current_order_list),
-                Price = current_order_price
-            });
-        }
-}
+                Items = new List<string>(newOrder),
+                Price = newPrice
+            };
+        });
+
+        preloadedOrders = (await Task.WhenAll(fetchTasks)).ToList();
+    }
 
     public void Dispose()
     {
@@ -285,18 +318,23 @@
     public async Task start_game()
     {
         isGameStarting = false;
+
         await create_player();
         await fetch_player_score();
 
-        if (preloadedOrders.Count > 0)
+        @* if (preloadedOrders.Count > 0)
         {
             var initialOrder = preloadedOrders.First();
             current_order_list = initialOrder.Items;
             current_order_price = initialOrder.Price;
             preloadedOrders.RemoveAt(0);
         }
-
+        else 
+        {
+        
+        } *@
         StateHasChanged();
+        PreloadOrders();
     }
 
     //Classes to check for the right order.

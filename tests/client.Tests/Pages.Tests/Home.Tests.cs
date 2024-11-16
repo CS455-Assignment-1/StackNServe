@@ -45,8 +45,7 @@ namespace StackNServe.Tests
         {
             var component = RenderComponent<Home>(parameters => parameters
                 .Add(p => p.isGameStarting, false)
-                .Add(p => p.isEnded, false)
-            );
+                .Add(p => p.isEnded, false).Add(p => p.IsTestMode, true));
             component.FindComponent<Bun_Select>(); 
             component.FindComponent<Patty_Select>(); 
             component.FindComponent<Toppings_Select>(); 
@@ -62,8 +61,7 @@ namespace StackNServe.Tests
         public void NewGamePage_PageRendersStart()
         {
             var component = RenderComponent<Home>(parameters => parameters
-                .Add(p => p.isGameStarting, true)
-            );
+                .Add(p => p.isGameStarting, true).Add(p => p.IsTestMode, true));
             var playerNameField = component.Find("input.Player_Name_Field");
             var startGameButton = component.Find("button.Player_Name_Button");
             Assert.NotNull(playerNameField);
@@ -75,8 +73,7 @@ namespace StackNServe.Tests
         {
             var component = RenderComponent<Home>(parameters => parameters
                 .Add(p => p.isGameStarting, false)
-                .Add(p => p.isEnded, true)
-            );
+                .Add(p => p.isEnded, true).Add(p => p.IsTestMode, true));
 
             var timeFinishedMessage = component.Find("h1.Time_Elapsed_Message");
             var scoreMessage = component.Find("h2.Time_Elapsed_Score");
@@ -91,7 +88,9 @@ namespace StackNServe.Tests
         [Fact]
         public async Task ValidateAndStartGame_InvalidPlayerName_ShowsError()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
+
             component.Instance.playerName = "Invalid@Name";
 
             await component.Instance.validate_and_start_game();
@@ -104,7 +103,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task FetchPlayerScore_UpdatesPlayerScore()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
             var mockResponse = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("100")
@@ -156,7 +156,8 @@ namespace StackNServe.Tests
                 )
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
             await component.InvokeAsync(() => component.Instance.player_skip());
 
             Assert.Equal(-10, component.Instance.current_player_score);
@@ -164,7 +165,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task FetchPlayerScore_SetsCurrentPlayerScore()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
             mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post && req.RequestUri.ToString().Contains("fetchScore")),
@@ -182,7 +184,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task FetchOrderPrice_SetsCurrentOrderPrice()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
 
             mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -201,7 +204,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task FetchOrderList_SetsOrderList()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
             mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
                     ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("orderList")),
@@ -219,7 +223,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task CreatePlayer_SetsPlayerId()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
 
             mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -237,7 +242,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task CheckList_UpdatesScoreAndMessage()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
 
             var orderCheckResponse = new OrderCheckResponse
             {
@@ -284,7 +290,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task CheckList_ClearsStringListAndUpdatesOrder()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
 
             var orderCheckResponse = new OrderCheckResponse
             {
@@ -340,7 +347,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task HandleTimerFinished_SetsGameEnded()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
 
             component.Instance.handle_timer_finished();
 
@@ -350,7 +358,8 @@ namespace StackNServe.Tests
         [Fact]
         public async Task FetchPlayerScoreName_ReturnsCorrectScore()
         {
-            var component = RenderComponent<Home>();
+            var component = RenderComponent<Home>(parameters => parameters
+    .Add(p => p.IsTestMode, true));
             
             var playerName = "ValidPlayer";
             var expectedScore = 150;
